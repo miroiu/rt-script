@@ -31,18 +31,18 @@ Variables:
   - reserved words are: var, const, print, true, false, null
 
 Binary operators:
-  - \+ -> addition (e.g 2 + 3 = 5)
-  - \- -> subtraction (e.g 2 - 1 = 1)
-  - / -> division (e.g 6 : 2 = 3)
-  - \* -> multiplication (e.g 3 x 2 = 6)
+  - \+ -> addition
+  - \- -> subtraction
+  - / -> division
+  - \* -> multiplication
   - == -> equals
   - != -> not equals
-  - &lt; -> less
-  - &gt; -> greater
+  - &lt; -> less than
+  - &gt; -> greater than
   
 Unary operators:
-  - \- -> (for negative numbers, e.g. -1)
-  - ! -> logical negation (e.g !true)
+  - \- -> minus
+  - ! -> logical negation
 
 Commands:
   - print (prints to the output stream, e.g. print 2 + 3)
