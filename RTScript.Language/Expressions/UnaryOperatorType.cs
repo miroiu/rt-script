@@ -2,8 +2,8 @@
 {
     public enum UnaryOperatorType
     {
-        Print,
         Minus,
-        LogicalNegation
+        LogicalNegation,
+        Print
     }
 }

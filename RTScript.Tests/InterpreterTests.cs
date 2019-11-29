@@ -1,6 +1,8 @@
 ﻿using RTScript.Language.Interpreter;
 using RTScript.Tests.Mocks;
 using NUnit.Framework;
+using RTScript.Language.Lexer;
+using RTScript.Language.Parser;
 
 namespace RTScript.Tests
 {
@@ -14,6 +16,20 @@ namespace RTScript.Tests
         {
             _out = new MockOutputStream();
             _ctx = new ExecutionContext(_out);  
+        }
+
+        [Test]
+        public void Comments_Should_Be_Ignored()
+        {
+            var input = "var a = 2; print a; // print a + 1;";
+            var source = new SourceText(input);
+            var lexer = new RTScriptLexer(source);
+            var parser = new RTScriptParser(lexer);
+            var interpreter = new RTScriptInterpreter(_out);
+            interpreter.Run(parser);
+            var output = _out.Output.ToString();
+
+            Assert.AreEqual(output, "2\r\n");
         }
     }
 }

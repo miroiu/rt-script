@@ -1,4 +1,5 @@
 ﻿using RTScript.Language.Expressions;
+using RTScript.Language.Interpreter.Operators;
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +11,12 @@ namespace RTScript.Language.Interpreter
         private readonly IOutputStream _out;
 
         public ExecutionContext(IOutputStream outs)
-            => _out = outs;
+        {
+            _out = outs;
+            OperatorsCache.LoadOperators(typeof(NumberOperators));
+            OperatorsCache.LoadOperators(typeof(StringOperators));
+            OperatorsCache.LoadOperators(typeof(BooleanOperators));
+        }
 
         public void Assign(string name, object value)
         {
@@ -42,7 +48,6 @@ namespace RTScript.Language.Interpreter
         public void Print(object value)
             => _out.WriteLine(value?.ToString() ?? "null");
 
-        // TODO: Allow user defined evaluation of numbers, strings and boolean values?
         public object Evaluate(LiteralType type, string value)
         {
             // TODO: Could be improved by caching common values and already parsed values
@@ -51,7 +56,7 @@ namespace RTScript.Language.Interpreter
                 case LiteralType.Boolean:
                     return bool.Parse(value);
 
-                // Defaults to double
+                // TODO: Let user specify default number type?
                 case LiteralType.Number:
                     return double.Parse(value);
 
@@ -64,15 +69,22 @@ namespace RTScript.Language.Interpreter
             }
         }
 
-        // TODO: Use user defined operator logic for object type
         public object Evaluate(UnaryOperatorType operatorType, object value)
         {
-            return default;
+            // Can throw null reference exception
+            var type = value.GetType();
+            var op = OperatorsCache.GetUnaryOperator(operatorType, type);
+            return op.Execute(value);
         }
 
         public object Evaluate(object left, BinaryOperatorType operatorType, object right)
         {
-            return default;
+            // Can throw null reference exception
+            var leftType = left.GetType();
+            var rightType = right.GetType();
+
+            var op = OperatorsCache.GetBinaryOperator(operatorType, leftType, rightType);
+            return op.Execute(left, right);
         }
     }
 }

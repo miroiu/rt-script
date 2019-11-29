@@ -1,6 +1,6 @@
 ﻿using RTScript.Language.Expressions;
 
-namespace RTScript.Language.Interpreter
+namespace RTScript.Language.Interpreter.Evaluators
 {
     [ExpressionEvaluator(typeof(BinaryExpression))]
     public class BinaryExpressionEvaluator : IExpressionEvaluator
