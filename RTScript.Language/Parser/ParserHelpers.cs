@@ -37,6 +37,10 @@ namespace RTScript.Language.Parser
                 case TokenType.Minus:
                 case TokenType.Asterisk:
                 case TokenType.Slash:
+                case TokenType.GreaterThan:
+                case TokenType.LessThan:
+                case TokenType.EqualsEquals:
+                case TokenType.ExclamationEquals:
                     return true;
             }
 
@@ -89,15 +93,34 @@ namespace RTScript.Language.Parser
 
                 case TokenType.Slash:
                     return BinaryOperatorType.Divide;
+
+                case TokenType.GreaterThan:
+                    return BinaryOperatorType.Greater;
+
+                case TokenType.LessThan:
+                    return BinaryOperatorType.Less;
+
+                case TokenType.EqualsEquals:
+                    return BinaryOperatorType.Equal;
+
+                case TokenType.ExclamationEquals:
+                    return BinaryOperatorType.NotEqual;
             }
 
             throw new ParserException(token, $"{token.Type} is not a binary operator.");
         }
 
+        // Does not handle prefix operators because that's handled in the binary parslet code
         public static OperatorPrecedence ToOperatorPrecedence(this Token token)
         {
             switch (token.Type)
             {
+                case TokenType.GreaterThan:
+                case TokenType.LessThan:
+                case TokenType.EqualsEquals:
+                case TokenType.ExclamationEquals:
+                    return OperatorPrecedence.Equality;
+
                 case TokenType.Plus:
                 case TokenType.Minus:
                     return OperatorPrecedence.Addition;
@@ -105,9 +128,6 @@ namespace RTScript.Language.Parser
                 case TokenType.Asterisk:
                 case TokenType.Slash:
                     return OperatorPrecedence.Multiplication;
-
-                case TokenType.Exclamation:
-                    return OperatorPrecedence.Prefix;
             }
 
             throw new ParserException(token, $"{token.Type} is not an operator.");

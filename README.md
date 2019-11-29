@@ -12,13 +12,13 @@ rtscript -?
   
 Language rules: 
   - statements are delimited by a semicolon (i.e. ";")
-  - the decimal separator is comma (i.e. ".")
+  - the decimal separator is dot (i.e. ".")
   - empty statements are permitted and ignored during evaluation
   - a statement can be written on a single or multiple lines
   - spaces between an operator and its operands are optional
 
 Data types:
-  - a numeric type (double)
+  - number (double)
   - string
   - boolean
   - array of string, boolean and number
