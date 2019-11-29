@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RTScript": {
+      "commandName": "Project",
+      "commandLineArgs": "-r"
+    }
+  }
+}
