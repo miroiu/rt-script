@@ -34,11 +34,11 @@ Binary operators:
   - \+ -> addition (e.g 2 + 3 = 5)
   - \- -> subtraction (e.g 2 - 1 = 1)
   - / -> division (e.g 6 : 2 = 3)
-  - * -> multiplication (e.g 3 x 2 = 6)
+  - \* -> multiplication (e.g 3 x 2 = 6)
   - == -> equals
   - != -> not equals
-  - < -> less
-  - > -> greater
+  - &lt; -> less
+  - &gt; -> greater
   
 Unary operators:
   - \- -> (for negative numbers, e.g. -1)
