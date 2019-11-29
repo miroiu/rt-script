@@ -1,6 +1,6 @@
 ﻿namespace RTScript
 {
-    [ConsoleCommand("-h", "-?", "-help", Description = "Shows a list of commands")]
+    [ConsoleCommand("-?", Description = "Shows a list of commands")]
     public class HelpCommand : IConsoleCommand
     {
         public void Execute(RTScriptConsole console)

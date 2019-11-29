@@ -7,20 +7,24 @@ namespace RTScript.Language.Interpreter.Operators
 {
     public static class OperatorsCache
     {
-        private static readonly Dictionary<UnaryOperatorType, List<IUnaryOperator>> _unaryOperators = new Dictionary<UnaryOperatorType, List<IUnaryOperator>>();
-        private static readonly Dictionary<BinaryOperatorType, List<IBinaryOperator>> _binaryOperators = new Dictionary<BinaryOperatorType, List<IBinaryOperator>>();
+        static OperatorsCache()
+        {
+            LoadOperators(typeof(NumberOperators));
+            LoadOperators(typeof(StringOperators));
+            LoadOperators(typeof(BooleanOperators));
+        }
+
+        private static readonly Dictionary<UnaryOperatorType, Dictionary<Type, IUnaryOperator>> _unaryOperators = new Dictionary<UnaryOperatorType, Dictionary<Type, IUnaryOperator>>();
+        private static readonly Dictionary<BinaryOperatorType, Dictionary<(Type, Type), IBinaryOperator>> _binaryOperators = new Dictionary<BinaryOperatorType, Dictionary<(Type, Type), IBinaryOperator>>();
         private static readonly HashSet<Type> _loadedTypes = new HashSet<Type>();
 
         public static IUnaryOperator GetUnaryOperator(UnaryOperatorType operatorType, Type type)
         {
             if (_unaryOperators.TryGetValue(operatorType, out var unaryOperators))
             {
-                foreach (var op in unaryOperators)
+                if (unaryOperators.TryGetValue(type, out var op))
                 {
-                    if (op.ParameterType.IsAssignableFrom(type))
-                    {
-                        return op;
-                    }
+                    return op;
                 }
             }
 
@@ -31,16 +35,37 @@ namespace RTScript.Language.Interpreter.Operators
         {
             if (_binaryOperators.TryGetValue(operatorType, out var binaryOperators))
             {
-                foreach (var op in binaryOperators)
+                if (binaryOperators.TryGetValue((leftType, rightType), out var op))
                 {
-                    if (op.LeftType.IsAssignableFrom(leftType) && op.RightType.IsAssignableFrom(rightType))
-                    {
-                        return op;
-                    }
+                    return op;
                 }
             }
 
             throw new Exception($"Binary operator {operatorType} is not defined for types {leftType.ToFriendlyName()} and {rightType.ToFriendlyName()}");
+        }
+
+        public static void AddOperator(IUnaryOperator op)
+        {
+            if (!_unaryOperators.TryGetValue(op.OperatorType, out var operators))
+            {
+                _unaryOperators.Add(op.OperatorType, new Dictionary<Type, IUnaryOperator> { [op.ParameterType] = op });
+            }
+            else if (!operators.TryGetValue(op.ParameterType, out _))
+            {
+                operators.Add(op.ParameterType, op);
+            }
+        }
+
+        public static void AddOperator(IBinaryOperator op)
+        {
+            if (!_binaryOperators.TryGetValue(op.OperatorType, out var operators))
+            {
+                _binaryOperators.Add(op.OperatorType, new Dictionary<(Type, Type), IBinaryOperator> { [(op.LeftType, op.RightType)] = op });
+            }
+            else if (!operators.TryGetValue((op.LeftType, op.RightType), out var _))
+            {
+                operators.Add((op.LeftType, op.RightType), op);
+            }
         }
 
         public static void LoadOperators<T>() where T : class
@@ -56,81 +81,74 @@ namespace RTScript.Language.Interpreter.Operators
 
                     foreach (var method in staticMethods)
                     {
-                        var unaryAttribute = (UnaryOperatorAttribute)method.GetCustomAttribute(typeof(UnaryOperatorAttribute), false);
-
-                        if (unaryAttribute != default)
+                        if (TryGetUnaryOperator(method, out var unary))
                         {
-                            var parameters = method.GetParameters();
-                            var returnType = method.ReturnType;
-
-                            if (parameters.Length == 1 && returnType != typeof(void))
-                            {
-                                var parameterType = parameters[0].ParameterType;
-
-                                var unaryType = typeof(UnaryOperator<,>).MakeGenericType(parameterType, returnType);
-                                var operatorType = unaryAttribute.OperatorType;
-
-                                var funcType = typeof(Func<,>).MakeGenericType(parameterType, returnType);
-                                var funcInst = Delegate.CreateDelegate(funcType, method);
-
-                                var instance = (IUnaryOperator)Activator.CreateInstance(unaryType, funcInst, operatorType);
-                                AddOperator(instance);
-                            }
-
-                            continue;
+                            AddOperator(unary);
                         }
-
-                        var binaryAttribute = (BinaryOperatorAttribute)method.GetCustomAttribute(typeof(BinaryOperatorAttribute), false);
-
-                        if (binaryAttribute != default)
+                        else if (TryGetBinaryOperator(method, out var binary))
                         {
-                            var parameters = method.GetParameters();
-                            var returnType = method.ReturnType;
-
-                            if (parameters.Length == 2 && returnType != typeof(void))
-                            {
-                                var leftType = parameters[0].ParameterType;
-                                var rightType = parameters[1].ParameterType;
-
-                                var binaryType = typeof(BinaryOperator<,,>).MakeGenericType(leftType, rightType, returnType);
-                                var operatorType = binaryAttribute.OperatorType;
-
-                                var funcType = typeof(Func<,,>).MakeGenericType(leftType, rightType, returnType);
-                                var funcInst = Delegate.CreateDelegate(funcType, method);
-
-                                var instance = (IBinaryOperator)Activator.CreateInstance(binaryType, funcInst, operatorType);
-                                AddOperator(instance);
-                            }
-
-                            continue;
+                            AddOperator(binary);
                         }
                     }
                 }
             }
         }
 
-        public static void AddOperator(IUnaryOperator op)
+        private static bool TryGetUnaryOperator(MethodInfo method, out IUnaryOperator result)
         {
-            if (!_unaryOperators.TryGetValue(op.OperatorType, out var operators))
+            result = default;
+            var unaryAttribute = (UnaryOperatorAttribute)method.GetCustomAttribute(typeof(UnaryOperatorAttribute), false);
+
+            if (unaryAttribute != default)
             {
-                _unaryOperators.Add(op.OperatorType, new List<IUnaryOperator>() { op });
+                var parameters = method.GetParameters();
+                var returnType = method.ReturnType;
+
+                if (parameters.Length == 1 && returnType != typeof(void))
+                {
+                    var parameterType = parameters[0].ParameterType;
+
+                    var unaryType = typeof(UnaryOperator<,>).MakeGenericType(parameterType, returnType);
+                    var operatorType = unaryAttribute.OperatorType;
+
+                    var funcType = typeof(Func<,>).MakeGenericType(parameterType, returnType);
+                    var funcInst = Delegate.CreateDelegate(funcType, method);
+
+                    result = (IUnaryOperator)Activator.CreateInstance(unaryType, funcInst, operatorType);
+                    return true;
+                }
             }
-            else
-            {
-                operators.Add(op);
-            }
+
+            return false;
         }
 
-        public static void AddOperator(IBinaryOperator op)
+        private static bool TryGetBinaryOperator(MethodInfo method, out IBinaryOperator result)
         {
-            if (!_binaryOperators.TryGetValue(op.OperatorType, out var operators))
+            result = default;
+            var binaryAttribute = (BinaryOperatorAttribute)method.GetCustomAttribute(typeof(BinaryOperatorAttribute), false);
+
+            if (binaryAttribute != default)
             {
-                _binaryOperators.Add(op.OperatorType, new List<IBinaryOperator>() { op });
+                var parameters = method.GetParameters();
+                var returnType = method.ReturnType;
+
+                if (parameters.Length == 2 && returnType != typeof(void))
+                {
+                    var leftType = parameters[0].ParameterType;
+                    var rightType = parameters[1].ParameterType;
+
+                    var binaryType = typeof(BinaryOperator<,,>).MakeGenericType(leftType, rightType, returnType);
+                    var operatorType = binaryAttribute.OperatorType;
+
+                    var funcType = typeof(Func<,,>).MakeGenericType(leftType, rightType, returnType);
+                    var funcInst = Delegate.CreateDelegate(funcType, method);
+
+                    result = (IBinaryOperator)Activator.CreateInstance(binaryType, funcInst, operatorType);
+                    return true;
+                }
             }
-            else
-            {
-                operators.Add(op);
-            }
+
+            return false;
         }
     }
 }

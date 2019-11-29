@@ -11,12 +11,7 @@ namespace RTScript.Language.Interpreter
         private readonly IOutputStream _out;
 
         public ExecutionContext(IOutputStream outs)
-        {
-            _out = outs;
-            OperatorsCache.LoadOperators(typeof(NumberOperators));
-            OperatorsCache.LoadOperators(typeof(StringOperators));
-            OperatorsCache.LoadOperators(typeof(BooleanOperators));
-        }
+            => _out = outs;
 
         public void Assign(string name, object value)
         {
