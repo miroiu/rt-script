@@ -22,7 +22,7 @@ namespace RTScript.Language.Parser
                     return LiteralType.Number;
 
                 case TokenType.String:
-                    return LiteralType.Null;
+                    return LiteralType.String;
 
             }
 

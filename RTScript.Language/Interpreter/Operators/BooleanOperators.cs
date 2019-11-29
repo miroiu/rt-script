@@ -4,7 +4,7 @@ namespace RTScript.Language.Interpreter.Operators
 {
     public static class BooleanOperators
     {
-        [UnaryOperator(UnaryOperatorType.LogicalNegation)]
+        [Operator(UnaryOperatorType.LogicalNegation)]
         public static bool Negate(bool value) => !value;
     }
 }

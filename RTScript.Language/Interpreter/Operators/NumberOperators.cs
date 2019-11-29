@@ -6,35 +6,35 @@ namespace RTScript.Language.Interpreter.Operators
     {
         #region Math
 
-        [BinaryOperator(BinaryOperatorType.Plus)]
+        [Operator(BinaryOperatorType.Plus)]
         public static double Add(double x, double y) => x + y;
 
-        [BinaryOperator(BinaryOperatorType.Minus)]
+        [Operator(BinaryOperatorType.Minus)]
         public static double Subtract(double x, double y) => x - y;
 
-        [BinaryOperator(BinaryOperatorType.Multiply)]
+        [Operator(BinaryOperatorType.Multiply)]
         public static double Multiply(double x, double y) => x * y;
 
-        [BinaryOperator(BinaryOperatorType.Divide)]
+        [Operator(BinaryOperatorType.Divide)]
         public static double Divide(double x, double y) => x / y;
 
-        [UnaryOperator(UnaryOperatorType.Minus)]
+        [Operator(UnaryOperatorType.Minus)]
         public static double Negative(double x) => -x;
 
         #endregion
 
         #region Logical
 
-        [BinaryOperator(BinaryOperatorType.Greater)]
+        [Operator(BinaryOperatorType.Greater)]
         public static bool Greater(double x, double y) => x > y;
 
-        [BinaryOperator(BinaryOperatorType.Less)]
+        [Operator(BinaryOperatorType.Less)]
         public static bool Less(double x, double y) => x < y;
 
-        [BinaryOperator(BinaryOperatorType.Equal)]
+        [Operator(BinaryOperatorType.Equal)]
         public static bool Equal(double x, double y) => x == y;
 
-        [BinaryOperator(BinaryOperatorType.NotEqual)]
+        [Operator(BinaryOperatorType.NotEqual)]
         public static bool NotEqual(double x, double y) => x != y;
 
         #endregion

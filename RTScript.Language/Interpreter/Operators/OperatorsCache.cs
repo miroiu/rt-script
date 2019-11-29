@@ -81,71 +81,67 @@ namespace RTScript.Language.Interpreter.Operators
 
                     foreach (var method in staticMethods)
                     {
-                        if (TryGetUnaryOperator(method, out var unary))
+                        var attribute = (OperatorAttribute)method.GetCustomAttribute(typeof(OperatorAttribute), false);
+
+                        if (attribute?.IsUnary ?? false)
                         {
-                            AddOperator(unary);
+                            if (TryGetUnaryOperator(method, attribute.UnaryOperatorType, out var unary))
+                            {
+                                AddOperator(unary);
+                            }
                         }
-                        else if (TryGetBinaryOperator(method, out var binary))
+                        else
                         {
-                            AddOperator(binary);
+                            if (TryGetBinaryOperator(method, attribute.BinaryOperatorType, out var binary))
+                            {
+                                AddOperator(binary);
+                            }
                         }
                     }
                 }
             }
         }
 
-        private static bool TryGetUnaryOperator(MethodInfo method, out IUnaryOperator result)
+        private static bool TryGetUnaryOperator(MethodInfo method, UnaryOperatorType operatorType, out IUnaryOperator result)
         {
             result = default;
-            var unaryAttribute = (UnaryOperatorAttribute)method.GetCustomAttribute(typeof(UnaryOperatorAttribute), false);
+            var parameters = method.GetParameters();
+            var returnType = method.ReturnType;
 
-            if (unaryAttribute != default)
+            if (parameters.Length == 1 && returnType != typeof(void))
             {
-                var parameters = method.GetParameters();
-                var returnType = method.ReturnType;
+                var parameterType = parameters[0].ParameterType;
 
-                if (parameters.Length == 1 && returnType != typeof(void))
-                {
-                    var parameterType = parameters[0].ParameterType;
+                var unaryType = typeof(UnaryOperator<,>).MakeGenericType(parameterType, returnType);
 
-                    var unaryType = typeof(UnaryOperator<,>).MakeGenericType(parameterType, returnType);
-                    var operatorType = unaryAttribute.OperatorType;
+                var funcType = typeof(Func<,>).MakeGenericType(parameterType, returnType);
+                var funcInst = Delegate.CreateDelegate(funcType, method);
 
-                    var funcType = typeof(Func<,>).MakeGenericType(parameterType, returnType);
-                    var funcInst = Delegate.CreateDelegate(funcType, method);
-
-                    result = (IUnaryOperator)Activator.CreateInstance(unaryType, funcInst, operatorType);
-                    return true;
-                }
+                result = (IUnaryOperator)Activator.CreateInstance(unaryType, funcInst, operatorType);
+                return true;
             }
 
             return false;
         }
 
-        private static bool TryGetBinaryOperator(MethodInfo method, out IBinaryOperator result)
+        private static bool TryGetBinaryOperator(MethodInfo method, BinaryOperatorType operatorType, out IBinaryOperator result)
         {
             result = default;
-            var binaryAttribute = (BinaryOperatorAttribute)method.GetCustomAttribute(typeof(BinaryOperatorAttribute), false);
+            var parameters = method.GetParameters();
+            var returnType = method.ReturnType;
 
-            if (binaryAttribute != default)
+            if (parameters.Length == 2 && returnType != typeof(void))
             {
-                var parameters = method.GetParameters();
-                var returnType = method.ReturnType;
+                var leftType = parameters[0].ParameterType;
+                var rightType = parameters[1].ParameterType;
 
-                if (parameters.Length == 2 && returnType != typeof(void))
-                {
-                    var leftType = parameters[0].ParameterType;
-                    var rightType = parameters[1].ParameterType;
+                var binaryType = typeof(BinaryOperator<,,>).MakeGenericType(leftType, rightType, returnType);
 
-                    var binaryType = typeof(BinaryOperator<,,>).MakeGenericType(leftType, rightType, returnType);
-                    var operatorType = binaryAttribute.OperatorType;
+                var funcType = typeof(Func<,,>).MakeGenericType(leftType, rightType, returnType);
+                var funcInst = Delegate.CreateDelegate(funcType, method);
 
-                    var funcType = typeof(Func<,,>).MakeGenericType(leftType, rightType, returnType);
-                    var funcInst = Delegate.CreateDelegate(funcType, method);
-
-                    result = (IBinaryOperator)Activator.CreateInstance(binaryType, funcInst, operatorType);
-                    return true;
-                }
+                result = (IBinaryOperator)Activator.CreateInstance(binaryType, funcInst, operatorType);
+                return true;
             }
 
             return false;
