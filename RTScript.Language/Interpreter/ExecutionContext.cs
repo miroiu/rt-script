@@ -7,7 +7,7 @@ namespace RTScript.Language.Interpreter
 {
     public class ExecutionContext : IExecutionContext
     {
-        private readonly IDictionary<string, object> _values = new Dictionary<string, object>();
+        private readonly IDictionary<string, object> _variables = new Dictionary<string, object>();
         private readonly IOutputStream _out;
 
         public ExecutionContext(IOutputStream outs)
@@ -16,31 +16,31 @@ namespace RTScript.Language.Interpreter
         // TODO: Should use key instead of name where key is a unique identifier for an object instance in a pool
         public void Assign(string name, object value)
         {
-            if (!_values.ContainsKey(name))
+            if (!_variables.ContainsKey(name))
             {
                 throw new Exception("Variable is not declared");
             }
-            _values[name] = value;
+            _variables[name] = value;
         }
 
         // TODO: Should generate a key for the variable and place it in an object pool
         public void Declare(string name, object value)
         {
-            if (_values.ContainsKey(name))
+            if (_variables.ContainsKey(name))
             {
                 throw new Exception("Variable is already declared");
             }
-            _values[name] = value;
+            _variables[name] = value;
         }
 
         // TODO: Should use key instead of name where key is a unique identifier for an object instance in a pool
         public object Get(string name)
         {
-            if (!_values.ContainsKey(name))
+            if (!_variables.ContainsKey(name))
             {
                 throw new Exception($"Variable {name} is not defined.");
             }
-            return _values[name];
+            return _variables[name];
         }
 
         public void Print(object value)
