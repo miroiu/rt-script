@@ -13,7 +13,6 @@ namespace RTScript.Language.Interpreter
         public ExecutionContext(IOutputStream outs)
             => _out = outs;
 
-        // TODO: Should use key instead of name where key is a unique identifier for an object instance in a pool
         public void Assign(string name, object value)
         {
             if (!_variables.ContainsKey(name))
@@ -23,7 +22,6 @@ namespace RTScript.Language.Interpreter
             _variables[name] = value;
         }
 
-        // TODO: Should generate a key for the variable and place it in an object pool
         public void Declare(string name, object value)
         {
             if (_variables.ContainsKey(name))
@@ -33,7 +31,6 @@ namespace RTScript.Language.Interpreter
             _variables[name] = value;
         }
 
-        // TODO: Should use key instead of name where key is a unique identifier for an object instance in a pool
         public object Get(string name)
         {
             if (!_variables.ContainsKey(name))
