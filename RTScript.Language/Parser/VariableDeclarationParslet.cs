@@ -16,7 +16,9 @@ namespace RTScript.Language.Parser
             var initializer = parser.ParseExpression();
             var id = new Identifier(identifierToken.Text);
 
-            return new VariableDeclaration(id, initializer)
+            bool isReadOnly = varToken.Type == TokenType.Const ? true : false;
+
+            return new VariableDeclaration(isReadOnly, id, initializer)
             {
                 Token = varToken
             };

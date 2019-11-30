@@ -7,7 +7,7 @@ namespace RTScript.Language.Interpreter
 {
     public class ExecutionContext : IExecutionContext
     {
-        private readonly IDictionary<string, object> _variables = new Dictionary<string, object>();
+        private readonly IDictionary<string, Reference> _variables = new Dictionary<string, Reference>();
         private readonly IOutputStream _out;
 
         public ExecutionContext(IOutputStream outs)
@@ -15,20 +15,31 @@ namespace RTScript.Language.Interpreter
 
         public void Assign(string name, object value)
         {
-            if (!_variables.ContainsKey(name))
+            if (_variables.TryGetValue(name, out var reference))
             {
-                throw new Exception("Variable is not declared");
+                if (!reference.IsReadOnly)
+                {
+                    reference.SetValue(value);
+                }
+                else
+                {
+                    throw new Exception($"Variable {name} is read-only.");
+                }
             }
-            _variables[name] = value;
+            else
+            {
+                throw new Exception($"Variable {name} is not defined.");
+            }
         }
 
-        public void Declare(string name, object value)
+        public void Declare(string name, object value, bool isConst = false)
         {
             if (_variables.ContainsKey(name))
             {
-                throw new Exception("Variable is already declared");
+                throw new Exception($"Variable {name} is already defined.");
             }
-            _variables[name] = value;
+
+            _variables[name] = new Reference(name, isConst, value);
         }
 
         public object Get(string name)
@@ -37,6 +48,7 @@ namespace RTScript.Language.Interpreter
             {
                 throw new Exception($"Variable {name} is not defined.");
             }
+
             return _variables[name];
         }
 

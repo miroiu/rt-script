@@ -9,7 +9,7 @@ namespace RTScript.Language.Interpreter.Evaluators
         {
             var casted = (VariableDeclaration)expression;
             object result = ((ValueExpression)Reducer.Reduce(casted.Initializer, ctx)).Value;
-            ctx.Declare(casted.Identifier.Name, result);
+            ctx.Declare(casted.Identifier.Name, result, casted.IsReadOnly);
             return default;
         }
     }
