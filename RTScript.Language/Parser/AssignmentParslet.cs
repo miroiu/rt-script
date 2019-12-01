@@ -13,9 +13,9 @@ namespace RTScript.Language.Parser
 
             var expr = parser.ParseExpression();
             // TODO: Parse identifier
-            var identifier = new Identifier(id.Text);
+            var identifier = new IdentifierExpression(id.Text);
 
-            return new Assignment(identifier, expr)
+            return new AssignmentExpression(identifier, expr)
             {
                 Token = equalsToken
             };

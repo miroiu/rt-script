@@ -14,11 +14,11 @@ namespace RTScript.Language.Parser
 
             parser.Match(TokenType.Equals);
             var initializer = parser.ParseExpression();
-            var id = new Identifier(identifierToken.Text);
+            var id = new IdentifierExpression(identifierToken.Text);
 
             bool isReadOnly = varToken.Type == TokenType.Const ? true : false;
 
-            return new VariableDeclaration(isReadOnly, id, initializer)
+            return new VariableDeclarationExpression(isReadOnly, id, initializer)
             {
                 Token = varToken
             };

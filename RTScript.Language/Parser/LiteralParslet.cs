@@ -14,7 +14,10 @@ namespace RTScript.Language.Parser
         {
             var literal = parser.Take();
 
-            return new Literal(literal.ToLiteralType(), literal.Text);
+            return new LiteralExpression(literal.ToLiteralType(), literal.Text)
+            {
+                Token = literal
+            };
         }
     }
 }

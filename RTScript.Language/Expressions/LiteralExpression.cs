@@ -1,8 +1,8 @@
 ﻿namespace RTScript.Language.Expressions
 {
-    public class Literal : Expression
+    public class LiteralExpression : Expression
     {
-        public Literal(LiteralType type, string value)
+        public LiteralExpression(LiteralType type, string value)
         {
             Type = type;
             Value = value;

@@ -2,12 +2,12 @@
 
 namespace RTScript.Language.Interpreter.Evaluators
 {
-    [ExpressionEvaluator(typeof(Grouping))]
+    [ExpressionEvaluator(typeof(GroupingExpression))]
     public class GroupingEvaluator : IExpressionEvaluator
     {
         public Expression Evaluate(Expression expression, IExecutionContext ctx)
         {
-            var casted = (Grouping)expression;
+            var casted = (GroupingExpression)expression;
             var result = Reducer.Reduce(casted.Inner, ctx);
             return result;
         }

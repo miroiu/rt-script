@@ -12,7 +12,7 @@ namespace RTScript.Language.Parser
             var expr = parser.ParseExpression();
             parser.Match(TokenType.CloseParen);
 
-            return new Grouping(expr)
+            return new GroupingExpression(expr)
             {
                 Token = openParen
             };

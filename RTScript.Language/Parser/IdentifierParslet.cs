@@ -9,7 +9,7 @@ namespace RTScript.Language.Parser
         public Expression Accept(RTScriptParser parser)
         {
             var identToken = parser.Take();
-            return new Identifier(identToken.Text)
+            return new IdentifierExpression(identToken.Text)
             {
                 Token = identToken
             };

@@ -34,6 +34,8 @@ namespace RTScript.Language.Parser
             HasNext = Peek().Type != TokenType.EndOfCode;
         }
 
+        #region API
+
         public Expression Next()
         {
             Current = _lexer.Lex();
@@ -44,12 +46,6 @@ namespace RTScript.Language.Parser
 
             return result;
         }
-
-        public Expression ParseExpression()
-            => Parslets[(BinaryHackType, false)].Accept(this);
-
-        public Expression ParsePrimaryExpression()
-            => GetParslet(Current, false).Accept(this);
 
         public Token Match(TokenType tokenType)
         {
@@ -90,5 +86,39 @@ namespace RTScript.Language.Parser
             }
             throw new ParserException(token, $"Invalid token found: {token.Text}");
         }
+
+        #endregion
+
+        #region Parsers
+
+        public Expression ParseExpression()
+            => Parslets[(BinaryHackType, false)].Accept(this);
+
+        public Expression ParsePrimaryExpression()
+            => GetParslet(Current, false).Accept(this);
+
+        public ArgumentsExpression ParseArguments(TokenType closingToken)
+        {
+            List<Expression> arguments = new List<Expression>();
+
+            while (!IsEndOfStatement() && Current.Type != closingToken)
+            {
+                var arg = ParsePrimaryExpression();
+
+                if (Current.Type != closingToken)
+                {
+                    Match(TokenType.Comma);
+                }
+
+                arguments.Add(arg);
+            }
+
+            return new ArgumentsExpression(arguments)
+            {
+                Token = Current
+            };
+        }
+
+        #endregion
     }
 }

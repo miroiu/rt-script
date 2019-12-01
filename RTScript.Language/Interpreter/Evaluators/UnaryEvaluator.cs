@@ -1,4 +1,5 @@
 ﻿using RTScript.Language.Expressions;
+using System;
 
 namespace RTScript.Language.Interpreter.Evaluators
 {
@@ -18,7 +19,13 @@ namespace RTScript.Language.Interpreter.Evaluators
 
                 default:
                     var result = ctx.Evaluate(casted.OperatorType, value);
-                    return new ValueExpression(result);
+
+                    if (result == null)
+                    {
+                        throw new Exception("Could not determine result type.");
+                    }
+
+                    return new ValueExpression(result, result.GetType());
             }
         }
     }

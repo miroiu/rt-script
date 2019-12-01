@@ -2,14 +2,15 @@
 
 namespace RTScript.Language.Interpreter.Evaluators
 {
-    [ExpressionEvaluator(typeof(Identifier))]
+    [ExpressionEvaluator(typeof(IdentifierExpression))]
     public class IdentifierEvaluator : IExpressionEvaluator
     {
         public Expression Evaluate(Expression expression, IExecutionContext ctx)
         {
-            var casted = (Identifier)expression;
+            var casted = (IdentifierExpression)expression;
             var result = ctx.Get(casted.Name);
-            return new ValueExpression(result);
+            var type = ctx.GetType(casted.Name);
+            return new ValueExpression(result, type);
         }
     }
 }

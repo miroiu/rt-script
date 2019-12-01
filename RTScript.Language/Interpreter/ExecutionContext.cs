@@ -1,7 +1,9 @@
 ﻿using RTScript.Language.Expressions;
 using RTScript.Language.Interpreter.Operators;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace RTScript.Language.Interpreter
 {
@@ -43,10 +45,43 @@ namespace RTScript.Language.Interpreter
             return result.Value;
         }
 
+        public Type GetType(string name)
+        {
+            if (!_variables.TryGetValue(name, out var result))
+            {
+                throw new Exception($"'{name}' does not exist in the current context.");
+            }
+
+            return result.Type;
+        }
+
         public void Print(object value)
         {
+            if (value is IEnumerable collection)
+            {
+                StringBuilder builder = new StringBuilder(12);
+                builder.Append("<");
+
+                foreach (var element in collection)
+                {
+                    var friendly = ToFriendlyString(element);
+                    builder.Append($"{friendly}, ");
+                }
+
+                builder.Length -= 2;
+                builder.Append(">");
+                _out.WriteLine(builder.ToString());
+            }
+            else
+            {
+                _out.WriteLine(ToFriendlyString(value));
+            }
+        }
+
+        private string ToFriendlyString(object value)
+        {
             var result = value?.ToString() ?? "null";
-            _out.WriteLine(result == "True" ? "true" : result == "False" ? "false" : result);
+            return result == "True" ? "true" : result == "False" ? "false" : result;
         }
 
         public object Evaluate(LiteralType type, string value)

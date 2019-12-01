@@ -51,6 +51,11 @@ namespace RTScript.Language
                 return "void";
             }
 
+            if(type.IsArray)
+            {
+                return $"{type.GetElementType().ToFriendlyName()}[]";
+            }
+
             return type.Name;
         }
     }
