@@ -48,7 +48,7 @@ namespace RTScript.Language.Interpreter
                 var newType = value.GetType();
                 if (newType != Type)
                 {
-                    throw new Exception($"Cannot convert type {newType} to {Type}.");
+                    throw new Exception($"Cannot convert type '{newType.ToFriendlyName()}' to '{Type.ToFriendlyName()}'.");
                 }
             }
 

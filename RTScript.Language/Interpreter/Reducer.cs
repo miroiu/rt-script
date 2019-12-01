@@ -37,7 +37,7 @@ namespace RTScript.Language.Interpreter
                 return result;
             }
 
-            throw new ExecutionException($"Expected expression of type {typeof(T).Name}.", expression);
+            throw new ExecutionException($"Expected expression of type '{typeof(T).Name}'.", expression);
         }
     }
 }

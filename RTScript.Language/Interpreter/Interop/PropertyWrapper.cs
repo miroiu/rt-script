@@ -8,20 +8,15 @@ namespace RTScript.Language.Interpreter.Interop
         private readonly Func<TInstanceType, TPropertyType> _getterInvocation;
         private readonly Action<TInstanceType, TPropertyType> _setterInvocation;
 
-        public string Name { get; }
-        public Type Type { get; }
-        public PropertyFlag Flag { get; }
-
-        public PropertyWrapper(Func<TInstanceType, TPropertyType> getterInvocation, Action<TInstanceType, TPropertyType> setterInvocation, string name, Type type)
+        public PropertyWrapper(Func<TInstanceType, TPropertyType> getterInvocation, Action<TInstanceType, TPropertyType> setterInvocation, PropertyDescriptor descriptor)
         {
+            Descriptor = descriptor;
+
             _getterInvocation = getterInvocation;
             _setterInvocation = setterInvocation;
-
-            Name = name;
-            Type = type;
-
-            Flag = _getterInvocation == default ? PropertyFlag.Write : _setterInvocation == default ? PropertyFlag.Read : PropertyFlag.ReadWrite;
         }
+
+        public PropertyDescriptor Descriptor { get; }
 
         public object GetValue(object instance, object index = default)
             => _getterInvocation.Invoke((TInstanceType)instance);

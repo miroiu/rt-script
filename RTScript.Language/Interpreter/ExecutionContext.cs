@@ -27,7 +27,7 @@ namespace RTScript.Language.Interpreter
         {
             if (_variables.ContainsKey(name))
             {
-                throw new Exception($"{name} is already defined in this scope.");
+                throw new Exception($"'{name}' is already defined in this scope.");
             }
 
             _variables[name] = new Reference(name, isConst, value);
@@ -40,7 +40,7 @@ namespace RTScript.Language.Interpreter
                 throw new Exception($"'{name}' does not exist in the current context.");
             }
 
-            return result;
+            return result.Value;
         }
 
         public void Print(object value)
