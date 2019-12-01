@@ -15,28 +15,19 @@ namespace RTScript.Language.Interpreter
 
         public void Assign(string name, object value)
         {
-            if (_variables.TryGetValue(name, out var reference))
+            if (!_variables.TryGetValue(name, out var reference))
             {
-                if (!reference.IsReadOnly)
-                {
-                    reference.SetValue(value);
-                }
-                else
-                {
-                    throw new Exception($"Variable {name} is read-only.");
-                }
+                throw new Exception($"'{name}' does not exist in the current context.");
             }
-            else
-            {
-                throw new Exception($"Variable {name} is not defined.");
-            }
+
+            reference.SetValue(value);
         }
 
         public void Declare(string name, object value, bool isConst = false)
         {
             if (_variables.ContainsKey(name))
             {
-                throw new Exception($"Variable {name} is already defined.");
+                throw new Exception($"{name} is already defined in this scope.");
             }
 
             _variables[name] = new Reference(name, isConst, value);
@@ -44,12 +35,12 @@ namespace RTScript.Language.Interpreter
 
         public object Get(string name)
         {
-            if (!_variables.ContainsKey(name))
+            if (!_variables.TryGetValue(name, out var result))
             {
-                throw new Exception($"Variable {name} is not defined.");
+                throw new Exception($"'{name}' does not exist in the current context.");
             }
 
-            return _variables[name];
+            return result;
         }
 
         public void Print(object value)
