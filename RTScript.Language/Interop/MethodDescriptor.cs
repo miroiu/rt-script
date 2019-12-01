@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RTScript.Language.Interpreter.Interop
+namespace RTScript.Language.Interop
 {
     public class MethodDescriptor
     {

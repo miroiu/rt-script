@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTScript.Language.Interpreter.Interop
+namespace RTScript.Language.Interop
 {
     public sealed class PropertyWrapper<TInstanceType, TPropertyType> : IPropertyWrapper
         where TInstanceType : class

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RTScript.Language.Interpreter.Interop
+namespace RTScript.Language.Interop
 {
     // TODO: Make this configurable to wrap only certain properties (marked with attributes or manually added)
     public class TypeConfiguration

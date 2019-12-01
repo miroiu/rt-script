@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace RTScript.Language.Interpreter.Interop
+namespace RTScript.Language.Interop
 {
     public static class TypesCache
     {

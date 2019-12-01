@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace RTScript.Language.Interpreter.Interop
+namespace RTScript.Language.Interop
 {
     // TODO: Try to create a type safe delegate from the method info (using Linq.Expressions?) like it is done for the operators
     public class MethodWrapper : IMethodWrapper

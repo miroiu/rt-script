@@ -1,4 +1,4 @@
-﻿namespace RTScript.Language.Interpreter.Interop
+﻿namespace RTScript.Language.Interop
 {
     public interface IMethodWrapper
     {
