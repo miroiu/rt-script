@@ -17,9 +17,18 @@ namespace RTScript.Language.Interop
 
                 foreach (var descriptor in typeConfig.Properties)
                 {
-                    var property = descriptor.IsStatic ? typeConfig.Type.GetProperty(descriptor.Name, BindingFlags.Public | BindingFlags.Static) : typeConfig.Type.GetProperty(descriptor.Name, descriptor.PropertyType);
-                    var wrapper = descriptor.IsIndexer ? WrapIndexer(typeConfig.Type, property, descriptor) : descriptor.IsStatic ? WrapStaticProperty(typeConfig.Type, property, descriptor) : WrapProperty(typeConfig.Type, property, descriptor);
-                    result.AddProperty(descriptor, wrapper);
+                    if (descriptor.IsStatic)
+                    {
+                        var property = typeConfig.Type.GetProperty(descriptor.Name, BindingFlags.Public | BindingFlags.Static);
+                        var wrapper = WrapStaticProperty(typeConfig.Type, property, descriptor);
+                        result.AddProperty(descriptor, wrapper);
+                    }
+                    else
+                    {
+                        var property = typeConfig.Type.GetProperty(descriptor.Name, descriptor.PropertyType);
+                        var wrapper = descriptor.IsIndexer ? WrapIndexer(typeConfig.Type, property, descriptor) : WrapProperty(typeConfig.Type, property, descriptor);
+                        result.AddProperty(descriptor, wrapper);
+                    }
                 }
 
                 foreach (var descriptor in typeConfig.Methods)
