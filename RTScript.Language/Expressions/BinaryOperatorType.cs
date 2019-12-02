@@ -10,6 +10,7 @@
         Less,
         Equal,
         NotEqual,
-        Assign
+        Assign,
+        AccessMember
     }
 }

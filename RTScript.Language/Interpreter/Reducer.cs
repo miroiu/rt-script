@@ -6,7 +6,7 @@ namespace RTScript.Language.Interpreter
 {
     public static class Reducer
     {
-        public static Expression Reduce(Expression expression, IExecutionContext ctx)
+        public static Expression Reduce(Expression expression, IExecutionContext ctx, Type resultType = default)
         {
             try
             {
@@ -17,6 +17,11 @@ namespace RTScript.Language.Interpreter
 
                 var evaluator = RTScriptInterpreter.Evaluators[expression.GetType()];
                 var expr = evaluator.Evaluate(expression, ctx);
+
+                if (resultType != default && expr.GetType() == resultType)
+                {
+                    return expr;
+                }
 
                 return Reduce(expr, ctx);
             }
@@ -30,19 +35,19 @@ namespace RTScript.Language.Interpreter
             }
         }
 
-        public static T Reduce<T>(Expression expression, IExecutionContext ctx) where T : Expression
+        public static T Reduce<T>(Expression expression, IExecutionContext ctx, bool throwIfUnexpected = true) where T : Expression
         {
             if (expression is T result)
             {
                 return result;
             }
 
-            if (Reduce(expression, ctx) is T reduced)
+            if (Reduce(expression, ctx, typeof(T)) is T reduced)
             {
                 return reduced;
             }
 
-            throw new ExecutionException($"Expected expression of type '{typeof(T).Name}'.", expression);
+            return throwIfUnexpected ? throw new ExecutionException($"Expected expression of type '{typeof(T).Name}'.", expression) : default(T);
         }
     }
 }

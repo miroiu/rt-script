@@ -17,8 +17,8 @@ namespace RTScript.Language.Interop
 
                 foreach (var descriptor in typeConfig.Properties)
                 {
-                    var property = typeConfig.Type.GetProperty(descriptor.Name, descriptor.PropertyType);
-                    var wrapper = descriptor.IsIndexer ? WrapIndexer(typeConfig.Type, property, descriptor) : WrapProperty(typeConfig.Type, property, descriptor);
+                    var property = descriptor.IsStatic ? typeConfig.Type.GetProperty(descriptor.Name, BindingFlags.Public | BindingFlags.Static) : typeConfig.Type.GetProperty(descriptor.Name, descriptor.PropertyType);
+                    var wrapper = descriptor.IsIndexer ? WrapIndexer(typeConfig.Type, property, descriptor) : descriptor.IsStatic ? WrapStaticProperty(typeConfig.Type, property, descriptor) : WrapProperty(typeConfig.Type, property, descriptor);
                     result.AddProperty(descriptor, wrapper);
                 }
 
@@ -112,19 +112,43 @@ namespace RTScript.Language.Interop
 
             if (descriptor.CanRead)
             {
-                MethodInfo getMethod = property.GetGetMethod(true);
+                MethodInfo getMethod = property.GetGetMethod();
                 Type getterType = typeof(Func<,>).MakeGenericType(type, descriptor.PropertyType);
                 getterInvocation = Delegate.CreateDelegate(getterType, getMethod);
             }
 
             if (descriptor.CanWrite)
             {
-                MethodInfo setMethod = property.GetSetMethod(true);
+                MethodInfo setMethod = property.GetSetMethod();
                 Type setterType = typeof(Action<,>).MakeGenericType(type, descriptor.PropertyType);
                 setterInvocation = Delegate.CreateDelegate(setterType, setMethod);
             }
 
             Type adapterType = typeof(PropertyWrapper<,>).MakeGenericType(type, descriptor.PropertyType);
+
+            return (IPropertyWrapper)Activator.CreateInstance(adapterType, getterInvocation, setterInvocation, descriptor);
+        }
+
+        private static IPropertyWrapper WrapStaticProperty(Type type, PropertyInfo property, PropertyDescriptor descriptor)
+        {
+            Delegate getterInvocation = default;
+            Delegate setterInvocation = default;
+
+            if (descriptor.CanRead)
+            {
+                MethodInfo getMethod = property.GetGetMethod();
+                Type getterType = typeof(Func<>).MakeGenericType(descriptor.PropertyType);
+                getterInvocation = Delegate.CreateDelegate(getterType, getMethod);
+            }
+
+            if (descriptor.CanWrite)
+            {
+                MethodInfo setMethod = property.GetSetMethod();
+                Type setterType = typeof(Action<>).MakeGenericType(descriptor.PropertyType);
+                setterInvocation = Delegate.CreateDelegate(setterType, setMethod);
+            }
+
+            Type adapterType = typeof(StaticPropertyWrapper<>).MakeGenericType(descriptor.PropertyType);
 
             return (IPropertyWrapper)Activator.CreateInstance(adapterType, getterInvocation, setterInvocation, descriptor);
         }

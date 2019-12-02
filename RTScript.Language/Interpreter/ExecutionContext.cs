@@ -57,10 +57,10 @@ namespace RTScript.Language.Interpreter
 
         public void Print(object value)
         {
-            if (value is IEnumerable collection)
+            if (value is ICollection collection)
             {
                 StringBuilder builder = new StringBuilder(12);
-                builder.Append("<");
+                builder.Append("[");
 
                 foreach (var element in collection)
                 {
@@ -69,7 +69,7 @@ namespace RTScript.Language.Interpreter
                 }
 
                 builder.Length -= 2;
-                builder.Append(">");
+                builder.Append("]");
                 _out.WriteLine(builder.ToString());
             }
             else

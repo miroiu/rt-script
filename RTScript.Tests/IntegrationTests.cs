@@ -3,19 +3,21 @@ using RTScript.Language.Lexer;
 using RTScript.Language.Parser;
 using NUnit.Framework;
 using System;
+using RTScript.Tests.Mocks;
+using RTScript.Language.Interop;
 
 namespace RTScript.Tests
 {
     public static class App
     {
-        public static string[] Run(string code)
+        public static string[] Run(string code, RTScriptInterpreter interp = default, MockOutputStream outputStream = default)
         {
-            var mockOutput = new Mocks.MockOutputStream();
+            var mockOutput = outputStream ?? new MockOutputStream();
             var source = new SourceText(code);
             var lexer = new RTScriptLexer(source);
             var parser = new RTScriptParser(lexer);
 
-            var interpreter = new RTScriptInterpreter(mockOutput);
+            var interpreter = interp ?? new RTScriptInterpreter(mockOutput);
             interpreter.Run(parser);
             return mockOutput.Output.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
         }
@@ -24,6 +26,36 @@ namespace RTScript.Tests
     [TestFixture]
     public class IntegrationTests
     {
+        public RTScriptInterpreter Interpreter { get; set; }
+        public MockOutputStream Output = new MockOutputStream();
+        public TestClass Test = new TestClass();
+
+        [OneTimeSetUp]
+        public void OneTimeSetup()
+        {
+            var type = new TypeConfiguration(typeof(TestClass));
+            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.Instance), typeof(string)));
+            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.Static), typeof(string), isStatic: true));
+
+            TypesCache.AddType(type);
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            Output.Clear();
+            Interpreter = new RTScriptInterpreter(Output);
+            Interpreter.Context.Declare("test", Test);
+        }
+
+        [TestCase("print test.Instance;", new string[] { "null" })]
+        [TestCase("test.Instance = 'instance'; print test.Instance;", new string[] { "instance" })]
+        public void Interop(string input, string[] expected)
+        {
+            var result = App.Run(input, Interpreter, Output);
+            Assert.AreEqual(expected, result);
+        }
+
         [Test]
         [TestCase("var a = 2; print a;", new string[] { "2" })]
         [TestCase(";;;;;;;;;", new string[0])]

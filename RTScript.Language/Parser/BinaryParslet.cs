@@ -43,7 +43,7 @@ namespace RTScript.Language.Parser
             {
                 if (IsBinaryOperator(parser.Current.Type))
                 {
-                    var precedence = GetOperatorPrecedence(parser.Current);
+                    var precedence = GetBinaryOperatorPrecedence(parser.Current);
                     if (parentPrecedence >= precedence)
                     {
                         return left;
@@ -65,7 +65,7 @@ namespace RTScript.Language.Parser
             return left;
         }
 
-        public static OperatorPrecedence GetOperatorPrecedence(Token token)
+        public static OperatorPrecedence GetBinaryOperatorPrecedence(Token token)
         {
             switch (token.Type)
             {
@@ -84,6 +84,7 @@ namespace RTScript.Language.Parser
                     return OperatorPrecedence.Multiplication;
 
                 case TokenType.Equals:
+                case TokenType.Dot:
                     return OperatorPrecedence.Assignment;
             }
 
@@ -137,6 +138,9 @@ namespace RTScript.Language.Parser
 
                 case TokenType.Equals:
                     return BinaryOperatorType.Assign;
+
+                case TokenType.Dot:
+                    return BinaryOperatorType.AccessMember;
             }
 
             throw new ParserException(token, $"{token.Type} is not a binary operator.");
@@ -169,6 +173,7 @@ namespace RTScript.Language.Parser
                 case TokenType.EqualsEquals:
                 case TokenType.ExclamationEquals:
                 case TokenType.Equals:
+                case TokenType.Dot:
                     return true;
             }
 

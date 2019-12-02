@@ -7,11 +7,12 @@ namespace RTScript.Language.Interop
     {
         private readonly int _hashCode;
 
-        public PropertyDescriptor(string name, bool canRead, bool canWrite, Type propertyType, Type parameterType = default)
+        public PropertyDescriptor(string name, Type propertyType, Type parameterType = default, bool canRead = true, bool canWrite = true, bool isStatic = false)
         {
             Name = name;
             CanRead = canRead;
             CanWrite = canWrite;
+            IsStatic = isStatic;
             PropertyType = propertyType;
             ParameterType = parameterType ?? propertyType;
             IsIndexer = parameterType != default;
@@ -25,6 +26,7 @@ namespace RTScript.Language.Interop
         public string Name { get; }
         public bool CanRead { get; }
         public bool CanWrite { get; }
+        public bool IsStatic { get; }
         public bool IsIndexer { get; }
 
         public Type PropertyType { get; }
