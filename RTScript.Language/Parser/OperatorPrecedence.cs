@@ -3,9 +3,10 @@
     public enum OperatorPrecedence
     {
         None = -1,
-        Equality = 0,
-        Addition = 1,
-        Multiplication = 2,
-        Prefix = 3
+        Assignment = 1,
+        Equality = 2,
+        Addition = 3,
+        Multiplication = 4,
+        Prefix = 5
     }
 }

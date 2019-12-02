@@ -1,5 +1,4 @@
 ﻿using RTScript.Language.Expressions;
-using System;
 
 namespace RTScript.Language.Interpreter.Evaluators
 {
@@ -9,17 +8,31 @@ namespace RTScript.Language.Interpreter.Evaluators
         public Expression Evaluate(Expression expression, IExecutionContext ctx)
         {
             var casted = (BinaryExpression)expression;
-            var leftExpr = Reducer.Reduce<ValueExpression>(casted.Left, ctx);
-            var rightExpr = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
 
-            var result = ctx.Evaluate(leftExpr.Value, casted.OperatorType, rightExpr.Value);
-
-            if (result == null)
+            switch (casted.OperatorType)
             {
-                throw new Exception($"Could not determine result type.");
-            }
+                case BinaryOperatorType.Assign:
+                    if (casted.Left is IdentifierExpression identifier)
+                    {
+                        var rightEx = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
+                        ctx.Assign(identifier.Name, rightEx.Value);
+                        return rightEx;
+                    }
 
-            return new ValueExpression(result, result.GetType());
+                    throw new ExecutionException($"Expected identifier.", casted.Left);
+
+                default:
+                    var rightExpr = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
+                    var leftExpr = Reducer.Reduce<ValueExpression>(casted.Left, ctx);
+                    var result = ctx.Evaluate(leftExpr.Value, casted.OperatorType, rightExpr.Value);
+
+                    if (result == null)
+                    {
+                        throw new ExecutionException($"Could not determine result type.", expression);
+                    }
+
+                    return new ValueExpression(result, result.GetType());
+            }
         }
     }
 }

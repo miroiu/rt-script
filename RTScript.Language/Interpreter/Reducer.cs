@@ -32,9 +32,14 @@ namespace RTScript.Language.Interpreter
 
         public static T Reduce<T>(Expression expression, IExecutionContext ctx) where T : Expression
         {
-            if(Reduce(expression, ctx) is T result)
+            if (expression is T result)
             {
                 return result;
+            }
+
+            if (Reduce(expression, ctx) is T reduced)
+            {
+                return reduced;
             }
 
             throw new ExecutionException($"Expected expression of type '{typeof(T).Name}'.", expression);

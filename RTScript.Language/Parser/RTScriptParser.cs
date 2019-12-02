@@ -20,8 +20,6 @@ namespace RTScript.Language.Parser
                  })
                  .ToDictionary(x => (x.Attribute.TokenType, x.Attribute.CanBeginWith), x => Activator.CreateInstance(x.Type) as IParslet);
 
-        internal const TokenType BinaryHackType = TokenType.Asterisk;
-
         private readonly RTScriptLexer _lexer;
 
         public bool HasNext { get; private set; }
@@ -92,7 +90,7 @@ namespace RTScript.Language.Parser
         #region Parsers
 
         public Expression ParseExpression()
-            => Parslets[(BinaryHackType, false)].Accept(this);
+            => Parslets[(TokenType.Identifier, true)].Accept(this);
 
         public Expression ParsePrimaryExpression()
             => GetParslet(Current, false).Accept(this);

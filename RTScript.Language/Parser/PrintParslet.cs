@@ -9,10 +9,9 @@ namespace RTScript.Language.Parser
         public Expression Accept(RTScriptParser parser)
         {
             var opToken = parser.Take();
-            var op = opToken.ToUnaryOperatorType();
             var expr = parser.ParseExpression();
 
-            return new UnaryExpression(op, expr)
+            return new UnaryExpression(UnaryOperatorType.Print, expr)
             {
                 Token = opToken
             };

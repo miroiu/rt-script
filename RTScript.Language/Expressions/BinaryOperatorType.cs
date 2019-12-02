@@ -9,6 +9,7 @@
         Greater,
         Less,
         Equal,
-        NotEqual
+        NotEqual,
+        Assign
     }
 }
