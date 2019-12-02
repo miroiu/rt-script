@@ -1,5 +1,4 @@
 ﻿using RTScript.Language.Expressions;
-using System;
 
 namespace RTScript.Language.Interpreter.Evaluators
 {
@@ -12,12 +11,8 @@ namespace RTScript.Language.Interpreter.Evaluators
             var casted = (LiteralExpression)expression;
             var result = ctx.Evaluate(casted.Type, casted.Value);
 
-            if (result == null)
-            {
-                throw new Exception("Could not determine result type.");
-            }
-
-            return new ValueExpression(result, result.GetType());
+            // Allow nulls for null literal
+            return new ValueExpression(result, result?.GetType());
         }
     }
 }

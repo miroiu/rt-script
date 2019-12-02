@@ -48,8 +48,11 @@ namespace RTScript.Tests
             Interpreter.Context.Declare("test", Test);
         }
 
+        [Test]
         [TestCase("print test.Instance;", new string[] { "null" })]
-        [TestCase("test.Instance = 'instance'; print test.Instance;", new string[] { "instance" })]
+        [TestCase("test.Instance = 'Instance'; print test.Instance;", new string[] { "Instance" })]
+        [TestCase("print test.Static;", new string[] { "Static" })]
+        [TestCase("test.Static = null; print test.Static;", new string[] { "null" })]
         public void Interop(string input, string[] expected)
         {
             var result = App.Run(input, Interpreter, Output);
@@ -68,6 +71,7 @@ namespace RTScript.Tests
         [TestCase("print !true;", new string[] { "false" })]
         [TestCase("var a = 5; print 10 / a;", new string[] { "2" })]
         [TestCase("// some comment; // print 5;", new string[0])]
+        [TestCase("var a = [1, 2, 3]; print a;", new string[] { "[1, 2, 3]" })]
         public void Everything(string input, string[] expected)
         {
             var result = App.Run(input);
