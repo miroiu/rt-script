@@ -133,7 +133,7 @@ namespace RTScript.Language.Interpreter.Evaluators
             }
         }
 
-        private static bool TryMatchMethodOverload(IExecutionContext ctx, IReadOnlyList<Expression> arguments, IReadOnlyList<System.Type> parameterTypes, out object[] argumentsValues)
+        internal static bool TryMatchMethodOverload(IExecutionContext ctx, IReadOnlyList<Expression> arguments, IReadOnlyList<System.Type> parameterTypes, out object[] argumentsValues)
         {
             argumentsValues = new object[arguments.Count];
 
