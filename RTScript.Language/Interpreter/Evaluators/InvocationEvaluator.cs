@@ -9,6 +9,7 @@ namespace RTScript.Language.Interpreter.Evaluators
         {
             var casted = (InvocationExpression)expression;
 
+            // TODO: Commands
             //var method = ctx.Get(casted.Name);
 
             return casted;

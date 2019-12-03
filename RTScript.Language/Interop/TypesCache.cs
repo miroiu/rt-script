@@ -62,43 +62,25 @@ namespace RTScript.Language.Interop
             }
         }
 
-        public static bool TryGetProperty(Type type, PropertyDescriptor descriptor, out IPropertyWrapper property)
-        {
-            property = default;
-            if (_members.TryGetValue(new TypeConfiguration(type), out var props))
-            {
-                return props.TryGetProperty(descriptor, out property);
-            }
-
-            return false;
-        }
-
         public static IEnumerable<IPropertyWrapper> GetProperties(Type type)
         {
             if (!_members.TryGetValue(new TypeConfiguration(type), out var props))
             {
-                return Enumerable.Empty<IPropertyWrapper>();
+                var config = TypeConfiguration.Build(type);
+                AddType(config);
+                return _members[config].GetProperties();
             }
 
             return props.GetProperties();
-        }
-
-        public static bool TryGetMethod(Type type, MethodDescriptor descriptor, out IMethodWrapper method)
-        {
-            method = default;
-            if (_members.TryGetValue(new TypeConfiguration(type), out var props))
-            {
-                return props.TryGetMethod(descriptor, out method);
-            }
-
-            return false;
         }
 
         public static IEnumerable<IMethodWrapper> GetMethods(Type type)
         {
             if (!_members.TryGetValue(new TypeConfiguration(type), out var props))
             {
-                return Enumerable.Empty<IMethodWrapper>();
+                var config = TypeConfiguration.Build(type);
+                AddType(config);
+                return _members[config].GetMethods();
             }
 
             return props.GetMethods();

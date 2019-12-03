@@ -23,12 +23,6 @@ namespace RTScript.Language.Interop
             }
         }
 
-        public bool TryGetProperty(PropertyDescriptor descriptor, out IPropertyWrapper property)
-            => _properties.TryGetValue(descriptor, out property);
-
-        public bool TryGetMethod(MethodDescriptor descriptor, out IMethodWrapper method)
-            => _methods.TryGetValue(descriptor, out method);
-
         public bool HasProperty(PropertyDescriptor descriptor)
             => _properties.ContainsKey(descriptor);
 

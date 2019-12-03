@@ -31,24 +31,6 @@ namespace RTScript.Tests
         public MockOutputStream Output = new MockOutputStream();
         public TestClass Test = new TestClass();
 
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            var type = new TypeConfiguration(typeof(TestClass));
-            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.InstanceProp), typeof(string)));
-            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.StaticProp), typeof(string), isStatic: true));
-            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.Ints), typeof(Dictionary<string, int>), canWrite: false));
-
-            var dictType = new TypeConfiguration(typeof(Dictionary<string, int>));
-            dictType.Properties.Add(new PropertyDescriptor("Item", typeof(int), typeof(string), isIndexer: true));
-
-            type.Methods.Add(new MethodDescriptor(nameof(TestClass.StaticMethod), true, typeof(bool)));
-            type.Methods.Add(new MethodDescriptor(nameof(TestClass.InstanceMethod), false, typeof(double), typeof(double)));
-
-            TypesCache.AddType(type);
-            TypesCache.AddType(dictType);
-        }
-
         [SetUp]
         public void Setup()
         {
