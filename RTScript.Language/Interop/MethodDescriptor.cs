@@ -7,9 +7,10 @@ namespace RTScript.Language.Interop
     {
         private readonly int _hashCode;
 
-        public MethodDescriptor(string name, Type returnType, params Type[] parameters)
+        public MethodDescriptor(string name, bool isStatic, Type returnType, params Type[] parameters)
         {
             Parameters = parameters;
+            IsStatic = isStatic;
             Name = name;
             ReturnType = returnType;
 
@@ -20,6 +21,7 @@ namespace RTScript.Language.Interop
         }
 
         public string Name { get; }
+        public bool IsStatic { get; }
         public Type ReturnType { get; }
         public IReadOnlyList<Type> Parameters { get; }
 

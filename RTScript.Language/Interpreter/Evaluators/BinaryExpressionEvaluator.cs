@@ -1,5 +1,6 @@
 ﻿using RTScript.Language.Expressions;
 using RTScript.Language.Interop;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RTScript.Language.Interpreter.Evaluators
@@ -35,22 +36,47 @@ namespace RTScript.Language.Interpreter.Evaluators
                 case BinaryOperatorType.AccessMember:
                     if (casted.Right is IdentifierExpression propertyIdentifier)
                     {
-                        var leftEx = Reducer.Reduce<ValueExpression>(casted.Left, ctx);
+                        var variable = Reducer.Reduce<ValueExpression>(casted.Left, ctx);
 
-                        if (leftEx.Value != null)
+                        if (variable.Value != null)
                         {
                             // Should be a single property
-                            var prop = TypesCache.GetProperties(leftEx.Type).FirstOrDefault(p => p.Descriptor.Name == propertyIdentifier.Name);
+                            var prop = TypesCache.GetProperties(variable.Type).FirstOrDefault(p => p.Descriptor.Name == propertyIdentifier.Name);
 
                             if (prop != null)
                             {
-                                return new PropertyAccessExpression(leftEx.Value, prop);
+                                return new PropertyAccessExpression(variable.Value, prop);
                             }
 
-                            throw new ExecutionException($"Object of type '{leftEx.Type.ToFriendlyName()}' does not have a property named '{propertyIdentifier.Name}'.", casted.Right);
+                            throw new ExecutionException($"Object of type '{variable.Type.ToFriendlyName()}' does not have a property named '{propertyIdentifier.Name}'.", casted.Right);
                         }
 
-                        throw new ExecutionException($"Cannot read property '{propertyIdentifier.Name}' of null.", leftEx);
+                        throw new ExecutionException($"Cannot read property '{propertyIdentifier.Name}' of null.", variable);
+                    }
+
+                    if (casted.Right is InvocationExpression invocation)
+                    {
+                        var variable = Reducer.Reduce<ValueExpression>(casted.Left, ctx);
+
+                        if (variable.Value != null)
+                        {
+                            var methods = TypesCache.GetMethods(variable.Type).Where(p => p.Descriptor.Name == invocation.Name);
+                            var arguments = invocation.Arguments.Items;
+
+                            foreach (var method in methods)
+                            {
+                                var parameterTypes = method.Descriptor.Parameters;
+
+                                if (TryMatchMethodOverload(ctx, arguments, parameterTypes, out var values))
+                                {
+                                    return new MethodCallExpression(variable.Value, method, values);
+                                }
+                            }
+
+                            throw new ExecutionException($"No matching overload found for '{variable.Type.ToFriendlyName()}.{invocation.Name}'", casted.Right);
+                        }
+
+                        throw new ExecutionException($"Cannot read method '{invocation.Name}' of null.", variable);
                     }
 
                     throw new ExecutionException($"Expected identifier.", casted.Left);
@@ -67,6 +93,32 @@ namespace RTScript.Language.Interpreter.Evaluators
 
                     return new ValueExpression(result, result.GetType());
             }
+        }
+
+        private static bool TryMatchMethodOverload(IExecutionContext ctx, IReadOnlyList<Expression> arguments, IReadOnlyList<System.Type> parameterTypes, out object[] argumentsValues)
+        {
+            argumentsValues = new object[arguments.Count];
+
+            if (arguments.Count != parameterTypes.Count)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < parameterTypes.Count; i++)
+            {
+                var arg = Reducer.Reduce<ValueExpression>(arguments[i], ctx);
+                var paramType = parameterTypes[i];
+
+                // TODO: Try cast if not matching? (should cast only chars/strings/numbers?)
+                if (arg.Type != paramType)
+                {
+                    return false;
+                }
+
+                argumentsValues[i] = arg.Value;
+            }
+
+            return true;
         }
     }
 }

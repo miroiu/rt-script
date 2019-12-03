@@ -15,7 +15,7 @@ namespace RTScript.Language.Interop
 
         public MethodDescriptor Descriptor { get; }
 
-        public object Execute(object instance, params object[] args)
+        public object Execute(object instance, object[] args)
             => _info.Invoke(instance, args);
     }
 }

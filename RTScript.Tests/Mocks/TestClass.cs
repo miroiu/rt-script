@@ -2,7 +2,13 @@
 {
     public class TestClass
     {
-        public static string Static { get; set; } = "Static";
-        public string Instance { get; set; }
+        public static string StaticProp { get; set; } = "Static";
+        public string InstanceProp { get; set; }
+
+        public static bool StaticMethod()
+            => true;
+
+        public double InstanceMethod(double d)
+            => -d;
     }
 }

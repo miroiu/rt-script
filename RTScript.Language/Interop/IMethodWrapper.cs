@@ -3,6 +3,6 @@
     public interface IMethodWrapper
     {
         MethodDescriptor Descriptor { get; }
-        object Execute(object instance, params object[] args);
+        object Execute(object instance, object[] args);
     }
 }

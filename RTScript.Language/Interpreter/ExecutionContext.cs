@@ -94,7 +94,17 @@ namespace RTScript.Language.Interpreter
 
                 // TODO: Let user specify default number type?
                 case LiteralType.Number:
-                    return double.Parse(value);
+                    if(int.TryParse(value, out int result))
+                    {
+                        return result;
+                    }
+
+                    if(double.TryParse(value, out double dResult))
+                    {
+                        return dResult;
+                    }
+
+                    throw new Exception($"{value} is not a number. (should not happen)");
 
                 case LiteralType.String:
                     return value;

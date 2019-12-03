@@ -34,8 +34,11 @@ namespace RTScript.Tests
         public void OneTimeSetup()
         {
             var type = new TypeConfiguration(typeof(TestClass));
-            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.Instance), typeof(string)));
-            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.Static), typeof(string), isStatic: true));
+            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.InstanceProp), typeof(string)));
+            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.StaticProp), typeof(string), isStatic: true));
+
+            type.Methods.Add(new MethodDescriptor(nameof(TestClass.StaticMethod), true, typeof(bool)));
+            type.Methods.Add(new MethodDescriptor(nameof(TestClass.InstanceMethod), false, typeof(double), typeof(double)));
 
             TypesCache.AddType(type);
         }
@@ -49,10 +52,12 @@ namespace RTScript.Tests
         }
 
         [Test]
-        [TestCase("print test.Instance;", new string[] { "null" })]
-        [TestCase("test.Instance = 'Instance'; print test.Instance;", new string[] { "Instance" })]
-        [TestCase("print test.Static;", new string[] { "Static" })]
-        [TestCase("test.Static = null; print test.Static;", new string[] { "null" })]
+        [TestCase("print test.InstanceProp;", new string[] { "null" })]
+        [TestCase("test.InstanceProp = 'Instance'; print test.InstanceProp;", new string[] { "Instance" })]
+        [TestCase("print test.StaticProp;", new string[] { "Static" })]
+        [TestCase("test.StaticProp = null; print test.StaticProp;", new string[] { "null" })]
+        [TestCase("print test.StaticMethod();", new string[] { "true" })]
+        [TestCase("print test.InstanceMethod(1.0);", new string[] { "-1" })]
         public void Interop(string input, string[] expected)
         {
             var result = App.Run(input, Interpreter, Output);
@@ -63,13 +68,13 @@ namespace RTScript.Tests
         [TestCase("var a = 2; print a;", new string[] { "2" })]
         [TestCase(";;;;;;;;;", new string[0])]
         [TestCase("var _ = 2; print _;", new string[] { "2" })]
-        [TestCase("print 5 + 3;", new string[] { "8" })]
-        [TestCase("print 5 - 3;", new string[] { "2" })]
-        [TestCase("print 5 / 2;", new string[] { "2.5" })]
-        [TestCase("print 3 / 3;", new string[] { "1" })]
-        [TestCase("print 5 * 2;", new string[] { "10" })]
+        [TestCase("print 5.0 + 3.0;", new string[] { "8" })]
+        [TestCase("print 5.0 - 3.0;", new string[] { "2" })]
+        [TestCase("print 5.0 / 2.0;", new string[] { "2.5" })]
+        [TestCase("print 3.0 / 3.0;", new string[] { "1" })]
+        [TestCase("print 5.0 * 2.0;", new string[] { "10" })]
         [TestCase("print !true;", new string[] { "false" })]
-        [TestCase("var a = 5; print 10 / a;", new string[] { "2" })]
+        [TestCase("var a = 5.0; print 10.0 / a;", new string[] { "2" })]
         [TestCase("// some comment; // print 5;", new string[0])]
         [TestCase("var a = [1, 2, 3]; print a;", new string[] { "[1, 2, 3]" })]
         public void Everything(string input, string[] expected)
