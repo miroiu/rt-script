@@ -2,12 +2,12 @@
 
 namespace RTScript.Language.Interpreter.Evaluators
 {
-    [ExpressionEvaluator(typeof(MethodCallExpression))]
-    public class MethodCallEvaluator : IExpressionEvaluator
+    [ExpressionEvaluator(typeof(MethodAccessExpression))]
+    public class MethodAccessEvaluator : IExpressionEvaluator
     {
         public Expression Evaluate(Expression expression, IExecutionContext ctx)
         {
-            var casted = (MethodCallExpression)expression;
+            var casted = (MethodAccessExpression)expression;
             return new ValueExpression(casted.Method.Execute(casted.Instance, (object[])casted.Arguments), casted.Method.Descriptor.ReturnType);
         }
     }

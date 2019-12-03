@@ -14,27 +14,47 @@ namespace RTScript.Language.Interop
             if (!_members.ContainsKey(typeConfig))
             {
                 var result = new MembersCache();
+                var type = typeConfig.Type;
 
                 foreach (var descriptor in typeConfig.Properties)
                 {
                     if (descriptor.IsStatic)
                     {
-                        var property = typeConfig.Type.GetProperty(descriptor.Name, BindingFlags.Public | BindingFlags.Static);
-                        var wrapper = WrapStaticProperty(typeConfig.Type, property, descriptor);
+                        var property = type.GetProperty(descriptor.Name, BindingFlags.Public | BindingFlags.Static);
+                        var wrapper = WrapStaticProperty(type, property, descriptor);
+                        result.AddProperty(descriptor, wrapper);
+                    }
+                    else if (descriptor.IsIndexer)
+                    {
+                        IPropertyWrapper wrapper;
+
+                        if (type.IsArray)
+                        {
+                            var getter = type.GetMethod("GetValue", new Type[] { typeof(int) });
+                            var setter = type.GetMethod("SetValue", new Type[] { typeof(object), typeof(int) });
+
+                            wrapper = WrapIndexer(type, getter, setter, descriptor);
+                        }
+                        else
+                        {
+                            var property = type.GetProperty(descriptor.Name, descriptor.ReturnType, new Type[] { descriptor.ParameterType });
+                            wrapper = WrapIndexer(type, property, descriptor);
+                        }
+
                         result.AddProperty(descriptor, wrapper);
                     }
                     else
                     {
-                        var property = typeConfig.Type.GetProperty(descriptor.Name, descriptor.PropertyType);
-                        var wrapper = descriptor.IsIndexer ? WrapIndexer(typeConfig.Type, property, descriptor) : WrapProperty(typeConfig.Type, property, descriptor);
+                        var property = type.GetProperty(descriptor.Name, descriptor.ReturnType);
+                        var wrapper = WrapProperty(type, property, descriptor);
                         result.AddProperty(descriptor, wrapper);
                     }
                 }
 
                 foreach (var descriptor in typeConfig.Methods)
                 {
-                    var method = typeConfig.Type.GetMethod(descriptor.Name, descriptor.Parameters.ToArray());
-                    var wrapper = WrapMethod(typeConfig.Type, method, descriptor);
+                    var method = type.GetMethod(descriptor.Name, descriptor.Parameters.ToArray());
+                    var wrapper = WrapMethod(type, method, descriptor);
                     result.AddMethod(descriptor, wrapper);
                 }
 
@@ -90,6 +110,28 @@ namespace RTScript.Language.Interop
         private static IMethodWrapper WrapMethod(Type type, MethodInfo method, MethodDescriptor descriptor)
             => new MethodWrapper(method, descriptor);
 
+        private static IPropertyWrapper WrapIndexer(Type type, MethodInfo getter, MethodInfo setter, PropertyDescriptor descriptor)
+        {
+            Delegate getterInvocation = default;
+            Delegate setterInvocation = default;
+
+            if (descriptor.CanRead)
+            {
+                Type getterType = typeof(Func<,,>).MakeGenericType(type, typeof(int), typeof(object));
+                getterInvocation = Delegate.CreateDelegate(getterType, getter);
+            }
+
+            if (descriptor.CanWrite)
+            {
+                Type setterType = typeof(Action<,,>).MakeGenericType(type, typeof(object), typeof(int));
+                setterInvocation = Delegate.CreateDelegate(setterType, setter);
+            }
+
+            Type adapterType = typeof(IndexerWrapper<>).MakeGenericType(type);
+
+            return (IPropertyWrapper)Activator.CreateInstance(adapterType, getterInvocation, setterInvocation, descriptor);
+        }
+
         private static IPropertyWrapper WrapIndexer(Type type, PropertyInfo property, PropertyDescriptor descriptor)
         {
             Delegate getterInvocation = default;
@@ -98,18 +140,18 @@ namespace RTScript.Language.Interop
             if (descriptor.CanRead)
             {
                 MethodInfo getMethod = property.GetGetMethod(true);
-                Type getterType = typeof(Func<,,>).MakeGenericType(type, descriptor.ParameterType, descriptor.PropertyType);
+                Type getterType = typeof(Func<,,>).MakeGenericType(type, descriptor.ParameterType, descriptor.ReturnType);
                 getterInvocation = Delegate.CreateDelegate(getterType, getMethod);
             }
 
             if (descriptor.CanWrite)
             {
                 MethodInfo setMethod = property.GetSetMethod(true);
-                Type setterType = typeof(Action<,,>).MakeGenericType(type, descriptor.ParameterType, descriptor.PropertyType);
+                Type setterType = typeof(Action<,,>).MakeGenericType(type, descriptor.ParameterType, descriptor.ReturnType);
                 setterInvocation = Delegate.CreateDelegate(setterType, setMethod);
             }
 
-            Type adapterType = typeof(IndexerWrapper<,,>).MakeGenericType(type, descriptor.PropertyType, descriptor.ParameterType);
+            Type adapterType = typeof(IndexerWrapper<,,>).MakeGenericType(type, descriptor.ReturnType, descriptor.ParameterType);
 
             return (IPropertyWrapper)Activator.CreateInstance(adapterType, getterInvocation, setterInvocation, descriptor);
         }
@@ -122,18 +164,18 @@ namespace RTScript.Language.Interop
             if (descriptor.CanRead)
             {
                 MethodInfo getMethod = property.GetGetMethod();
-                Type getterType = typeof(Func<,>).MakeGenericType(type, descriptor.PropertyType);
+                Type getterType = typeof(Func<,>).MakeGenericType(type, descriptor.ReturnType);
                 getterInvocation = Delegate.CreateDelegate(getterType, getMethod);
             }
 
             if (descriptor.CanWrite)
             {
                 MethodInfo setMethod = property.GetSetMethod();
-                Type setterType = typeof(Action<,>).MakeGenericType(type, descriptor.PropertyType);
+                Type setterType = typeof(Action<,>).MakeGenericType(type, descriptor.ReturnType);
                 setterInvocation = Delegate.CreateDelegate(setterType, setMethod);
             }
 
-            Type adapterType = typeof(PropertyWrapper<,>).MakeGenericType(type, descriptor.PropertyType);
+            Type adapterType = typeof(PropertyWrapper<,>).MakeGenericType(type, descriptor.ReturnType);
 
             return (IPropertyWrapper)Activator.CreateInstance(adapterType, getterInvocation, setterInvocation, descriptor);
         }
@@ -146,18 +188,18 @@ namespace RTScript.Language.Interop
             if (descriptor.CanRead)
             {
                 MethodInfo getMethod = property.GetGetMethod();
-                Type getterType = typeof(Func<>).MakeGenericType(descriptor.PropertyType);
+                Type getterType = typeof(Func<>).MakeGenericType(descriptor.ReturnType);
                 getterInvocation = Delegate.CreateDelegate(getterType, getMethod);
             }
 
             if (descriptor.CanWrite)
             {
                 MethodInfo setMethod = property.GetSetMethod();
-                Type setterType = typeof(Action<>).MakeGenericType(descriptor.PropertyType);
+                Type setterType = typeof(Action<>).MakeGenericType(descriptor.ReturnType);
                 setterInvocation = Delegate.CreateDelegate(setterType, setMethod);
             }
 
-            Type adapterType = typeof(StaticPropertyWrapper<>).MakeGenericType(descriptor.PropertyType);
+            Type adapterType = typeof(StaticPropertyWrapper<>).MakeGenericType(descriptor.ReturnType);
 
             return (IPropertyWrapper)Activator.CreateInstance(adapterType, getterInvocation, setterInvocation, descriptor);
         }

@@ -8,7 +8,7 @@ namespace RTScript.Language.Interpreter.Evaluators
         public Expression Evaluate(Expression expression, IExecutionContext ctx)
         {
             var casted = (PropertyAccessExpression)expression;
-            return new ValueExpression(casted.Property.GetValue(casted.Instance), casted.Property.Descriptor.PropertyType);
+            return new ValueExpression(casted.Property.GetValue(casted.Instance), casted.Property.Descriptor.ReturnType);
         }
     }
 }

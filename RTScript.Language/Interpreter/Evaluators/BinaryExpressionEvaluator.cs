@@ -22,13 +22,22 @@ namespace RTScript.Language.Interpreter.Evaluators
                         return rightEx;
                     }
 
-                    var leftExp = Reducer.Reduce<PropertyAccessExpression>(casted.Left, ctx, false);
+                    var leftProp = Reducer.Reduce<PropertyAccessExpression>(casted.Left, ctx, false);
 
-                    if (leftExp is PropertyAccessExpression propExpr)
+                    if (leftProp is PropertyAccessExpression propExpr)
                     {
                         var rightEx = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
                         propExpr.Property.SetValue(propExpr.Instance, rightEx.Value);
                         return propExpr;
+                    }
+
+                    var leftIndexer = Reducer.Reduce<IndexerAccessExpression>(casted.Left, ctx, false);
+
+                    if (leftIndexer is IndexerAccessExpression indexerExpr)
+                    {
+                        var rightEx = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
+                        indexerExpr.Indexer.SetValue(indexerExpr.Instance, rightEx.Value, leftIndexer.Index);
+                        return indexerExpr;
                     }
 
                     throw new ExecutionException($"Expected identifier.", casted.Left);
@@ -41,7 +50,7 @@ namespace RTScript.Language.Interpreter.Evaluators
                         if (variable.Value != null)
                         {
                             // Should be a single property
-                            var prop = TypesCache.GetProperties(variable.Type).FirstOrDefault(p => p.Descriptor.Name == propertyIdentifier.Name);
+                            var prop = TypesCache.GetProperties(variable.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == propertyIdentifier.Name);
 
                             if (prop != null)
                             {
@@ -69,7 +78,7 @@ namespace RTScript.Language.Interpreter.Evaluators
 
                                 if (TryMatchMethodOverload(ctx, arguments, parameterTypes, out var values))
                                 {
-                                    return new MethodCallExpression(variable.Value, method, values);
+                                    return new MethodAccessExpression(variable.Value, method, values);
                                 }
                             }
 
@@ -77,6 +86,35 @@ namespace RTScript.Language.Interpreter.Evaluators
                         }
 
                         throw new ExecutionException($"Cannot read method '{invocation.Name}' of null.", variable);
+                    }
+
+                    if (casted.Right is IndexerExpression indexer)
+                    {
+                        var variable = Reducer.Reduce<ValueExpression>(casted.Left, ctx);
+
+                        if (variable.Value != null)
+                        {
+                            // Should be a single property
+                            var prop = TypesCache.GetProperties(variable.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == indexer.Name);
+
+                            if (prop != null)
+                            {
+                                var indexerWrappers = TypesCache.GetProperties(prop.Descriptor.ReturnType).Where(p => p.Descriptor.IsIndexer);
+                                var index = Reducer.Reduce<ValueExpression>(indexer.Index, ctx);
+
+                                foreach (var wrapper in indexerWrappers)
+                                {
+                                    if (wrapper.Descriptor.ParameterType == index.Type)
+                                    {
+                                        return new IndexerAccessExpression(prop.GetValue(variable.Value), index.Value, wrapper);
+                                    }
+                                }
+                            }
+
+                            throw new ExecutionException($"Object of type '{variable.Type.ToFriendlyName()}' does not have a property named '{indexer.Name}'.", casted.Right);
+                        }
+
+                        throw new ExecutionException($"Cannot read indexer of null.", variable);
                     }
 
                     throw new ExecutionException($"Expected identifier.", casted.Left);

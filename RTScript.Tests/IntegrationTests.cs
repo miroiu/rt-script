@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using RTScript.Tests.Mocks;
 using RTScript.Language.Interop;
+using System.Collections.Generic;
 
 namespace RTScript.Tests
 {
@@ -36,11 +37,16 @@ namespace RTScript.Tests
             var type = new TypeConfiguration(typeof(TestClass));
             type.Properties.Add(new PropertyDescriptor(nameof(TestClass.InstanceProp), typeof(string)));
             type.Properties.Add(new PropertyDescriptor(nameof(TestClass.StaticProp), typeof(string), isStatic: true));
+            type.Properties.Add(new PropertyDescriptor(nameof(TestClass.Ints), typeof(Dictionary<string, int>), canWrite: false));
+
+            var dictType = new TypeConfiguration(typeof(Dictionary<string, int>));
+            dictType.Properties.Add(new PropertyDescriptor("Item", typeof(int), typeof(string), isIndexer: true));
 
             type.Methods.Add(new MethodDescriptor(nameof(TestClass.StaticMethod), true, typeof(bool)));
             type.Methods.Add(new MethodDescriptor(nameof(TestClass.InstanceMethod), false, typeof(double), typeof(double)));
 
             TypesCache.AddType(type);
+            TypesCache.AddType(dictType);
         }
 
         [SetUp]
@@ -58,6 +64,7 @@ namespace RTScript.Tests
         [TestCase("test.StaticProp = null; print test.StaticProp;", new string[] { "null" })]
         [TestCase("print test.StaticMethod();", new string[] { "true" })]
         [TestCase("print test.InstanceMethod(1.0);", new string[] { "-1" })]
+        [TestCase("test.Ints['one'] = 1; print test.Ints['one'];", new string[] { "1" })]
         public void Interop(string input, string[] expected)
         {
             var result = App.Run(input, Interpreter, Output);

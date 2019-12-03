@@ -1,9 +1,16 @@
-﻿namespace RTScript.Tests.Mocks
+﻿using System.Collections.Generic;
+
+namespace RTScript.Tests.Mocks
 {
     public class TestClass
     {
         public static string StaticProp { get; set; } = "Static";
         public string InstanceProp { get; set; }
+
+        public Dictionary<string, int> Ints { get; } = new Dictionary<string, int>()
+        {
+            ["one"] = 1
+        };
 
         public static bool StaticMethod()
             => true;

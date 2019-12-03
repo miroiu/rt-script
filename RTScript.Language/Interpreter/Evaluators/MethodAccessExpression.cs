@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace RTScript.Language.Interpreter.Evaluators
 {
-    public class MethodCallExpression : Expression
+    public class MethodAccessExpression : Expression
     {
-        public MethodCallExpression(object instance, IMethodWrapper method, object[] arguments)
+        public MethodAccessExpression(object instance, IMethodWrapper method, object[] arguments)
         {
             Instance = instance;
             Method = method;
