@@ -69,7 +69,10 @@ namespace RTScript.Language.Interpreter
                     builder.Append($"{friendly}, ");
                 }
 
-                builder.Length -= 2;
+                if (collection.Count > 0)
+                {
+                    builder.Length -= 2;
+                }
                 builder.Append("]");
                 _out.WriteLine(builder.ToString());
             }

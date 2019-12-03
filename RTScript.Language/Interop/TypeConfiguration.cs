@@ -60,6 +60,12 @@ namespace RTScript.Language.Interop
                 config.Methods.Add(med);
             }
 
+            if(type.IsArray)
+            {
+                var desc = new PropertyDescriptor("Item", typeof(object), typeof(int), true, true, false, true);
+                config.Properties.Add(desc);
+            }
+
             return config;
         }
     }

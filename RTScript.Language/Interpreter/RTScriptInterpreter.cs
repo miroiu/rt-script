@@ -27,6 +27,13 @@ namespace RTScript.Language.Interpreter
         {
             _output = output;
             Context = new ExecutionContext(_output);
+
+            Context.Declare("int", 0, true);
+            Context.Declare("float", 0.0f, true);
+            Context.Declare("double", 0.0, true);
+            Context.Declare("bool", true, true);
+            Context.Declare("char", ' ', true);
+            Context.Declare("string", string.Empty, true);
         }
 
         public void Run(IExpressionProvider provider)
