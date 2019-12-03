@@ -3,6 +3,7 @@ using RTScript.Language.Interpreter.Operators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace RTScript.Language.Interpreter
@@ -13,16 +14,7 @@ namespace RTScript.Language.Interpreter
         private readonly IOutputStream _out;
 
         public ExecutionContext(IOutputStream outs)
-        {
-            _out = outs;
-
-            Declare("int", 0, true);
-            Declare("double", 0.0, true);
-            Declare("float", 0.0f, true);
-            Declare("char", ' ', true);
-            Declare("string", string.Empty, true);
-            Declare("bool", false, true);
-        }
+            => _out = outs;
 
         public void Assign(string name, object value)
         {
@@ -141,5 +133,9 @@ namespace RTScript.Language.Interpreter
             var op = OperatorsCache.GetBinaryOperator(operatorType, leftType, rightType);
             return op.Execute(left, right);
         }
+
+        // TODO: Should return keywords + variable names/types
+        public IReadOnlyList<string> GetSymbols()
+            => _variables.Keys.ToList();
     }
 }
