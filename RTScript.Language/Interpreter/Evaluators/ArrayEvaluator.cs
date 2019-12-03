@@ -24,14 +24,23 @@ namespace RTScript.Language.Interpreter.Evaluators
                     var arg = args[i];
 
                     var value = Reducer.Reduce<ValueExpression>(arg, ctx);
-                    // TODO: Try to convert value to element type (e.g. an array of ints will not work because the default number type is double, nor char array)
+
                     var valueType = value.Type;
                     if (!elementType.IsAssignableFrom(valueType))
                     {
-                        throw new Exception($"Could not convert type {valueType.ToFriendlyName()} to {elementType.ToFriendlyName()}");
+                        if (elementType == typeof(char) && valueType == typeof(string) && char.TryParse(value.Value.ToString(), out char c))
+                        {
+                            array.SetValue(c, i);
+                        }
+                        else
+                        {
+                            throw new Exception($"Could not convert type {valueType.ToFriendlyName()} to {elementType.ToFriendlyName()}");
+                        }
                     }
-
-                    array.SetValue(value.Value, i);
+                    else
+                    {
+                        array.SetValue(value.Value, i);
+                    }
                 }
 
                 return new ValueExpression(array, array.GetType());

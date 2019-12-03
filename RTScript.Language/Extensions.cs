@@ -36,7 +36,7 @@ namespace RTScript.Language
                 return "decimal";
             }
 
-            if (type.Name == typeof(decimal).Name)
+            if (type.Name == typeof(char).Name)
             {
                 return "char";
             }
