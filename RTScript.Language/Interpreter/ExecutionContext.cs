@@ -13,7 +13,16 @@ namespace RTScript.Language.Interpreter
         private readonly IOutputStream _out;
 
         public ExecutionContext(IOutputStream outs)
-            => _out = outs;
+        {
+            _out = outs;
+
+            Declare("int", 0, true);
+            Declare("double", 0.0, true);
+            Declare("float", 0.0f, true);
+            Declare("char", ' ', true);
+            Declare("string", string.Empty, true);
+            Declare("bool", false, true);
+        }
 
         public void Assign(string name, object value)
         {
@@ -94,12 +103,12 @@ namespace RTScript.Language.Interpreter
 
                 // TODO: Let user specify default number type?
                 case LiteralType.Number:
-                    if(int.TryParse(value, out int result))
+                    if (int.TryParse(value, out int result))
                     {
                         return result;
                     }
 
-                    if(double.TryParse(value, out double dResult))
+                    if (double.TryParse(value, out double dResult))
                     {
                         return dResult;
                     }

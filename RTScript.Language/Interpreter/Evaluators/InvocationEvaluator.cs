@@ -4,20 +4,22 @@ using System.Linq;
 
 namespace RTScript.Language.Interpreter.Evaluators
 {
-    // Not part of a member access expression so it should be treated as global
+    // Not part of a member access expression so it should be treated as global command
     [ExpressionEvaluator(typeof(InvocationExpression))]
     public class InvocationEvaluator : IExpressionEvaluator
     {
+        private const string DelegateInvoke = "Invoke";
+
         public Expression Evaluate(Expression expression, IExecutionContext ctx)
         {
             var casted = (InvocationExpression)expression;
 
-            var global = ctx.Get("global");
-            var globalType = ctx.GetType("global");
+            var action = ctx.Get(casted.Name);
+            var actionType = ctx.GetType(casted.Name);
 
-            if (global != null)
+            if (action != default)
             {
-                var methods = TypesCache.GetMethods(globalType).Where(p => p.Descriptor.Name == casted.Name);
+                var methods = TypesCache.GetMethods(actionType).Where(p => p.Descriptor.Name == DelegateInvoke);
                 var arguments = casted.Arguments.Items;
 
                 foreach (var method in methods)
@@ -26,7 +28,7 @@ namespace RTScript.Language.Interpreter.Evaluators
 
                     if (BinaryExpressionEvaluator.TryMatchMethodOverload(ctx, arguments, parameterTypes, out var values))
                     {
-                        return new MethodAccessExpression(global, method, values);
+                        return new MethodAccessExpression(action, method, values);
                     }
                 }
 

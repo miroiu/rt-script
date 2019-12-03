@@ -5,11 +5,9 @@ VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTScript", "RTScript\RTScript.csproj", "{33A0F145-CD30-43EF-B4F5-2F4CD27AADFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTScript.Language", "RTScript.Language\RTScript.Language.csproj", "{658F953A-A32C-47DC-94FC-E620C8B21C90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTScript.Language", "RTScript.Language\RTScript.Language.csproj", "{658F953A-A32C-47DC-94FC-E620C8B21C90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTScript.Tests", "RTScript.Tests\RTScript.Tests.csproj", "{5E2AD568-3CB3-49AE-ABF9-BEEAB6CEABC6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTScript.Editor", "RTScript.Editor\RTScript.Editor.csproj", "{53616DF1-6135-4CB1-922D-81156A36FE3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTScript.Tests", "RTScript.Tests\RTScript.Tests.csproj", "{5E2AD568-3CB3-49AE-ABF9-BEEAB6CEABC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +27,6 @@ Global
 		{5E2AD568-3CB3-49AE-ABF9-BEEAB6CEABC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E2AD568-3CB3-49AE-ABF9-BEEAB6CEABC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E2AD568-3CB3-49AE-ABF9-BEEAB6CEABC6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53616DF1-6135-4CB1-922D-81156A36FE3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53616DF1-6135-4CB1-922D-81156A36FE3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53616DF1-6135-4CB1-922D-81156A36FE3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53616DF1-6135-4CB1-922D-81156A36FE3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
