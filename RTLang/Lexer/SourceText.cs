@@ -10,7 +10,7 @@ namespace RTLang.Lexer
         public int Position { get; set; }
         public int Length => Text.Length;
 
-        // TODO: Try to remove \0
+        // The string terminator is used by the lexer to produce EndOfCode tokens
         public SourceText(string source)
             => Text = $"{source}\0";
 

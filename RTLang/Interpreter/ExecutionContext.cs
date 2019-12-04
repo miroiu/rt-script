@@ -103,13 +103,11 @@ namespace RTLang.Interpreter
 
         public object Evaluate(LiteralType type, string value)
         {
-            // TODO: Could be improved by caching common values and already parsed values
             switch (type)
             {
                 case LiteralType.Boolean:
                     return bool.Parse(value);
 
-                // TODO: Let user specify default number type?
                 case LiteralType.Number:
                     if (int.TryParse(value, out int result))
                     {
