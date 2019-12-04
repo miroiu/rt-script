@@ -71,6 +71,7 @@ namespace RTLang.Interpreter
                 {
                     builder.Length -= 2;
                 }
+
                 builder.Append("]");
                 _out.WriteLine(builder.ToString());
             }
@@ -82,8 +83,22 @@ namespace RTLang.Interpreter
 
         private string ToFriendlyString(object value)
         {
-            var result = value?.ToString() ?? "null";
-            return result == "True" ? "true" : result == "False" ? "false" : $"\"{result}\"";
+            if (value == null)
+            {
+                return "null";
+            }
+
+            if (value is string str)
+            {
+                return $"\"{str}\"";
+            }
+
+            if (value is bool b)
+            {
+                return b ? "true" : "false";
+            }
+
+            return value.ToString();
         }
 
         public object Evaluate(LiteralType type, string value)
