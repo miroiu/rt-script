@@ -5,15 +5,23 @@ namespace RTLang.Interpreter
 {
     public class ExecutionException : RTLangException
     {
-        public Expression Expression { get; private set; }
-        public ExecutionException(string message, Expression e) : base(message)
+        public ExecutionException(string message, Expression e) : this(message, e.Token.Line, e.Token.Column)
         {
-            Expression = e;
+
         }
 
-        public ExecutionException(Exception ex, Expression e) : base(ex.Message)
+        public ExecutionException(Exception ex, Expression e) : this(ex.Message, e.Token.Line, e.Token.Column)
         {
-            Expression = e;
+
         }
+
+        public ExecutionException(string message, int line, int column) : base(message)
+        {
+            Line = line;
+            Column = column;
+        }
+
+        public int Line { get; }
+        public int Column { get; }
     }
 }

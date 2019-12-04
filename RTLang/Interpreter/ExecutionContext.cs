@@ -28,7 +28,7 @@ namespace RTLang.Interpreter
         {
             if (_variables.ContainsKey(name))
             {
-                throw new Exception($"'{name}' is already defined in this scope.");
+                throw new Exception($"'{name}' is already defined in the current context.");
             }
 
             _variables[name] = new Reference(name, isConst, value);

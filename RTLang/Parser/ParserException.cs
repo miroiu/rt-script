@@ -4,11 +4,17 @@ namespace RTLang.Parser
 {
     public class ParserException : RTLangException
     {
-        public ParserException(Token token, string message) : base(message)
+        internal ParserException(Token token, string message) : this(token.Line, token.Column, message)
         {
-            Token = token;
         }
 
-        public Token Token { get; }
+        public ParserException(int line, int column, string message) : base(message)
+        {
+            Line = line;
+            Column = column;
+        }
+
+        public int Line { get; }
+        public int Column { get; }
     }
 }

@@ -11,7 +11,6 @@
 
         public bool IsReadOnly { get; }
         public IdentifierExpression Identifier { get; }
-        // May be null (e.g var x;)
         public Expression Initializer { get; }
     }
 }

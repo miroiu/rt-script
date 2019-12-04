@@ -8,8 +8,6 @@ namespace RTLang.Interpreter.Evaluators
         public Type ExpressionType { get; private set; }
 
         public ExpressionEvaluatorAttribute(Type expressionType)
-        {
-            ExpressionType = expressionType;
-        }
+            => ExpressionType = expressionType;
     }
 }

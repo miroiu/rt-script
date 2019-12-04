@@ -1,11 +1,25 @@
 ﻿using RTLang.Expressions;
 using RTLang.Interpreter.Evaluators;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RTLang.Interpreter
 {
-    public static class Reducer
+    internal static class Reducer
     {
+        internal static readonly IDictionary<Type, IExpressionEvaluator> Evaluators = typeof(Interpreter).Assembly.GetTypes()
+                .Where(x => typeof(IExpressionEvaluator).IsAssignableFrom(x) && x.CustomAttributes.Any())
+                .SelectMany(x =>
+                {
+                    return x.GetCustomAttributes(false).Select(y => new
+                    {
+                        Attribute = (ExpressionEvaluatorAttribute)y,
+                        Type = x
+                    }).ToList();
+                })
+                .ToDictionary(x => x.Attribute.ExpressionType, x => Activator.CreateInstance(x.Type) as IExpressionEvaluator);
+
         public static Expression Reduce(Expression expression, IExecutionContext ctx, Type resultType = default)
         {
             try
@@ -15,7 +29,7 @@ namespace RTLang.Interpreter
                     return expression;
                 }
 
-                var evaluator = Interpreter.Evaluators[expression.GetType()];
+                var evaluator = Evaluators[expression.GetType()];
                 var expr = evaluator.Evaluate(expression, ctx);
 
                 if (resultType != default && expr.GetType() == resultType)

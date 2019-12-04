@@ -26,11 +26,11 @@ namespace RTLang
             }
             catch (ExecutionException rtScriptExx)
             {
-                context.Print($"[{rtScriptExx.Expression.Token.Line}, {rtScriptExx.Expression.Token.Column}]: {rtScriptExx.Message}");
+                context.Print($"[{rtScriptExx.Line}, {rtScriptExx.Column}]: {rtScriptExx.Message}");
             }
             catch (ParserException rtScriptParserEx)
             {
-                context.Print($"[{rtScriptParserEx.Token.Line}, {rtScriptParserEx.Token.Column}]: {rtScriptParserEx.Message}");
+                context.Print($"[{rtScriptParserEx.Line}, {rtScriptParserEx.Column}]: {rtScriptParserEx.Message}");
             }
             catch (RTLangException rtScriptEx)
             {
