@@ -43,7 +43,7 @@ namespace RTScript.Language.Interpreter.Operators
                 {
                     foreach (var bOp in binaryOperators)
                     {
-                        if (CanConvertType(leftType, bOp.Key.Left) && CanConvertType(rightType, bOp.Key.Right))
+                        if (CanChangeType(leftType, bOp.Key.Left) && CanChangeType(rightType, bOp.Key.Right))
                         {
                             return bOp.Value;
                         }
@@ -54,9 +54,9 @@ namespace RTScript.Language.Interpreter.Operators
             throw new Exception($"Binary operator {operatorType} is not defined for types {leftType.ToFriendlyName()} and {rightType.ToFriendlyName()}");
         }
 
-        private static bool CanConvertType(Type from, Type to)
+        public static bool CanChangeType(Type from, Type to)
         {
-            if (from.IsPrimitive)
+            if (from.IsPrimitive && to.IsPrimitive)
             {
                 return TypeDescriptor.GetConverter(from).CanConvertTo(to);
             }
@@ -165,6 +165,16 @@ namespace RTScript.Language.Interpreter.Operators
             }
 
             return false;
+        }
+
+        public static object ChangeType(object value, Type paramType)
+        {
+            if (paramType == typeof(string))
+            {
+                return value.ToString();
+            }
+
+            return Convert.ChangeType(value, paramType);
         }
     }
 }

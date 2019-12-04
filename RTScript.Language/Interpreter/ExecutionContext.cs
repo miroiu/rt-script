@@ -139,7 +139,7 @@ namespace RTScript.Language.Interpreter
             }
 
             var op = OperatorsCache.GetBinaryOperator(operatorType, leftType, rightType);
-            return op.Execute(Convert.ChangeType(left, op.LeftType), Convert.ChangeType(right, op.RightType));
+            return op.Execute(OperatorsCache.ChangeType(left, op.LeftType), OperatorsCache.ChangeType(right, op.RightType));
         }
 
         public IReadOnlyList<string> GetVariablesNames()

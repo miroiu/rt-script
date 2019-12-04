@@ -1,5 +1,6 @@
 ﻿using RTScript.Language.Expressions;
 using RTScript.Language.Interop;
+using RTScript.Language.Interpreter.Operators;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -147,13 +148,12 @@ namespace RTScript.Language.Interpreter.Evaluators
                 var arg = Reducer.Reduce<ValueExpression>(arguments[i], ctx);
                 var paramType = parameterTypes[i];
 
-                // TODO: Try cast if not matching? (should cast only chars/strings/numbers?)
-                if (arg.Type != paramType)
+                if (!OperatorsCache.CanChangeType(arg.Type, paramType))
                 {
                     return false;
                 }
 
-                argumentsValues[i] = arg.Value;
+                argumentsValues[i] = OperatorsCache.ChangeType(arg.Value, paramType);
             }
 
             return true;
