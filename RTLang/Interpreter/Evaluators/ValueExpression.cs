@@ -1,7 +1,7 @@
-﻿using RTScript.Expressions;
+﻿using RTLang.Expressions;
 using System;
 
-namespace RTScript.Interpreter.Evaluators
+namespace RTLang.Interpreter.Evaluators
 {
     // Used only by the evaluators.
     // Leaf node in the expression tree

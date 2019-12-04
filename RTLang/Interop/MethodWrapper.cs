@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace RTScript.Interop
+namespace RTLang.Interop
 {
     // TODO: Try to create a type safe delegate from the method info (maybe using Linq.Expressions?)
     public class MethodWrapper : IMethodWrapper

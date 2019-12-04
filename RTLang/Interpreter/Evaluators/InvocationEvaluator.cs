@@ -1,10 +1,10 @@
-﻿using RTScript.Expressions;
-using RTScript.Interop;
+﻿using RTLang.Expressions;
+using RTLang.Interop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RTScript.Interpreter.Evaluators
+namespace RTLang.Interpreter.Evaluators
 {
     // Not part of a member access expression so it should be treated as global command
     [ExpressionEvaluator(typeof(InvocationExpression))]

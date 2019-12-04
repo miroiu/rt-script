@@ -1,4 +1,4 @@
-﻿namespace RTScript.Expressions
+﻿namespace RTLang.Expressions
 {
     public class IdentifierExpression : Expression
     {

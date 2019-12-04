@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace RTScript.Interpreter
+namespace RTLang.Interpreter
 {
-    // Type safe reference
-    public class Reference : IEquatable<Reference>, IEquatable<string>
+    // Type safe weak reference
+    public sealed class Reference : IEquatable<Reference>, IEquatable<string>
     {
         private readonly WeakReference<object> _reference;
 

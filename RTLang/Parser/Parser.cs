@@ -1,14 +1,14 @@
-﻿using RTScript.Expressions;
-using RTScript.Lexer;
+﻿using RTLang.Expressions;
+using RTLang.Lexer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
-    public class RTScriptParser : IExpressionProvider
+    public class Parser : IExpressionProvider
     {
-        public static readonly IDictionary<(TokenType Type, bool CanBeginWith), IParslet> Parslets = typeof(RTScriptParser).Assembly.GetTypes()
+        public static readonly IDictionary<(TokenType Type, bool CanBeginWith), IParslet> Parslets = typeof(Parser).Assembly.GetTypes()
                  .Where(x => typeof(IParslet).IsAssignableFrom(x) && x.CustomAttributes.Any())
                  .SelectMany(x =>
                  {
@@ -20,12 +20,12 @@ namespace RTScript.Parser
                  })
                  .ToDictionary(x => (x.Attribute.TokenType, x.Attribute.CanBeginWith), x => Activator.CreateInstance(x.Type) as IParslet);
 
-        private readonly RTScriptLexer _lexer;
+        private readonly Lexer.Lexer _lexer;
 
         public bool HasNext { get; private set; }
         public Token Current { get; private set; }
 
-        public RTScriptParser(RTScriptLexer lexer)
+        public Parser(Lexer.Lexer lexer)
         {
             _lexer = lexer;
 

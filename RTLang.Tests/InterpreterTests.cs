@@ -1,10 +1,10 @@
-﻿using RTScript.Interpreter;
-using RTScript.Tests.Mocks;
+﻿using RTLang.Interpreter;
+using RTLang.Tests.Mocks;
 using NUnit.Framework;
-using RTScript.Lexer;
-using RTScript.Parser;
+using RTLang.Lexer;
+using RTLang.Parser;
 
-namespace RTScript.Tests
+namespace RTLang.Tests
 {
     public class InterpreterTests
     {
@@ -23,9 +23,9 @@ namespace RTScript.Tests
         {
             var input = "var a = 2; print a; // print a + 1;";
             var source = new SourceText(input);
-            var lexer = new RTScriptLexer(source);
-            var parser = new RTScriptParser(lexer);
-            var interpreter = new RTScriptInterpreter(_out);
+            var lexer = new Lexer.Lexer(source);
+            var parser = new Parser.Parser(lexer);
+            var interpreter = new Interpreter.Interpreter(_out);
             interpreter.Run(parser);
             var output = _out.Output.ToString();
 

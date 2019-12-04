@@ -1,9 +1,9 @@
-﻿using RTScript.Expressions;
+﻿using RTLang.Expressions;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
     public interface IParslet
     {
-        Expression Accept(RTScriptParser parser);
+        Expression Accept(Parser parser);
     }
 }

@@ -1,7 +1,7 @@
-﻿using RTScript.Expressions;
+﻿using RTLang.Expressions;
 using System;
 
-namespace RTScript.Interpreter.Evaluators
+namespace RTLang.Interpreter.Evaluators
 {
     [ExpressionEvaluator(typeof(ArrayExpression))]
     public class ArrayEvaluator : IExpressionEvaluator

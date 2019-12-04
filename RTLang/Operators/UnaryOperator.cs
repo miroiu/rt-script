@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTScript
+namespace RTLang.Operators
 {
     public class UnaryOperator<TValue, TResult> : IUnaryOperator
     {

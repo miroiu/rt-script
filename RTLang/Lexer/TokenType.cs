@@ -1,4 +1,4 @@
-﻿namespace RTScript.Lexer
+﻿namespace RTLang.Lexer
 {
     public enum TokenType
     {

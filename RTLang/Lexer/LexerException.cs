@@ -1,6 +1,6 @@
-﻿namespace RTScript.Lexer
+﻿namespace RTLang.Lexer
 {
-    public class LexerException : RTScriptException
+    public class LexerException : RTLangException
     {
         public LexerException(int line, int column, string message) : base(message)
         {

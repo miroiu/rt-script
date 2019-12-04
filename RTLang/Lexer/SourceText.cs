@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace RTScript.Lexer
+namespace RTLang.Lexer
 {
     public class SourceText : IEnumerator<char>
     {

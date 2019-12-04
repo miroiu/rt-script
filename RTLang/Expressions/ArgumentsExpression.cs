@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RTScript.Expressions
+namespace RTLang.Expressions
 {
     public class ArgumentsExpression : Expression
     {

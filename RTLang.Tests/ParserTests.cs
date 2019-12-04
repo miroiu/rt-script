@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace RTScript.Tests
+namespace RTLang.Tests
 {
     public class ParserTests
     {

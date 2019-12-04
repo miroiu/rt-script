@@ -1,9 +1,9 @@
-﻿using RTScript.Expressions;
+﻿using RTLang.Expressions;
 using System;
 
-namespace RTScript.Interpreter
+namespace RTLang.Interpreter
 {
-    public class ExecutionException : RTScriptException
+    public class ExecutionException : RTLangException
     {
         public Expression Expression { get; private set; }
         public ExecutionException(string message, Expression e) : base(message)

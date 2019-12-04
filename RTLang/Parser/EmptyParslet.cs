@@ -1,13 +1,13 @@
-﻿using RTScript.Expressions;
-using RTScript.Lexer;
+﻿using RTLang.Expressions;
+using RTLang.Lexer;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
     [Parslet(TokenType.Semicolon, true)]
     [Parslet(TokenType.EndOfCode, true)]
     public class EmptyParslet : IParslet
     {
-        public Expression Accept(RTScriptParser parser)
+        public Expression Accept(Parser parser)
         {
             return new EmptyExpression();
         }

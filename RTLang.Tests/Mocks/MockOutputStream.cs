@@ -1,7 +1,6 @@
-﻿using RTScript;
-using System.Text;
+﻿using System.Text;
 
-namespace RTScript.Tests.Mocks
+namespace RTLang.Tests.Mocks
 {
     public class MockOutputStream : IOutputStream
     {

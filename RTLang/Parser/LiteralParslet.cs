@@ -1,7 +1,7 @@
-﻿using RTScript.Expressions;
-using RTScript.Lexer;
+﻿using RTLang.Expressions;
+using RTLang.Lexer;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
     [Parslet(TokenType.String)]
     [Parslet(TokenType.Number)]
@@ -10,7 +10,7 @@ namespace RTScript.Parser
     [Parslet(TokenType.Null)]
     public class LiteralParslet : IParslet
     {
-        public Expression Accept(RTScriptParser parser)
+        public Expression Accept(Parser parser)
         {
             var literal = parser.Take();
 

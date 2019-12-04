@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace RTScript.Lexer
+namespace RTLang.Lexer
 {
-    public partial class RTScriptLexer
+    public partial class Lexer
     {
         private (TokenType Type, string Text) ReadIdentifierOrKeyword(SourceText stream)
         {

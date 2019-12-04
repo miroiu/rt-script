@@ -1,8 +1,8 @@
-﻿using RTScript.Expressions;
-using RTScript.Interop;
+﻿using RTLang.Expressions;
+using RTLang.Interop;
 using System.Linq;
 
-namespace RTScript.Interpreter.Evaluators
+namespace RTLang.Interpreter.Evaluators
 {
     [ExpressionEvaluator(typeof(BinaryExpression))]
     public class BinaryExpressionEvaluator : IExpressionEvaluator

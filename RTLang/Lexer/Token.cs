@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace RTScript.Lexer
+namespace RTLang.Lexer
 {
     [DebuggerDisplay("{Type}: {Text}")]
     public struct Token : IEquatable<Token>

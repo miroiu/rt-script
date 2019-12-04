@@ -1,4 +1,4 @@
-﻿namespace RTScript
+﻿namespace RTLang.Operators
 {
     public static class BooleanOperators
     {

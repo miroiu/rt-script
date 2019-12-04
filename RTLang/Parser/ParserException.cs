@@ -1,8 +1,8 @@
-﻿using RTScript.Lexer;
+﻿using RTLang.Lexer;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
-    public class ParserException : RTScriptException
+    public class ParserException : RTLangException
     {
         public ParserException(Token token, string message) : base(message)
         {

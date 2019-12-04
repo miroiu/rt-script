@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTScript
+namespace RTLang
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public sealed class OperatorAttribute : Attribute

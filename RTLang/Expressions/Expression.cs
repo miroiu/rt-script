@@ -1,7 +1,7 @@
-﻿using RTScript.Lexer;
+﻿using RTLang.Lexer;
 using System.Diagnostics;
 
-namespace RTScript.Expressions
+namespace RTLang.Expressions
 {
     [DebuggerDisplay("{GetType().Name}")]
     public abstract class Expression

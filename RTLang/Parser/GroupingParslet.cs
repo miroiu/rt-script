@@ -1,12 +1,12 @@
-﻿using RTScript.Expressions;
-using RTScript.Lexer;
+﻿using RTLang.Expressions;
+using RTLang.Lexer;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
     [Parslet(TokenType.OpenParen)]
     public class GroupingParslet : IParslet
     {
-        public Expression Accept(RTScriptParser parser)
+        public Expression Accept(Parser parser)
         {
             var openParen = parser.Take();
             var expr = parser.ParseExpression();

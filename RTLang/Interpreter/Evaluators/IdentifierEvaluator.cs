@@ -1,6 +1,6 @@
-﻿using RTScript.Expressions;
+﻿using RTLang.Expressions;
 
-namespace RTScript.Interpreter.Evaluators
+namespace RTLang.Interpreter.Evaluators
 {
     [ExpressionEvaluator(typeof(IdentifierExpression))]
     public class IdentifierEvaluator : IExpressionEvaluator

@@ -1,7 +1,7 @@
-﻿using RTScript.Lexer;
+﻿using RTLang.Lexer;
 using System;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public sealed class ParsletAttribute : Attribute

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTScript.Interop
+namespace RTLang.Interop
 {
     // Instance property
     public sealed class PropertyWrapper<TInstanceType, TPropertyType> : IPropertyWrapper

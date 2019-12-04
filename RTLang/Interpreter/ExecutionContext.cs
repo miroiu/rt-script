@@ -1,12 +1,13 @@
-﻿using RTScript;
+﻿using RTLang.Interpreter;
+using RTLang.Operators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RTScript.Interpreter
+namespace RTLang
 {
-    public class ExecutionContext : IExecutionContext
+    public sealed class ExecutionContext : IExecutionContext
     {
         private readonly IDictionary<string, Reference> _variables = new Dictionary<string, Reference>();
         private readonly IOutputStream _out;

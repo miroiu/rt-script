@@ -1,4 +1,4 @@
-﻿namespace RTScript
+﻿namespace RTLang
 {
     public enum BinaryOperatorType
     {

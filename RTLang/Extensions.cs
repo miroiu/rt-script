@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTScript
+namespace RTLang
 {
     public static class Extensions
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace RTScript.Interpreter
+namespace RTLang.Interpreter
 {
     public static class TypeHelper
     {

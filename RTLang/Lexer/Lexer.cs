@@ -1,10 +1,10 @@
-﻿namespace RTScript.Lexer
+﻿namespace RTLang.Lexer
 {
-    public partial class RTScriptLexer
+    public partial class Lexer
     {
         private readonly SourceText _text;
 
-        public RTScriptLexer(SourceText text)
+        public Lexer(SourceText text)
             => _text = text;
 
         public Token Lex()

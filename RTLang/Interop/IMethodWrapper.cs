@@ -1,4 +1,4 @@
-﻿namespace RTScript.Interop
+﻿namespace RTLang.Interop
 {
     public interface IMethodWrapper
     {

@@ -1,12 +1,12 @@
-﻿using RTScript.Expressions;
-using RTScript.Lexer;
+﻿using RTLang.Expressions;
+using RTLang.Lexer;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
     [Parslet(TokenType.Print, true)]
     public class PrintParslet : IParslet
     {
-        public Expression Accept(RTScriptParser parser)
+        public Expression Accept(Parser parser)
         {
             var opToken = parser.Take();
             var expr = parser.ParseExpression();

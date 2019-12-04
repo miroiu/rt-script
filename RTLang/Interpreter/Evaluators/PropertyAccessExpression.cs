@@ -1,7 +1,7 @@
-﻿using RTScript.Expressions;
-using RTScript.Interop;
+﻿using RTLang.Expressions;
+using RTLang.Interop;
 
-namespace RTScript.Interpreter.Evaluators
+namespace RTLang.Interpreter.Evaluators
 {
     // Used only by the evaluators.
     public class PropertyAccessExpression : Expression

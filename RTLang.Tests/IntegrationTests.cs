@@ -1,24 +1,22 @@
-﻿using RTScript.Interpreter;
-using RTScript.Lexer;
-using RTScript.Parser;
+﻿using RTLang.Interpreter;
+using RTLang.Lexer;
+using RTLang.Parser;
 using NUnit.Framework;
 using System;
-using RTScript.Tests.Mocks;
-using RTScript.Interop;
-using System.Collections.Generic;
+using RTLang.Tests.Mocks;
 
-namespace RTScript.Tests
+namespace RTLang.Tests
 {
     public static class App
     {
-        public static string[] Run(string code, RTScriptInterpreter interp = default, MockOutputStream outputStream = default)
+        public static string[] Run(string code, Interpreter.Interpreter interp = default, MockOutputStream outputStream = default)
         {
             var mockOutput = outputStream ?? new MockOutputStream();
             var source = new SourceText(code);
-            var lexer = new RTScriptLexer(source);
-            var parser = new RTScriptParser(lexer);
+            var lexer = new Lexer.Lexer(source);
+            var parser = new Parser.Parser(lexer);
 
-            var interpreter = interp ?? new RTScriptInterpreter(mockOutput);
+            var interpreter = interp ?? new Interpreter.Interpreter(mockOutput);
             interpreter.Run(parser);
             return mockOutput.Output.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
         }
@@ -27,7 +25,7 @@ namespace RTScript.Tests
     [TestFixture]
     public class IntegrationTests
     {
-        public RTScriptInterpreter Interpreter { get; set; }
+        public Interpreter Interpreter { get; set; }
         public MockOutputStream Output = new MockOutputStream();
         public TestClass Test = new TestClass();
 
@@ -35,7 +33,7 @@ namespace RTScript.Tests
         public void Setup()
         {
             Output.Clear();
-            Interpreter = new RTScriptInterpreter(Output);
+            Interpreter = new Interpreter.Interpreter(Output);
             Interpreter.Context.Declare("test", Test);
         }
 
@@ -49,7 +47,7 @@ namespace RTScript.Tests
         [TestCase("test.Ints['one'] = 1; print test.Ints['one'];", new string[] { "1" })]
         public void Interop(string input, string[] expected)
         {
-            var result = App.Run(input, Interpreter, Output);
+            var result = App.Run(input, (Interpreter.Interpreter)Interpreter, Output);
             Assert.AreEqual(expected, result);
         }
 

@@ -1,13 +1,13 @@
-﻿using RTScript.Expressions;
-using RTScript.Lexer;
+﻿using RTLang.Expressions;
+using RTLang.Lexer;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
     [Parslet(TokenType.Var, true)]
     [Parslet(TokenType.Const, true)]
     public class VariableDeclarationParslet : IParslet
     {
-        public Expression Accept(RTScriptParser parser)
+        public Expression Accept(Parser parser)
         {
             var varToken = parser.Take();
             var identifierToken = parser.Match(TokenType.Identifier);

@@ -1,7 +1,7 @@
-﻿using RTScript.Tests.Mocks;
+﻿using RTLang.Tests.Mocks;
 using NUnit.Framework;
 
-namespace RTScript.Tests
+namespace RTLang.Tests
 {
     public class LexerTests
     {

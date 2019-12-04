@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTScript.Interop
+namespace RTLang.Interop
 {
     // this[] indexer
     public sealed class IndexerWrapper<TInstanceType, TPropertyType, TIndexType> : IPropertyWrapper

@@ -1,8 +1,8 @@
-﻿using RTScript.Expressions;
-using RTScript.Interpreter.Evaluators;
+﻿using RTLang.Expressions;
+using RTLang.Interpreter.Evaluators;
 using System;
 
-namespace RTScript.Interpreter
+namespace RTLang.Interpreter
 {
     public static class Reducer
     {
@@ -15,7 +15,7 @@ namespace RTScript.Interpreter
                     return expression;
                 }
 
-                var evaluator = RTScriptInterpreter.Evaluators[expression.GetType()];
+                var evaluator = Interpreter.Evaluators[expression.GetType()];
                 var expr = evaluator.Evaluate(expression, ctx);
 
                 if (resultType != default && expr.GetType() == resultType)

@@ -1,15 +1,15 @@
-﻿using RTScript.Expressions;
-using RTScript.Lexer;
+﻿using RTLang.Expressions;
+using RTLang.Lexer;
 
-namespace RTScript.Parser
+namespace RTLang.Parser
 {
     [Parslet(TokenType.Identifier, true)]
     public class BinaryParslet : IParslet
     {
-        public Expression Accept(RTScriptParser parser)
+        public Expression Accept(Parser parser)
             => ParseBinaryExpression(parser);
 
-        private Expression ParseBinaryExpression(RTScriptParser parser, Expression left = default, OperatorPrecedence parentPrecedence = OperatorPrecedence.None)
+        private Expression ParseBinaryExpression(Parser parser, Expression left = default, OperatorPrecedence parentPrecedence = OperatorPrecedence.None)
         {
             if (left == default)
             {

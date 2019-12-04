@@ -1,6 +1,4 @@
-﻿using RTScript.Expressions;
-
-namespace RTScript
+﻿namespace RTLang.Expressions
 {
     public interface IExpressionProvider
     {

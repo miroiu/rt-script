@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTScript.Interpreter
+namespace RTLang
 {
     public interface IExecutionContext
     {

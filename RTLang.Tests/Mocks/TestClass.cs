@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RTScript.Tests.Mocks
+namespace RTLang.Tests.Mocks
 {
     public class TestClass
     {

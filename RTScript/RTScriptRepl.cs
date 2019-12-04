@@ -1,51 +1,26 @@
-﻿using RTScript;
-using RTScript.Interpreter;
-using RTScript.Lexer;
-using RTScript.Parser;
+﻿using RTLang;
 
 namespace RTScript
 {
     public class RTScriptRepl
     {
-        public RTScriptInterpreter Interpreter;
         public RTScriptConsole Console;
+        private readonly IExecutionContext _context;
 
         public RTScriptRepl(RTScriptConsole console)
         {
             Console = console;
-            Interpreter = new RTScriptInterpreter(console);
+            _context = new ExecutionContext(console);
+
+            _context.Declare("int", 0, true);
+            _context.Declare("float", 0.0f, true);
+            _context.Declare("double", 0.0, true);
+            _context.Declare("bool", true, true);
+            _context.Declare("char", ' ', true);
+            _context.Declare("string", string.Empty, true);
         }
 
         public void Evaluate(string code)
-        {
-            try
-            {
-                var source = new SourceText(code);
-                var lexer = new RTScriptLexer(source);
-                var parser = new RTScriptParser(lexer);
-
-                Interpreter.Run(parser);
-            }
-            catch (LexerException lexEx)
-            {
-                Console.WriteLine($"[{lexEx.Line}, {lexEx.Column}]: {lexEx.Message}");
-            }
-            catch (ExecutionException rtScriptExx)
-            {
-                Console.WriteLine($"[{rtScriptExx.Expression.Token.Line}, {rtScriptExx.Expression.Token.Column}]: {rtScriptExx.Message}");
-            }
-            catch (ParserException rtScriptParserEx)
-            {
-                Console.WriteLine($"[{rtScriptParserEx.Token.Line}, {rtScriptParserEx.Token.Column}]: {rtScriptParserEx.Message}");
-            }
-            catch (RTScriptException rtScriptEx)
-            {
-                Console.WriteLine(rtScriptEx.ToString());
-            }
-            catch
-            {
-                Console.WriteLine("Catastrophic failure!");
-            }
-        }
+            => RTLang.RTScript.Execute(code, _context);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace RTScript.Parser
+﻿namespace RTLang.Parser
 {
     public enum OperatorPrecedence
     {

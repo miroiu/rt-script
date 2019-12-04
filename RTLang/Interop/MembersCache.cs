@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RTScript.Interop
+namespace RTLang.Interop
 {
     public class MembersCache
     {
