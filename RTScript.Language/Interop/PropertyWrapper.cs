@@ -2,6 +2,7 @@
 
 namespace RTScript.Language.Interop
 {
+    // Instance property
     public sealed class PropertyWrapper<TInstanceType, TPropertyType> : IPropertyWrapper
         where TInstanceType : class
     {
@@ -25,12 +26,13 @@ namespace RTScript.Language.Interop
             => _setterInvocation.Invoke((TInstanceType)instance, (TPropertyType)value);
     }
 
-    public sealed class StaticPropertyWrapper<TPropertyType> : IPropertyWrapper
+    // Static property
+    public sealed class PropertyWrapper<TPropertyType> : IPropertyWrapper
     {
         private readonly Func<TPropertyType> _getterInvocation;
         private readonly Action<TPropertyType> _setterInvocation;
 
-        public StaticPropertyWrapper(Func<TPropertyType> getterInvocation, Action<TPropertyType> setterInvocation, PropertyDescriptor descriptor)
+        public PropertyWrapper(Func<TPropertyType> getterInvocation, Action<TPropertyType> setterInvocation, PropertyDescriptor descriptor)
         {
             Descriptor = descriptor;
 

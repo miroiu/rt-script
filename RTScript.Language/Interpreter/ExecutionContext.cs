@@ -3,7 +3,6 @@ using RTScript.Language.Interpreter.Operators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace RTScript.Language.Interpreter
@@ -139,10 +138,12 @@ namespace RTScript.Language.Interpreter
             }
 
             var op = OperatorsCache.GetBinaryOperator(operatorType, leftType, rightType);
-            return op.Execute(OperatorsCache.ChangeType(left, op.LeftType), OperatorsCache.ChangeType(right, op.RightType));
-        }
+            if (TypeHelper.TryChangeType(ref left, op.LeftType) && TypeHelper.TryChangeType(ref right, op.RightType))
+            {
+                return op.Execute(left, right);
+            }
 
-        public IReadOnlyList<string> GetVariablesNames()
-            => _variables.Keys.ToList();
+            throw new Exception("Should not happen.");
+        }
     }
 }

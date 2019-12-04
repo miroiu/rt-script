@@ -1,6 +1,5 @@
 ﻿using RTScript.Language.Expressions;
 using System;
-using System.Collections.Generic;
 
 namespace RTScript.Language.Interpreter
 {
@@ -12,7 +11,6 @@ namespace RTScript.Language.Interpreter
         Type GetType(string name);
         void Print(object value);
         object Evaluate(LiteralType type, string value);
-        IReadOnlyList<string> GetVariablesNames();
         object Evaluate(UnaryOperatorType operatorType, object value);
         object Evaluate(object left, BinaryOperatorType operatorType, object right);
     }

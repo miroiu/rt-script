@@ -1,5 +1,7 @@
 ﻿using RTScript.Language.Expressions;
 using RTScript.Language.Interop;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RTScript.Language.Interpreter.Evaluators
@@ -15,27 +17,50 @@ namespace RTScript.Language.Interpreter.Evaluators
             var casted = (InvocationExpression)expression;
 
             var action = ctx.Get(casted.Name);
-            var actionType = ctx.GetType(casted.Name);
 
             if (action != default)
             {
+                var actionType = ctx.GetType(casted.Name);
                 var methods = TypesCache.GetMethods(actionType).Where(p => p.Descriptor.Name == DelegateInvoke);
-                var arguments = casted.Arguments.Items;
 
                 foreach (var method in methods)
                 {
-                    var parameterTypes = method.Descriptor.Parameters;
-
-                    if (BinaryExpressionEvaluator.TryMatchMethodOverload(ctx, arguments, parameterTypes, out var values))
+                    if (TryFindMethodOverloadWithArguments(ctx, casted.Arguments.Items, method.Descriptor.Parameters, out var values))
                     {
                         return new MethodAccessExpression(action, method, values);
                     }
                 }
 
-                throw new ExecutionException($"No matching overload found for {casted.Name}'", casted);
+                throw new ExecutionException($"No matching overload found for '{casted.Name}'", casted);
             }
 
-            throw new ExecutionException($"'global' is not defined.", casted);
+            throw new ExecutionException($"Cannot invoke null delegate '{casted.Name}'.", casted);
+        }
+
+        internal static bool TryFindMethodOverloadWithArguments(IExecutionContext ctx, IReadOnlyList<Expression> arguments, IReadOnlyList<Type> parameterTypes, out object[] argumentsValues)
+        {
+            argumentsValues = new object[arguments.Count];
+
+            if (arguments.Count != parameterTypes.Count)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < parameterTypes.Count; i++)
+            {
+                var arg = Reducer.Reduce<ValueExpression>(arguments[i], ctx);
+                var paramType = parameterTypes[i];
+
+                var r = arg.Value;
+                if (!TypeHelper.TryChangeType(ref r, paramType))
+                {
+                    return false;
+                }
+
+                argumentsValues[i] = r;
+            }
+
+            return true;
         }
     }
 }

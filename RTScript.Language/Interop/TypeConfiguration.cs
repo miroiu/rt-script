@@ -9,8 +9,8 @@ namespace RTScript.Language.Interop
     {
         public TypeConfiguration(Type type)
         {
-            Properties = new List<PropertyDescriptor>();
-            Methods = new List<MethodDescriptor>();
+            Properties = new List<PropertyDescriptor>(4);
+            Methods = new List<MethodDescriptor>(8);
             Type = type;
         }
 
@@ -31,7 +31,28 @@ namespace RTScript.Language.Interop
         {
             var config = new TypeConfiguration(type);
 
-            foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            BuildProperties(type, config);
+            BuildMethods(type, config);
+
+            return config;
+        }
+
+        private static void BuildMethods(Type type, TypeConfiguration config)
+        {
+            var allMethods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
+            foreach (var method in allMethods)
+            {
+                var parameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
+                var med = new MethodDescriptor(method.Name, method.IsStatic, method.ReturnType, parameters);
+                config.Methods.Add(med);
+            }
+        }
+
+        private static void BuildProperties(Type type, TypeConfiguration config)
+        {
+            // Instance
+            var instanceProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (var property in instanceProperties)
             {
                 var indexParams = property.GetIndexParameters();
                 if (indexParams.Length > 0)
@@ -47,26 +68,20 @@ namespace RTScript.Language.Interop
                 }
             }
 
-            foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Static))
+            // Static
+            var staticProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Static);
+            foreach (var property in staticProperties)
             {
                 var prop = new PropertyDescriptor(property.Name, property.PropertyType, property.PropertyType, property.CanRead, property.CanWrite, isStatic: true, isIndexer: false);
                 config.Properties.Add(prop);
             }
 
-            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
+            // Array
+            if (type.IsArray)
             {
-                var parameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
-                var med = new MethodDescriptor(method.Name, method.IsStatic, method.ReturnType, parameters);
-                config.Methods.Add(med);
-            }
-
-            if(type.IsArray)
-            {
-                var desc = new PropertyDescriptor("Item", typeof(object), typeof(int), true, true, false, true);
+                var desc = new PropertyDescriptor(string.Empty, typeof(object), typeof(int), true, true, false, true);
                 config.Properties.Add(desc);
             }
-
-            return config;
         }
     }
 }

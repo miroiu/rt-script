@@ -2,6 +2,7 @@
 
 namespace RTScript.Language.Interop
 {
+    // this[] indexer
     public sealed class IndexerWrapper<TInstanceType, TPropertyType, TIndexType> : IPropertyWrapper
         where TInstanceType : class
     {
@@ -25,6 +26,7 @@ namespace RTScript.Language.Interop
             => _setterInvocation.Invoke((TInstanceType)instance, (TIndexType)index, (TPropertyType)value);
     }
 
+    // Array indexer
     public sealed class IndexerWrapper<TInstanceType> : IPropertyWrapper
         where TInstanceType : class
     {

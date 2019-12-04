@@ -1,7 +1,5 @@
 ﻿using RTScript.Language.Expressions;
 using RTScript.Language.Interop;
-using RTScript.Language.Interpreter.Operators;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace RTScript.Language.Interpreter.Evaluators
@@ -77,7 +75,7 @@ namespace RTScript.Language.Interpreter.Evaluators
                             {
                                 var parameterTypes = method.Descriptor.Parameters;
 
-                                if (TryMatchMethodOverload(ctx, arguments, parameterTypes, out var values))
+                                if (InvocationEvaluator.TryFindMethodOverloadWithArguments(ctx, arguments, parameterTypes, out var values))
                                 {
                                     return new MethodAccessExpression(variable.Value, method, values);
                                 }
@@ -132,31 +130,6 @@ namespace RTScript.Language.Interpreter.Evaluators
 
                     return new ValueExpression(result, result.GetType());
             }
-        }
-
-        internal static bool TryMatchMethodOverload(IExecutionContext ctx, IReadOnlyList<Expression> arguments, IReadOnlyList<System.Type> parameterTypes, out object[] argumentsValues)
-        {
-            argumentsValues = new object[arguments.Count];
-
-            if (arguments.Count != parameterTypes.Count)
-            {
-                return false;
-            }
-
-            for (var i = 0; i < parameterTypes.Count; i++)
-            {
-                var arg = Reducer.Reduce<ValueExpression>(arguments[i], ctx);
-                var paramType = parameterTypes[i];
-
-                if (!OperatorsCache.CanChangeType(arg.Type, paramType))
-                {
-                    return false;
-                }
-
-                argumentsValues[i] = OperatorsCache.ChangeType(arg.Value, paramType);
-            }
-
-            return true;
         }
     }
 }

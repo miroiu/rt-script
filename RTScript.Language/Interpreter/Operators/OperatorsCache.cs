@@ -1,7 +1,6 @@
 ﻿using RTScript.Language.Expressions;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
 
 namespace RTScript.Language.Interpreter.Operators
@@ -16,7 +15,7 @@ namespace RTScript.Language.Interpreter.Operators
 
         private static readonly Dictionary<UnaryOperatorType, Dictionary<Type, IUnaryOperator>> _unaryOperators = new Dictionary<UnaryOperatorType, Dictionary<Type, IUnaryOperator>>();
         private static readonly Dictionary<BinaryOperatorType, Dictionary<(Type Left, Type Right), IBinaryOperator>> _binaryOperators = new Dictionary<BinaryOperatorType, Dictionary<(Type, Type), IBinaryOperator>>();
-        private static readonly HashSet<Type> _loadedTypes = new HashSet<Type>();
+        private static readonly HashSet<Type> _loadedOperators = new HashSet<Type>();
 
         public static IUnaryOperator GetUnaryOperator(UnaryOperatorType operatorType, Type type)
         {
@@ -43,7 +42,7 @@ namespace RTScript.Language.Interpreter.Operators
                 {
                     foreach (var bOp in binaryOperators)
                     {
-                        if (CanChangeType(leftType, bOp.Key.Left) && CanChangeType(rightType, bOp.Key.Right))
+                        if (TypeHelper.CanChangeType(leftType, bOp.Key.Left) && TypeHelper.CanChangeType(rightType, bOp.Key.Right))
                         {
                             return bOp.Value;
                         }
@@ -52,21 +51,6 @@ namespace RTScript.Language.Interpreter.Operators
             }
 
             throw new Exception($"Binary operator {operatorType} is not defined for types {leftType.ToFriendlyName()} and {rightType.ToFriendlyName()}");
-        }
-
-        public static bool CanChangeType(Type from, Type to)
-        {
-            if(from == to)
-            {
-                return true;
-            }
-
-            if (from.IsPrimitive && to.IsPrimitive)
-            {
-                return TypeDescriptor.GetConverter(from).CanConvertTo(to);
-            }
-
-            return to.IsAssignableFrom(from);
         }
 
         public static void AddOperator(IUnaryOperator op)
@@ -100,7 +84,7 @@ namespace RTScript.Language.Interpreter.Operators
         {
             if (host.IsClass)
             {
-                if (_loadedTypes.Add(host))
+                if (_loadedOperators.Add(host))
                 {
                     var staticMethods = host.GetMethods(BindingFlags.Public | BindingFlags.Static);
 
@@ -170,16 +154,6 @@ namespace RTScript.Language.Interpreter.Operators
             }
 
             return false;
-        }
-
-        public static object ChangeType(object value, Type paramType)
-        {
-            if (paramType == typeof(string))
-            {
-                return value.ToString();
-            }
-
-            return Convert.ChangeType(value, paramType);
         }
     }
 }

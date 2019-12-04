@@ -27,12 +27,8 @@ namespace RTScript.Language.Interpreter
         {
             get
             {
-                if (_reference.TryGetTarget(out var result))
-                {
-                    return result;
-                }
-
-                return default;
+                _reference.TryGetTarget(out var result);
+                return result;
             }
         }
 
@@ -43,16 +39,18 @@ namespace RTScript.Language.Interpreter
                 throw new Exception($"'{Name}' is read-only.");
             }
 
-            if (value != null)
+            if (TypeHelper.TryChangeType(ref value, Type))
             {
-                var newType = value.GetType();
-                if (newType != Type)
-                {
-                    throw new Exception($"Cannot convert type '{newType.ToFriendlyName()}' to '{Type.ToFriendlyName()}'.");
-                }
+                _reference.SetTarget(value);
             }
-
-            _reference.SetTarget(value);
+            else if (value != null)
+            {
+                throw new Exception($"Cannot convert type '{value.GetType().ToFriendlyName()}' to '{Type.ToFriendlyName()}'.");
+            }
+            else
+            {
+                throw new Exception($"Cannot assign null to value of type '{Type.ToFriendlyName()}'.");
+            }
         }
 
         #region Equality

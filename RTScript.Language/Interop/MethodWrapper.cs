@@ -2,7 +2,7 @@
 
 namespace RTScript.Language.Interop
 {
-    // TODO: Try to create a type safe delegate from the method info (using Linq.Expressions?) like it is done for the operators
+    // TODO: Try to create a type safe delegate from the method info (maybe using Linq.Expressions?)
     public class MethodWrapper : IMethodWrapper
     {
         private readonly MethodInfo _info;

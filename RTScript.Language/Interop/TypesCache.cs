@@ -181,7 +181,7 @@ namespace RTScript.Language.Interop
                 setterInvocation = Delegate.CreateDelegate(setterType, setMethod);
             }
 
-            Type adapterType = typeof(StaticPropertyWrapper<>).MakeGenericType(descriptor.ReturnType);
+            Type adapterType = typeof(PropertyWrapper<>).MakeGenericType(descriptor.ReturnType);
 
             return (IPropertyWrapper)Activator.CreateInstance(adapterType, getterInvocation, setterInvocation, descriptor);
         }
