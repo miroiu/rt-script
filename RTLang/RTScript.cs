@@ -42,6 +42,9 @@ namespace RTLang
             }
         }
 
+        public static IExecutionContext NewContext(IOutputStream output)
+            => new ExecutionContext(output);
+
         public static void LoadOperators(Type hostType)
             => OperatorsCache.LoadOperators(hostType);
     }

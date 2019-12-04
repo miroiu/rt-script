@@ -25,7 +25,7 @@ namespace RTLang.Tests
     [TestFixture]
     public class IntegrationTests
     {
-        public Interpreter Interpreter { get; set; }
+        public Interpreter.Interpreter Interpreter { get; set; }
         public MockOutputStream Output = new MockOutputStream();
         public TestClass Test = new TestClass();
 

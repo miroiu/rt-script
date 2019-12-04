@@ -1,11 +1,10 @@
-﻿using RTLang.Interpreter;
-using RTLang.Operators;
+﻿using RTLang.Operators;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RTLang
+namespace RTLang.Interpreter
 {
     public sealed class ExecutionContext : IExecutionContext
     {

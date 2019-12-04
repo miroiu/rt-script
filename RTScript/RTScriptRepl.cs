@@ -4,13 +4,11 @@ namespace RTScript
 {
     public class RTScriptRepl
     {
-        public RTScriptConsole Console;
         private readonly IExecutionContext _context;
 
-        public RTScriptRepl(RTScriptConsole console)
+        public RTScriptRepl(IOutputStream output)
         {
-            Console = console;
-            _context = new ExecutionContext(console);
+            _context = RTLang.RTScript.NewContext(output);
 
             _context.Declare("int", 0, true);
             _context.Declare("float", 0.0f, true);
