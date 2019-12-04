@@ -4,6 +4,8 @@ namespace RTLang
 {
     public static class Extensions
     {
+        #region Strings
+
         public static string ToFriendlyName(this Type type)
         {
             if (type.Name == typeof(float).Name)
@@ -113,5 +115,13 @@ namespace RTLang
 
             throw new Exception($"{nameof(ToFriendlyName)}: should not happen.");
         }
+
+        #endregion
+
+        public static void DeclareStatic<T>(this IExecutionContext context, string name)
+            => context.Declare(name, typeof(T));
+
+        public static void DeclareStatic<T>(this IExecutionContext context)
+            => context.Declare(typeof(T).ToFriendlyName(), typeof(T));
     }
 }

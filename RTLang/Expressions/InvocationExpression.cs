@@ -2,13 +2,13 @@
 {
     public class InvocationExpression : Expression
     {
-        public InvocationExpression(string identifier, ArgumentsExpression arguments)
+        public InvocationExpression(string methodName, ArgumentsExpression arguments)
         {
-            IdentifierName = identifier;
+            MethodName = methodName;
             Arguments = arguments;
         }
 
-        public string IdentifierName { get; }
+        public string MethodName { get; }
         public ArgumentsExpression Arguments { get; }
     }
 }

@@ -4,11 +4,11 @@
     {
         public IndexerExpression(string identifierName, Expression index)
         {
-            IdentifierName = identifierName;
+            PropertyName = identifierName;
             Index = index;
         }
 
-        public string IdentifierName { get; }
+        public string PropertyName { get; }
         public Expression Index { get; }
     }
 }

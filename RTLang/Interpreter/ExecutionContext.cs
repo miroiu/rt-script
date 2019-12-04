@@ -9,6 +9,7 @@ namespace RTLang.Interpreter
     public sealed class ExecutionContext : IExecutionContext
     {
         private readonly IDictionary<string, Reference> _variables = new Dictionary<string, Reference>();
+        private readonly IDictionary<string, Type> _statics = new Dictionary<string, Type>();
         private readonly IOutputStream _out;
 
         public ExecutionContext(IOutputStream outs)
@@ -26,7 +27,7 @@ namespace RTLang.Interpreter
 
         public void Declare(string name, object value, bool isConst = false)
         {
-            if (_variables.ContainsKey(name))
+            if (_variables.ContainsKey(name) || _statics.ContainsKey(name))
             {
                 throw new Exception($"'{name}' is already defined in the current context.");
             }
@@ -34,8 +35,23 @@ namespace RTLang.Interpreter
             _variables[name] = new Reference(name, isConst, value);
         }
 
+        public void Declare(string name, Type type)
+        {
+            if (_variables.ContainsKey(name) || _statics.ContainsKey(name))
+            {
+                throw new Exception($"'{name}' is already defined in the current context.");
+            }
+
+            _statics[name] = type;
+        }
+
         public object GetValue(string name)
         {
+            if (_statics.ContainsKey(name))
+            {
+                return default;
+            }
+
             if (!_variables.TryGetValue(name, out var result))
             {
                 throw new Exception($"'{name}' does not exist in the current context.");
@@ -46,6 +62,11 @@ namespace RTLang.Interpreter
 
         public Type GetType(string name)
         {
+            if (_statics.TryGetValue(name, out var type))
+            {
+                return type;
+            }
+
             if (!_variables.TryGetValue(name, out var result))
             {
                 throw new Exception($"'{name}' does not exist in the current context.");
@@ -53,6 +74,9 @@ namespace RTLang.Interpreter
 
             return result.Type;
         }
+
+        public bool IsType(string name)
+            => _statics.ContainsKey(name);
 
         public void Print(object value)
         {

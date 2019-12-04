@@ -16,11 +16,11 @@ namespace RTLang.Interpreter.Evaluators
         {
             var casted = (InvocationExpression)expression;
 
-            var action = ctx.GetValue(casted.IdentifierName);
+            var action = ctx.GetValue(casted.MethodName);
 
             if (action != default)
             {
-                var actionType = ctx.GetType(casted.IdentifierName);
+                var actionType = ctx.GetType(casted.MethodName);
                 var methods = TypesCache.GetMethods(actionType).Where(p => p.Descriptor.Name == DelegateInvoke);
 
                 foreach (var method in methods)
@@ -31,10 +31,10 @@ namespace RTLang.Interpreter.Evaluators
                     }
                 }
 
-                throw new ExecutionException($"No matching overload found for '{casted.IdentifierName}'", casted);
+                throw new ExecutionException($"No matching overload found for '{casted.MethodName}'", casted);
             }
 
-            throw new ExecutionException($"Cannot invoke null delegate '{casted.IdentifierName}'.", casted);
+            throw new ExecutionException($"Cannot invoke null delegate '{casted.MethodName}'.", casted);
         }
 
         internal static bool TryFindMethodOverloadWithArguments(IExecutionContext ctx, IReadOnlyList<Expression> arguments, IReadOnlyList<Type> parameterTypes, out object[] argumentsValues)

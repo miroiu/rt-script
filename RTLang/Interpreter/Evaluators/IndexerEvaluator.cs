@@ -10,11 +10,11 @@ namespace RTLang.Interpreter.Evaluators
         public Expression Evaluate(Expression expression, IExecutionContext ctx)
         {
             var casted = (IndexerExpression)expression;
-            var instance = ctx.GetValue(casted.IdentifierName);
+            var instance = ctx.GetValue(casted.PropertyName);
 
             if (instance != null)
             {
-                var instanceType = ctx.GetType(casted.IdentifierName);
+                var instanceType = ctx.GetType(casted.PropertyName);
                 var indexers = TypesCache.GetProperties(instanceType).Where(p => p.Descriptor.IsIndexer);
 
                 var indexValue = Reducer.Reduce<ValueExpression>(casted.Index, ctx);
