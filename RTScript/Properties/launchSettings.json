@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "RTScript": {
+    "RTScript.Repl": {
       "commandName": "Project",
       "commandLineArgs": "-r"
     }

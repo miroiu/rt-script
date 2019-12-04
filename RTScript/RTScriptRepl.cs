@@ -1,7 +1,7 @@
-﻿using RTScript.Language;
-using RTScript.Language.Interpreter;
-using RTScript.Language.Lexer;
-using RTScript.Language.Parser;
+﻿using RTScript;
+using RTScript.Interpreter;
+using RTScript.Lexer;
+using RTScript.Parser;
 
 namespace RTScript
 {

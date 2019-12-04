@@ -1,13 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <AssemblyName>rtscript</AssemblyName>
+    <RootNamespace>RTScript</RootNamespace>
+    <StartupObject>RTScript.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RTScript.Language\RTScript.Language.csproj" />
+    <ProjectReference Include="..\RTLang\RTLang.csproj" />
   </ItemGroup>
 
 </Project>
