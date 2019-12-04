@@ -19,22 +19,21 @@ namespace RTLang.Tests
         public MockOutputStream Output { get; private set; }
         public IExecutionContext Context { get; private set; }
 
-        public TestClass Test = new TestClass();
-
         [SetUp]
         public void Setup()
         {
             Output = new MockOutputStream();
             Context = RTScript.NewContext(Output);
-            Context.Declare("test", Test);
+            Context.Declare("test", new TestClass());
+            Context.Declare("testc", typeof(TestClass));
         }
 
         [Test]
         [TestCase("print test.InstanceProp;", new string[] { "null" })]
         [TestCase("test.InstanceProp = 'Instance'; print test.InstanceProp;", new string[] { "\"Instance\"" })]
-        [TestCase("print test.StaticProp;", new string[] { "\"Static\"" })]
-        [TestCase("test.StaticProp = null; print test.StaticProp;", new string[] { "null" })]
-        [TestCase("print test.StaticMethod();", new string[] { "true" })]
+        [TestCase("print testc.StaticProp;", new string[] { "\"Static\"" })]
+        [TestCase("testc.StaticProp = null; print testc.StaticProp;", new string[] { "null" })]
+        [TestCase("print testc.StaticMethod();", new string[] { "true" })]
         [TestCase("print test.InstanceMethod(1.0);", new string[] { "-1" })]
         [TestCase("test.Ints['one'] = 1; print test.Ints['one'];", new string[] { "1" })]
         public void Interop(string input, string[] expected)
