@@ -5,6 +5,32 @@ An Interpreted scripting language which can interact with its host language.
 ## Usage from the command line
 rtscript -?
 
+Example C# code:
+```csharp
+Action<string, object> write = (str, arg) => Context.Print($"{str}{arg}");
+Context.Declare("write", write, isConst: true);
+
+Context.Declare("PI", 3.14, isConst: true);
+Context.Declare("myList", new List<int>{ 0, 1, 2, 3, 4, 5, 6, 7, 8 }, isConst: true);
+Context.Declare("myDictionary", new Dictionary<string, int>(), isConst: true);
+```
+
+Example RTScript code:
+```csharp
+write("The value of PI is: ", PI);
+
+myList.Add(9);
+print(myList);
+
+var arr = [1, 2, 3, 4];
+print arr[0];
+
+myDictionary.Add('one', 0);
+myDictionary["one"] = 1;
+ 
+print myDictionary;
+```
+
 ## Specifications:
   - somewhat type safe interpreted language
   - operators can be overloaded
