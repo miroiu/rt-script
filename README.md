@@ -33,49 +33,57 @@ print myDictionary;
 
 ## Specifications:
   - somewhat type safe interpreted language
+  - automatic type inference
   - operators can be overloaded
-  - execution is single threaded and sequential, all statements are executed in the order they are encountered
-  
-Language rules: 
   - statements are delimited by a semicolon (i.e. ";")
   - the decimal separator is dot (i.e. ".")
-  - empty statements are permitted and ignored during evaluation
-  - a statement can be written on a single or multiple lines
-  - spaces between an operator and its operands are optional
-
-Data types:
-  - number (double)
-  - string
-  - boolean
-  - array of string, boolean and number
-
+  - parentheses can be nested
+  
 Variables:
-  - variable declarations consists of the 'var' keyword followed by the variable's name or the 'const' keyword for variables that cannot be reasigned
-  - variables name consist exclusively of letters and/or underscore and numbers
-  - variables declaration and initialization must be a single statement so the data type can be infered (e.g. var a = 5;)
-  - reserved words of the language can't be used as variable names
-  - reserved words are: var, const, print, true, false, null
+```csharp
+// Declaration and initialization
+var myVar = 1;
+const PI = 3.14;
+
+// Initialization
+myVar = 2;
+PI = 1; // prints error
+```
+
+Built-in data types:
+```csharp
+integer: 1
+double: 1.0
+string: 's' | "s" | "'q'" | '"q"'
+boolean: true | false
+array of any type: [value, value, value] // where all values have to be the same type
+```
 
 Binary operators:
-  - \+ -> addition
-  - \- -> subtraction
-  - / -> division
-  - \* -> multiplication
-  - == -> equals
-  - != -> not equals
-  - &lt; -> less than
-  - &gt; -> greater than
-  
+```
+add: +
+subtract: -
+divide: /
+multiply: *
+equals: ==
+not equals: !=
+less than: <
+greater than: > 
+```
+
 Unary operators:
-  - \- -> minus
-  - ! -> logical negation
+```
+minus: -
+logical negation: !
+```
 
 Commands:
-  - print (prints to the output stream, e.g. print 2 + 3)
-  - user defined commands
-
-Operations grouping:
-  - parentheses with unlimited nesting depth
+```csharp
+print // prints to the output stream
+user defined commands:
+// C#: Action myCmd = () => Console.WriteLine("C#");
+// RTScript: myCmd();
+```
 
 Errors:
   - syntax errors and evaluation errors are printed to the console with their respective line and column numbers
