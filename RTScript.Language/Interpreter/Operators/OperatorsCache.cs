@@ -56,6 +56,11 @@ namespace RTScript.Language.Interpreter.Operators
 
         public static bool CanChangeType(Type from, Type to)
         {
+            if(from == to)
+            {
+                return true;
+            }
+
             if (from.IsPrimitive && to.IsPrimitive)
             {
                 return TypeDescriptor.GetConverter(from).CanConvertTo(to);
