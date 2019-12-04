@@ -14,6 +14,7 @@ namespace RTLang.Interpreter.Evaluators
             var firstArg = args[0];
             var firstValue = Reducer.Reduce<ValueExpression>(firstArg, ctx);
 
+            // This means it's not a null literal
             if (firstValue.Type != default)
             {
                 var elementType = firstValue.Type;
@@ -22,31 +23,23 @@ namespace RTLang.Interpreter.Evaluators
                 for (int i = 0; i < args.Count; i++)
                 {
                     var arg = args[i];
+                    var valueExpr = Reducer.Reduce<ValueExpression>(arg, ctx);
+                    var value = valueExpr.Value;
 
-                    var value = Reducer.Reduce<ValueExpression>(arg, ctx);
-
-                    var valueType = value.Type;
-                    if (!elementType.IsAssignableFrom(valueType))
+                    if (TypeHelper.TryChangeType(ref value, elementType))
                     {
-                        if (elementType == typeof(char) && valueType == typeof(string) && char.TryParse(value.Value.ToString(), out char c))
-                        {
-                            array.SetValue(c, i);
-                        }
-                        else
-                        {
-                            throw new Exception($"Could not convert type {valueType.ToFriendlyName()} to {elementType.ToFriendlyName()}");
-                        }
+                        array.SetValue(value, i);
                     }
                     else
                     {
-                        array.SetValue(value.Value, i);
+                        throw new ExecutionException($"All array values must be of the same type: '{elementType.ToFriendlyName()}'.", arg);
                     }
                 }
 
                 return new ValueExpression(array, array.GetType());
             }
 
-            throw new ExecutionException($"First value of an array cannot be null.", expression);
+            throw new ExecutionException($"Could not infer element type because the first element was null.", expression);
         }
     }
 }

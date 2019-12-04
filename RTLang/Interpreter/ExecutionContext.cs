@@ -83,7 +83,7 @@ namespace RTLang.Interpreter
         private string ToFriendlyString(object value)
         {
             var result = value?.ToString() ?? "null";
-            return result == "True" ? "true" : result == "False" ? "false" : result;
+            return result == "True" ? "true" : result == "False" ? "false" : $"\"{result}\"";
         }
 
         public object Evaluate(LiteralType type, string value)
