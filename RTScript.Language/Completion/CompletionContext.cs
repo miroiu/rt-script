@@ -16,14 +16,14 @@ namespace RTScript.Language.Completion
 
         public IEnumerable<string> GetSymbolCompletion(string name)
         {
-            var symbols = _context.GetSymbols();
+            var symbols = _context.GetVariablesNames();
 
             return symbols.Where(s => s.StartsWith(name));
         }
 
         public Type GetSymbolType(string name)
         {
-            var symbols = _context.GetSymbols();
+            var symbols = _context.GetVariablesNames();
 
             var symbol = symbols.FirstOrDefault(s => s == name);
 

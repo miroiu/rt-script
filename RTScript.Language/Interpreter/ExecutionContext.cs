@@ -133,12 +133,16 @@ namespace RTScript.Language.Interpreter
             var leftType = left.GetType();
             var rightType = right.GetType();
 
+            if (operatorType == BinaryOperatorType.Plus && (leftType == typeof(string) || rightType == typeof(string)))
+            {
+                return $"{left}{right}";
+            }
+
             var op = OperatorsCache.GetBinaryOperator(operatorType, leftType, rightType);
-            return op.Execute(left, right);
+            return op.Execute(Convert.ChangeType(left, op.LeftType), Convert.ChangeType(right, op.RightType));
         }
 
-        // TODO: Should return keywords + variable names/types
-        public IReadOnlyList<string> GetSymbols()
+        public IReadOnlyList<string> GetVariablesNames()
             => _variables.Keys.ToList();
     }
 }

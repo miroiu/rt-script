@@ -12,7 +12,7 @@ namespace RTScript.Language.Interpreter
         Type GetType(string name);
         void Print(object value);
         object Evaluate(LiteralType type, string value);
-        IReadOnlyList<string> GetSymbols();
+        IReadOnlyList<string> GetVariablesNames();
         object Evaluate(UnaryOperatorType operatorType, object value);
         object Evaluate(object left, BinaryOperatorType operatorType, object right);
     }

@@ -1,6 +1,7 @@
 ﻿using RTScript.Language.Expressions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace RTScript.Language.Interpreter.Operators
@@ -10,12 +11,11 @@ namespace RTScript.Language.Interpreter.Operators
         static OperatorsCache()
         {
             LoadOperators(typeof(NumberOperators));
-            LoadOperators(typeof(StringOperators));
             LoadOperators(typeof(BooleanOperators));
         }
 
         private static readonly Dictionary<UnaryOperatorType, Dictionary<Type, IUnaryOperator>> _unaryOperators = new Dictionary<UnaryOperatorType, Dictionary<Type, IUnaryOperator>>();
-        private static readonly Dictionary<BinaryOperatorType, Dictionary<(Type, Type), IBinaryOperator>> _binaryOperators = new Dictionary<BinaryOperatorType, Dictionary<(Type, Type), IBinaryOperator>>();
+        private static readonly Dictionary<BinaryOperatorType, Dictionary<(Type Left, Type Right), IBinaryOperator>> _binaryOperators = new Dictionary<BinaryOperatorType, Dictionary<(Type, Type), IBinaryOperator>>();
         private static readonly HashSet<Type> _loadedTypes = new HashSet<Type>();
 
         public static IUnaryOperator GetUnaryOperator(UnaryOperatorType operatorType, Type type)
@@ -39,9 +39,29 @@ namespace RTScript.Language.Interpreter.Operators
                 {
                     return op;
                 }
+                else
+                {
+                    foreach (var bOp in binaryOperators)
+                    {
+                        if (CanConvertType(leftType, bOp.Key.Left) && CanConvertType(rightType, bOp.Key.Right))
+                        {
+                            return bOp.Value;
+                        }
+                    }
+                }
             }
 
             throw new Exception($"Binary operator {operatorType} is not defined for types {leftType.ToFriendlyName()} and {rightType.ToFriendlyName()}");
+        }
+
+        private static bool CanConvertType(Type from, Type to)
+        {
+            if (from.IsPrimitive)
+            {
+                return TypeDescriptor.GetConverter(from).CanConvertTo(to);
+            }
+
+            return to.IsAssignableFrom(from);
         }
 
         public static void AddOperator(IUnaryOperator op)
