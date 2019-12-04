@@ -13,6 +13,7 @@ Context.Declare("write", write, isConst: true);
 Context.Declare("PI", 3.14, isConst: true);
 Context.Declare("myList", new List<int>{ 0, 1, 2, 3, 4, 5, 6, 7, 8 }, isConst: true);
 Context.Declare("myDictionary", new Dictionary<string, int>(), isConst: true);
+Context.Declare("int", typeof(int));
 ```
 
 Example RTScript code:
@@ -29,6 +30,8 @@ myDictionary.Add('one', 0);
 myDictionary["one"] = 1;
  
 print myDictionary;
+
+print int.Parse("123");
 ```
 
 ## Specifications:
