@@ -4,20 +4,17 @@ namespace RTLang.Interpreter
 {
     public sealed class Interpreter
     {
-        public IExecutionContext Context { get; }
+        private readonly IExpressionProvider _expressionProvider;
 
-        public Interpreter(IOutputStream output)
-            => Context = new ExecutionContext(output);
+        public Interpreter(IExpressionProvider expressionProvider)
+            => _expressionProvider = expressionProvider;
 
-        public Interpreter(IExecutionContext context)
-            => Context = context;
-
-        public void Run(IExpressionProvider provider)
+        public void Run(IExecutionContext context)
         {
-            while (provider.HasNext)
+            while (_expressionProvider.HasNext)
             {
-                var expr = provider.Next();
-                Reducer.Reduce(expr, Context);
+                var expr = _expressionProvider.Next();
+                Reducer.Reduce(expr, context);
             }
         }
     }

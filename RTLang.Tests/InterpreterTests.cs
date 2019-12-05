@@ -9,12 +9,12 @@ namespace RTLang.Tests
     {
         public static string[] Run(string input, IExecutionContext context, MockOutputStream output)
         {
-            var interpreter = new Interpreter.Interpreter(context);
             var source = new Lexer.SourceText(input);
             var lexer = new Lexer.Lexer(source);
             var parser = new Parser.Parser(lexer);
+            var interpreter = new Interpreter.Interpreter(parser);
 
-            interpreter.Run(parser);
+            interpreter.Run(context);
 
             return output.Output.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
         }

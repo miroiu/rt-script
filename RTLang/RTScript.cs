@@ -6,19 +6,26 @@ using System;
 
 namespace RTLang
 {
-    public static class RTScript
+    public class RTScript
     {
+        public IExecutionContext Context { get; }
+
+        public RTScript(IExecutionContext context)
+            => Context = context;
+
+        public void Execute(string code)
+            => Execute(code, Context);
+
         public static void Execute(string code, IExecutionContext context)
         {
             try
             {
-                var interpreter = new Interpreter.Interpreter(context);
-
                 var source = new SourceText(code);
                 var lexer = new Lexer.Lexer(source);
                 var parser = new Parser.Parser(lexer);
+                var interpreter = new Interpreter.Interpreter(parser);
 
-                interpreter.Run(parser);
+                interpreter.Run(context);
             }
             catch (LexerException lexEx)
             {
