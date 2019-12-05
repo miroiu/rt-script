@@ -64,8 +64,8 @@ namespace RTLang.Interpreter
                     throw new ExecutionException($"Expected identifier.", casted.Left);
 
                 default:
-                    var rightExpr = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
                     var leftExpr = Reducer.Reduce<ValueExpression>(casted.Left, ctx);
+                    var rightExpr = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
                     var result = ctx.Evaluate(casted.OperatorType, leftExpr.Value, rightExpr.Value);
 
                     return new ValueExpression(result, result?.GetType());

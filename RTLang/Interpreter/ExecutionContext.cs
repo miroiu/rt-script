@@ -112,11 +112,6 @@ namespace RTLang.Interpreter
                 return "null";
             }
 
-            if (value is string str)
-            {
-                return $"\"{str}\"";
-            }
-
             if (value is bool b)
             {
                 return b ? "true" : "false";
@@ -159,8 +154,9 @@ namespace RTLang.Interpreter
             if (value != null)
             {
                 var type = value.GetType();
+
                 var op = OperatorsCache.GetUnaryOperator(operatorType, type);
-                if (op != null)
+                if (op != null && TypeHelper.TryChangeType(ref value, op.ParameterType))
                 {
                     return op.Execute(value);
                 }
@@ -175,7 +171,6 @@ namespace RTLang.Interpreter
         {
             if (left != null && right != null)
             {
-                // Can throw null reference exception
                 var leftType = left.GetType();
                 var rightType = right.GetType();
 

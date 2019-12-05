@@ -24,6 +24,16 @@ namespace RTLang.Operators
                 {
                     return op;
                 }
+                else
+                {
+                    foreach (var uOp in unaryOperators)
+                    {
+                        if (TypeHelper.CanChangeType(type, uOp.Key))
+                        {
+                            return uOp.Value;
+                        }
+                    }
+                }
             }
 
             return default;
