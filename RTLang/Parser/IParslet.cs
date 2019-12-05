@@ -1,6 +1,4 @@
-﻿using RTLang.Expressions;
-
-namespace RTLang.Parser
+﻿namespace RTLang.Parser
 {
     public interface IParslet
     {

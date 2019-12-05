@@ -25,6 +25,14 @@ namespace RTLang.Tests
 
             return tokens.ToArray();
         }
+
+        public static T[] RemoveLast<T>(this IEnumerable<T> collection)
+        {
+            var arr = collection.ToArray();
+            var result = new T[arr.Length - 1];
+            Array.Copy(arr, 0, result, 0, arr.Length - 1);
+            return result;
+        }
     }
 
     public class LexerTests
@@ -107,6 +115,16 @@ namespace RTLang.Tests
         public void Exceptions(string input, Type exceptionType)
         {
             Assert.Throws(exceptionType, () => LexerApp.Run(input));
+        }
+
+        // Whitespaces
+        [TestCase(" 1 ", "1", 0, 1)]
+        [TestCase("1", "1", 0, 0)]
+        [TestCase("\r\n1", "1", 1, 0)]
+        [TestCase("\r\n\t1", "1", 1, 1)]
+        public void TokenTypes(string input, string text, int line, int column)
+        {
+            Assert.AreEqual(new[] { (text, line, column) }, LexerApp.Run(input).Select(t => (t.Text, t.Line, t.Column)).RemoveLast());
         }
     }
 }

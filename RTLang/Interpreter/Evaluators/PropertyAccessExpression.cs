@@ -1,7 +1,7 @@
-﻿using RTLang.Expressions;
+﻿using RTLang.Parser;
 using RTLang.Interop;
 
-namespace RTLang.Interpreter.Evaluators
+namespace RTLang.Interpreter
 {
     // Used only by the evaluators.
     public class PropertyAccessExpression : Expression

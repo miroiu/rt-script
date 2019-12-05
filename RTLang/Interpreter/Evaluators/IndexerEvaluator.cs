@@ -1,8 +1,8 @@
-﻿using RTLang.Expressions;
+﻿using RTLang.Parser;
 using RTLang.Interop;
 using System.Linq;
 
-namespace RTLang.Interpreter.Evaluators
+namespace RTLang.Interpreter
 {
     [ExpressionEvaluator(typeof(IndexerExpression))]
     public class IndexerEvaluator : IExpressionEvaluator

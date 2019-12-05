@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RTLang.Interpreter.Evaluators
+namespace RTLang.Interpreter
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class ExpressionEvaluatorAttribute : Attribute

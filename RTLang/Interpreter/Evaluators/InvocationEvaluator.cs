@@ -1,10 +1,10 @@
-﻿using RTLang.Expressions;
+﻿using RTLang.Parser;
 using RTLang.Interop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RTLang.Interpreter.Evaluators
+namespace RTLang.Interpreter
 {
     // Not part of a member access expression so it should be treated as global command
     [ExpressionEvaluator(typeof(InvocationExpression))]

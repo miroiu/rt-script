@@ -1,6 +1,6 @@
 ﻿using RTLang.Lexer;
 
-namespace RTLang.Expressions
+namespace RTLang.Parser
 {
     public abstract class Expression
     {

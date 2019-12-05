@@ -19,12 +19,14 @@ namespace RTLang.Tests
         public MockOutputStream Output { get; private set; }
         public IExecutionContext Context { get; private set; }
 
+        private readonly TestClass _test = new TestClass();
+
         [SetUp]
         public void Setup()
         {
             Output = new MockOutputStream();
             Context = RTScript.NewContext(Output);
-            Context.Declare("test", new TestClass());
+            Context.Declare("test", _test);
             Context.Declare("testc", typeof(TestClass));
         }
 

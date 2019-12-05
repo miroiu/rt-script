@@ -1,7 +1,7 @@
-﻿using RTLang.Expressions;
+﻿using RTLang.Parser;
 using System;
 
-namespace RTLang.Interpreter.Evaluators
+namespace RTLang.Interpreter
 {
     // Used only by the evaluators.
     // Leaf node in the expression tree

@@ -1,6 +1,6 @@
-﻿using RTLang.Expressions;
+﻿using RTLang.Parser;
 
-namespace RTLang.Interpreter.Evaluators
+namespace RTLang.Interpreter
 {
     [ExpressionEvaluator(typeof(VariableDeclarationExpression))]
     public class VariableDeclarationEvaluator : IExpressionEvaluator

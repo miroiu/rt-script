@@ -1,8 +1,8 @@
-﻿using RTLang.Expressions;
+﻿using RTLang.Parser;
 using RTLang.Interop;
 using System.Collections.Generic;
 
-namespace RTLang.Interpreter.Evaluators
+namespace RTLang.Interpreter
 {
     // Used only be the evaluators
     public class MethodAccessExpression : Expression

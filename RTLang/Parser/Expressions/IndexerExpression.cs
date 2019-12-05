@@ -1,4 +1,4 @@
-﻿namespace RTLang.Expressions
+﻿namespace RTLang.Parser
 {
     public class IndexerExpression : Expression
     {
