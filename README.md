@@ -13,7 +13,7 @@ Context.Declare("write", write, isConst: true);
 Context.Declare("PI", 3.14, isConst: true);
 Context.Declare("myList", new List<int>{ 0, 1, 2, 3, 4, 5, 6, 7, 8 }, isConst: true);
 Context.Declare("myDictionary", new Dictionary<string, int>(), isConst: true);
-Context.Declare("int", typeof(int));
+Context.Declare("int", typeof(int)); // Declare static type
 ```
 
 Example RTScript code:
@@ -21,7 +21,7 @@ Example RTScript code:
 write("The value of PI is: ", PI);
 
 myList.Add(9);
-print(myList);
+print myList;
 
 var arr = [1, 2, 3, 4];
 print arr[0];
