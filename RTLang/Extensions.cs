@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace RTLang
 {
@@ -58,7 +59,12 @@ namespace RTLang
                 return $"{type.GetElementType().ToFriendlyName()}[]";
             }
 
-            return type.FullName;
+            if (type.IsGenericType)
+            {
+                return type.Name.Split('`')[0] + "<" + string.Join(", ", type.GetGenericArguments().Select(x => x.ToFriendlyName()).ToArray()) + ">";
+            }
+
+            return type.Name;
         }
 
         public static string ToFriendlyName(this BinaryOperatorType type)

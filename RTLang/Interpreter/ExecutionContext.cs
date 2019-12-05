@@ -79,7 +79,41 @@ namespace RTLang.Interpreter
             => _statics.ContainsKey(name);
 
         public void Print(object value)
+            => _out.WriteLine(ToFriendlyString(value));
+
+        private string ToFriendlyString(object value)
         {
+            if (value == null)
+            {
+                return "null";
+            }
+
+            if (value is bool b)
+            {
+                return b ? "true" : "false";
+            }
+
+            if(value is IDictionary dictionary)
+            {
+                StringBuilder builder = new StringBuilder(12);
+                builder.Append("{");
+
+                foreach(var key in dictionary.Keys)
+                {
+                    var keyValue = dictionary[key];
+                    builder.Append($"[{ToFriendlyString(key)}] = {ToFriendlyString(keyValue)}, ");
+                }
+
+                if (dictionary.Count > 0)
+                {
+                    builder.Length -= 2;
+                }
+
+                builder.Append("}");
+
+                return builder.ToString();
+            }
+
             if (value is ICollection collection)
             {
                 StringBuilder builder = new StringBuilder(12);
@@ -97,24 +131,7 @@ namespace RTLang.Interpreter
                 }
 
                 builder.Append("]");
-                _out.WriteLine(builder.ToString());
-            }
-            else
-            {
-                _out.WriteLine(ToFriendlyString(value));
-            }
-        }
-
-        private string ToFriendlyString(object value)
-        {
-            if (value == null)
-            {
-                return "null";
-            }
-
-            if (value is bool b)
-            {
-                return b ? "true" : "false";
+                return builder.ToString();
             }
 
             return value.ToString();

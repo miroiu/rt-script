@@ -26,15 +26,16 @@ namespace RTLang.Interpreter
                     {
                         var rightEx = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
                         var wrapper = property.Property;
+                        var returnType = wrapper.Descriptor.ReturnType;
                         var castedValue = rightEx.Value;
 
-                        if (TypeHelper.TryChangeType(ref castedValue, wrapper.Descriptor.ReturnType))
+                        if (TypeHelper.TryChangeType(ref castedValue, returnType))
                         {
                             wrapper.SetValue(property.Instance, castedValue, property.Index);
                             return property;
                         }
 
-                        throw new ExecutionException($"Cannot convert type '{castedValue.GetType().ToFriendlyName()}' to '{wrapper.Descriptor.ParameterType.ToFriendlyName()}'.", rightEx);
+                        throw new ExecutionException($"Cannot convert type '{rightEx.Type.ToFriendlyName()}' to '{returnType.ToFriendlyName()}'.", rightEx);
                     }
 
                     throw new ExecutionException($"Expected identifier.", casted.Left);
