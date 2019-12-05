@@ -29,7 +29,7 @@ namespace RTLang.Interpreter
                         }
                     }
 
-                    throw new ExecutionException($"Object of type '{instanceType.ToFriendlyName()}' does not have an index taking a '{indexValue.Type.ToFriendlyName()}' parameter.", casted);
+                    throw new ExecutionException($"'{instanceType.ToFriendlyName()}' does not have an index taking a '{indexValue.Type.ToFriendlyName()}' parameter.", casted);
                 }
 
                 throw new ExecutionException($"Index is null.", casted.Index);

@@ -58,7 +58,7 @@ namespace RTLang
                 return $"{type.GetElementType().ToFriendlyName()}[]";
             }
 
-            return type.Name;
+            return type.FullName;
         }
 
         public static string ToFriendlyName(this BinaryOperatorType type)

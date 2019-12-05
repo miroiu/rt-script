@@ -21,12 +21,20 @@ namespace RTLang.Interpreter
                         return rightEx;
                     }
 
-                    var leftProp = Reducer.Reduce<PropertyAccessExpression>(casted.Left, ctx, false);
-                    if (leftProp != null)
+                    var property = Reducer.Reduce<PropertyAccessExpression>(casted.Left, ctx, false);
+                    if (property != null)
                     {
                         var rightEx = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
-                        leftProp.Property.SetValue(leftProp.Instance, rightEx.Value, leftProp.Index);
-                        return leftProp;
+                        var wrapper = property.Property;
+                        var castedValue = rightEx.Value;
+
+                        if (TypeHelper.TryChangeType(ref castedValue, wrapper.Descriptor.ReturnType))
+                        {
+                            wrapper.SetValue(property.Instance, castedValue, property.Index);
+                            return property;
+                        }
+
+                        throw new ExecutionException($"Cannot convert type '{castedValue.GetType().ToFriendlyName()}' to '{wrapper.Descriptor.ParameterType.ToFriendlyName()}'.", rightEx);
                     }
 
                     throw new ExecutionException($"Expected identifier.", casted.Left);
@@ -48,8 +56,9 @@ namespace RTLang.Interpreter
 
                     if (casted.Right is IndexerExpression indexer)
                     {
+                        bool isStatic = casted.Left is IdentifierExpression id && ctx.IsType(id.Name);
                         var instance = Reducer.Reduce<ValueExpression>(casted.Left, ctx);
-                        return CreatePropertyIndexerAccessor(ctx, indexer, instance);
+                        return CreatePropertyIndexerAccessor(ctx, indexer, instance, isStatic);
                     }
 
                     throw new ExecutionException($"Expected identifier.", casted.Left);
@@ -65,13 +74,13 @@ namespace RTLang.Interpreter
 
         #region Accessors
 
-        private static Expression CreatePropertyIndexerAccessor(IExecutionContext ctx, IndexerExpression indexer, ValueExpression instance)
+        private static Expression CreatePropertyIndexerAccessor(IExecutionContext ctx, IndexerExpression indexer, ValueExpression instance, bool isStatic)
         {
             // This means the value is not a null literal
             if (instance.Type != null)
             {
                 // Should be a single indexable property
-                var prop = TypesCache.GetProperties(instance.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == indexer.PropertyName);
+                var prop = TypesCache.GetProperties(instance.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == indexer.PropertyName && p.Descriptor.IsStatic == isStatic);
 
                 if (prop != null)
                 {
@@ -85,9 +94,11 @@ namespace RTLang.Interpreter
                             return new PropertyAccessExpression(wrapper, prop.GetValue(instance.Value), index.Value);
                         }
                     }
+
+                    throw new ExecutionException($"'{instance.Type.ToFriendlyName()}' does not have an indexable property named '{prop.Descriptor.Name}'.", indexer);
                 }
 
-                throw new ExecutionException($"Object of type '{instance.Type.ToFriendlyName()}' is not indexable.", indexer);
+                throw new ExecutionException($"'{instance.Type.ToFriendlyName()}' does not have a {(isStatic ? "static " : string.Empty)}property named '{indexer.PropertyName}'.", indexer);
             }
 
             throw new ExecutionException($"Cannot index a null value.", instance);
@@ -108,7 +119,7 @@ namespace RTLang.Interpreter
                     }
                 }
 
-                throw new ExecutionException($"No matching overload found for {(isStatic ? "static" : string.Empty)} method '{instance.Type.ToFriendlyName()}.{method.MethodName}'", method);
+                throw new ExecutionException($"No matching overload found for {(isStatic ? "static " : string.Empty)}method '{instance.Type.ToFriendlyName()}.{method.MethodName}'", method);
             }
 
             throw new ExecutionException($"Cannot read method '{method.MethodName}' of null.", instance);
@@ -127,7 +138,7 @@ namespace RTLang.Interpreter
                     return new PropertyAccessExpression(prop, instance.Value);
                 }
 
-                throw new ExecutionException($"Object of type '{instance.Type.ToFriendlyName()}' does not have a {(isStatic ? "static" : string.Empty)} property named '{property.Name}'.", property);
+                throw new ExecutionException($"'{instance.Type.ToFriendlyName()}' does not have a {(isStatic ? "static " : string.Empty)}property named '{property.Name}'.", property);
             }
 
             throw new ExecutionException($"Cannot read property '{property.Name}' of null.", instance);
