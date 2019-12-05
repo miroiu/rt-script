@@ -2,7 +2,7 @@
   "profiles": {
     "RTScript": {
       "commandName": "Project",
-      "commandLineArgs": "-r"
+      "commandLineArgs": "-r --add rtstdlib.dll"
     }
   }
 }

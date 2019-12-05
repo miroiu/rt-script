@@ -1,13 +1,20 @@
 ﻿namespace RTScript
 {
-    [ConsoleCommand("-r", "-repl", Description = "read-eval-print-loop")]
-    public class ReplCommand : IConsoleCommand
+    [CommandOption("--add", Arguments = "<file>.dll", Description = "Loads one or multiple plugin files.")]
+    [ConsoleCommand("-r", Description = "starts in repl mode")]
+    public sealed class ReplCommand : IConsoleCommand
     {
         private RTScriptRepl _repl;
 
         public void Execute(RTScriptConsole console)
         {
             _repl = new RTScriptRepl(console);
+
+            var plugins = console.GetOptions("--add");
+            foreach (var plugin in plugins)
+            {
+                _repl.AddReference(plugin);
+            }
 
             while (true)
             {

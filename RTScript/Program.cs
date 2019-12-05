@@ -11,7 +11,7 @@ namespace RTScript
             // TODO: Load assembly?
             if (args.Length != 0)
             {
-                var console = new RTScriptConsole(args.Skip(1).ToArray());
+                var console = new RTScriptConsole(args);
                 console.RunCommand(args[0]);
             }
             else

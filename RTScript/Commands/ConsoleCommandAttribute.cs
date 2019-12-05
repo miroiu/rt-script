@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace RTScript
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed class ConsoleCommandAttribute : Attribute
     {
-        public ConsoleCommandAttribute(params string[] name)
-        {
-            Aliases = name;
-        }
+        public ConsoleCommandAttribute(string name)
+            => Name = name;
 
-        public IReadOnlyCollection<string> Aliases { get; }
+        public string Name { get; }
         public string Description { get; set; }
     }
 }

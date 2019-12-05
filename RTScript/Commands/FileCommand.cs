@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace RTScript
 {
-    [ConsoleCommand("-f", "-file", Description = "execute .rt file")]
-    public class FileCommand : IConsoleCommand
+    [CommandOption("--add", Arguments = "<file>.dll", Description = "Loads one or multiple plugin files.")]
+    [ConsoleCommand("-f", Description = "execute .rt files")]
+    public sealed class FileCommand : IConsoleCommand
     {
         private RTScriptRepl _repl;
         private const string _extension = ".rt";
@@ -12,17 +14,49 @@ namespace RTScript
         {
             _repl = new RTScriptRepl(console);
 
-            var arguments = console.GetArguments();
-            var path = Path.Combine(Directory.GetCurrentDirectory(), arguments[0]);
+            var files = console.GetOptions("-f");
+            var plugins = console.GetOptions("--add");
 
-            if (Path.GetExtension(arguments[0]) == _extension && File.Exists(path))
+            foreach (var plugin in plugins)
             {
-                var source = File.ReadAllText(path);
-                _repl.Evaluate(source);
+                _repl.AddReference(plugin);
             }
-            else
+
+            var sources = new List<string>();
+            var missingFiles = new List<string>();
+
+            foreach (var file in files)
             {
-                console.WriteLine($"File {arguments[0]} not found.");
+                if (Path.GetExtension(file) == _extension && File.Exists(file))
+                {
+                    var source = File.ReadAllText(file);
+                    sources.Add(source);
+                }
+                else
+                {
+                    missingFiles.Add(file);
+                }
+            }
+
+            if (missingFiles.Count > 0)
+            {
+                console.WriteLine($"Could not load: {string.Join(", ", missingFiles)}");
+
+                if (missingFiles.Count != files.Length)
+                {
+                    console.WriteLine($"Do you want to continue? (y/n)");
+                    var answer = console.ReadLine().ToLower();
+
+                    if (answer == "n" || answer == "no")
+                    {
+                        return;
+                    }
+                }
+            }
+
+            foreach (var source in sources)
+            {
+                _repl.Evaluate(source);
             }
         }
     }
