@@ -9,7 +9,7 @@ on:
 jobs:
   release:
     name: 'Release'
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v1
@@ -17,10 +17,13 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '3.0.100'
-    - name: Publish 
+    - name: Publish DotNet App
       run: dotnet publish -c Release -r win-x64 -f netcoreapp3.0 /p:DebugType=None -o publish rtscript --self-contained false     
-    - name: Zip files
-      run: zip -r rtscript.zip ./publish/* 
+    - name: Zip Files
+      uses: TheDoctor0/zip-release@v0.2.0
+      with:
+        filename: rtscript.zip
+        path: ./publish/*
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
