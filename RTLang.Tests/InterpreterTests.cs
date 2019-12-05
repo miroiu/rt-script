@@ -30,10 +30,38 @@ namespace RTLang.Tests
         {
             Output = new MockOutputStream();
             Context = RTScript.NewContext(Output);
+
+            Action action = () => { };
+            Context.Declare("action", action);
         }
 
         [Test]
+        // Context
         [TestCase("print a;", typeof(ExecutionException))]
+        [TestCase("print true + 1;", typeof(ExecutionException))]
+        [TestCase("print -true;", typeof(ExecutionException))]
+        // Variables
+        [TestCase("var a = null;", typeof(ExecutionException))]
+        [TestCase("const a = 2; a = 1;", typeof(ExecutionException))]
+        [TestCase("const a = 2; a = 1;", typeof(ExecutionException))]
+        [TestCase("var a = 2; a = 'asd';", typeof(ExecutionException))]
+        [TestCase("var a = 1; var a = 2;", typeof(ExecutionException))]
+        // Array
+        [TestCase("const a = [null, 2];", typeof(ExecutionException))]
+        [TestCase("const a = [2, '3'];", typeof(ExecutionException))]
+        // Accessor
+        [TestCase("var a = 'str'; a = null; print a.ToString();", typeof(ExecutionException))]
+        [TestCase("var a = 'str'; a = null; print a.Length;", typeof(ExecutionException))]
+        [TestCase("var a = 'str'; a = null; print a.Length[0];", typeof(ExecutionException))]
+        [TestCase("var a = 'str'; print a.ToString(1);", typeof(ExecutionException))]
+        [TestCase("var a = 'str'; print a.NonExisting;", typeof(ExecutionException))]
+        // Invocation
+        [TestCase("action(1);", typeof(ExecutionException))]
+        [TestCase("action = null; action();", typeof(ExecutionException))]
+        // Indexer
+        [TestCase("var a = 'str'; print a['asd'];", typeof(ExecutionException))]
+        [TestCase("var a = 'str'; print a[null];", typeof(ExecutionException))]
+        [TestCase("var a = 'str'; a = null; print a[null];", typeof(ExecutionException))]
         public void Exceptions(string input, Type exType)
         {
             Assert.Throws(exType, () => InterpreterApp.Run(input, Context, Output));

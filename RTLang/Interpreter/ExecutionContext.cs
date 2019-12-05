@@ -143,7 +143,7 @@ namespace RTLang.Interpreter
                         return dResult;
                     }
 
-                    throw new Exception($"{value} is not a number. (should not happen)");
+                    throw new Exception($"'{value}' is not a number. (should not happen)");
 
                 case LiteralType.String:
                     return value;
