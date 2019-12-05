@@ -13,6 +13,8 @@
         Semicolon,
         OpenParen,
         CloseParen,
+        OpenBrace,
+        CloseBrace,
 
         // Keywords
         Var,
@@ -30,8 +32,6 @@
         Equals,
         Exclamation,
         Dot,
-        OpenBrace,
-        CloseBrace,
         LessThan,
         GreaterThan,
         ExclamationEquals,
