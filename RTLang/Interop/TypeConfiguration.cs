@@ -45,11 +45,15 @@ namespace RTLang.Interop
         private static void BuildMethods(Type type, TypeConfiguration config)
         {
             var allMethods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-            foreach (var method in allMethods)
+            for (int i = 0; i < allMethods.Length; i++)
             {
-                var parameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
-                var med = new MethodDescriptor(method.Name, method.IsStatic, method.ReturnType, parameters);
-                config.Methods.Add(med);
+                var method = allMethods[i];
+                if (!method.ContainsGenericParameters)
+                {
+                    var parameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
+                    var med = new MethodDescriptor(method.Name, method.IsStatic, method.ReturnType, parameters);
+                    config.Methods.Add(med);
+                }
             }
         }
 
