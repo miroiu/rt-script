@@ -100,7 +100,7 @@ namespace RTLang.Parser
 
             while (!IsEndOfStatement() && Current.Type != closingToken)
             {
-                var arg = ParsePrimaryExpression();
+                var arg = ParseExpression();
 
                 if (Current.Type != closingToken)
                 {

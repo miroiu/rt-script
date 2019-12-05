@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using RTLang.Parser;
 using RTLang.Lexer;
-using RTLang.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;

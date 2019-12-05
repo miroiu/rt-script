@@ -23,7 +23,7 @@ namespace RTLang.Parser
             else if (parser.Current.Type == TokenType.OpenBrace)
             {
                 parser.Take();
-                var arg = parser.ParsePrimaryExpression();
+                var arg = parser.ParseExpression();
                 parser.Match(TokenType.CloseBrace);
 
                 return new IndexerExpression(identToken.Text, arg)
