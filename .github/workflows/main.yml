@@ -20,10 +20,7 @@ jobs:
     - name: Publish DotNet App
       run: dotnet publish -c Release -r win-x64 -f netcoreapp3.0 /p:DebugType=None -o publish rtscript --self-contained false     
     - name: Zip Files
-      uses: TheDoctor0/zip-release@v0.2.0
-      with:
-        filename: rtscript.zip
-        path: ./publish/*
+      run: 7za -r rtscript.zip ./publish/*
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
