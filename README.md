@@ -1,11 +1,30 @@
 ![alt text](https://github.com/miroiu/rt-script/blob/master/RTScript/icon.ico "RTScript logo")
 # RTScript
-An Interpreted scripting language which can interact with its host language.
+An interpreted scripting language with syntax similar to C#.
 
 ## Usage from the command line
+```
+// shows all commands
 rtscript -?
 
-Example C# code:
+// shows the repl version
+rtscript -v 
+
+// starts the repl mode
+rtscript -r
+
+// evaluates files
+rtscript -f myscript.rt myotherscript.rt
+
+// starts the repl mode with plugins
+rtscript -r --add rtstdlib.dll mylib.dll
+
+// evaluates files with plugins
+rtscript -f myscript.rt --add rtstdlib.dll
+```
+
+## Examples:
+C#:
 ```csharp
 Action<string, object> write = (str, arg) => Context.Print($"{str}{arg}");
 Context.Declare("write", write, isConst: true);
@@ -13,10 +32,11 @@ Context.Declare("write", write, isConst: true);
 Context.Declare("PI", 3.14, isConst: true);
 Context.Declare("myList", new List<int>{ 0, 1, 2, 3, 4, 5, 6, 7, 8 }, isConst: true);
 Context.Declare("myDictionary", new Dictionary<string, int>(), isConst: true);
+
 Context.Declare("int", typeof(int)); // Declare static type
 ```
 
-Example RTScript code:
+RTScript:
 ```csharp
 write("The value of PI is: ", PI);
 
@@ -34,13 +54,12 @@ print myDictionary;
 print int.Parse("123");
 ```
 
-## Specifications:
-  - somewhat type safe interpreted language
-  - automatic type inference
+## Features:
+  - type safe
+  - type inference
   - operators can be overloaded
-  - statements are delimited by a semicolon (i.e. ";")
-  - the decimal separator is dot (i.e. ".")
-  - parentheses can be nested
+  - implicit type conversion
+  - very similar to C#
   
 Variables:
 ```csharp
@@ -59,7 +78,7 @@ integer: 1
 double: 1.0
 string: 's' | "s" | "'q'" | '"q"'
 boolean: true | false
-array of any type: [value, value, value] // where all values have to be the same type
+array of any type: [value, value, value] // where all values have to be of the same type
 ```
 
 Binary operators:
@@ -82,16 +101,12 @@ logical negation: !
 
 Commands:
 ```csharp
-print // prints to the output stream
-user defined commands:
-// C#: Action myCmd = () => Console.WriteLine("C#");
-// RTScript: myCmd();
+print 'hello'; // prints to the output stream
 ```
 
 Errors:
   - syntax errors and evaluation errors are printed to the console with their respective line and column numbers
   - evaluation and syntax errors are not fail-fast, meaning that the code will execute until an error is found
-  - attempting to use a variable that was not assigned any value should throw an evaluation error
 
 Comments:
   - the entire line after '//' is ignored during evaluation 
