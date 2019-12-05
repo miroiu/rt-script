@@ -7,6 +7,7 @@
         Equality = 2,
         Addition = 3,
         Multiplication = 4,
-        Prefix = 5
+        Prefix = 5,
+        MemberAccess = 6
     }
 }

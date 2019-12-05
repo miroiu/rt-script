@@ -36,7 +36,7 @@ namespace RTLang.Interpreter
                     return expr;
                 }
 
-                return Reduce(expr, ctx);
+                return Reduce(expr, ctx, resultType);
             }
             catch (ExecutionException e)
             {

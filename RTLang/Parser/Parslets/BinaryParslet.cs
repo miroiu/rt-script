@@ -83,8 +83,10 @@ namespace RTLang.Parser
                     return OperatorPrecedence.Multiplication;
 
                 case TokenType.Equals:
-                case TokenType.Dot:
                     return OperatorPrecedence.Assignment;
+
+                case TokenType.Dot:
+                    return OperatorPrecedence.MemberAccess;
             }
 
             throw new ParserException(token, $"{token.Type} is not an operator.");
