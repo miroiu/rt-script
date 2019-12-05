@@ -1,2 +1,2 @@
-dotnet publish -c Release -r win-x64 -f netcoreapp3.0 /p:PublishSingleFile=true /p:DebugType=None /p:PublishTrimmed=true -o publish rtscript
+dotnet publish -c Release -r win-x64 -f netcoreapp3.0 /p:DebugType=None -o publish rtscript --self-contained false
 pause
