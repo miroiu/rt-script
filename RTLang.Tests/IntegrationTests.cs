@@ -26,18 +26,21 @@ namespace RTLang.Tests
         {
             Output = new MockOutputStream();
             Context = RTScript.NewContext(Output);
-            Context.Declare("test", _test);
-            Context.Declare("testc", typeof(TestClass));
+            Context.Declare("t", _test);
+            Context.Declare("Test", typeof(TestClass));
         }
 
         [Test]
-        [TestCase("print test.InstanceProp;", new string[] { "null" })]
-        [TestCase("test.InstanceProp = 'Instance'; print test.InstanceProp;", new string[] { "Instance" })]
-        [TestCase("print testc.StaticProp;", new string[] { "Static" })]
-        [TestCase("testc.StaticProp = null; print testc.StaticProp;", new string[] { "null" })]
-        [TestCase("print testc.StaticMethod();", new string[] { "true" })]
-        [TestCase("print test.InstanceMethod(1.0);", new string[] { "-1" })]
-        [TestCase("test.Ints['one'] = 1; print test.Ints['one'];", new string[] { "1" })]
+        [TestCase("print t.InstanceProp;", new string[] { "null" })]
+        [TestCase("t.InstanceProp = 'Instance'; print t.InstanceProp;", new string[] { "Instance" })]
+        [TestCase("print Test.StaticProp;", new string[] { "Static" })]
+        [TestCase("Test.StaticProp = null; print Test.StaticProp;", new string[] { "null" })]
+        [TestCase("print Test.StaticMethod();", new string[] { "true" })]
+        [TestCase("print t.InstanceMethod(1.0);", new string[] { "-1" })]
+        [TestCase("t.Ints['one'] = 1; print t.Ints['one'];", new string[] { "1" })]
+        [TestCase("print Test.Overload(1);", new string[] { "1" })]
+        [TestCase("print Test.Overload(1, 2);", new string[] { "3" })]
+        [TestCase("print Test.Overload(1, '2');", new string[] { "12" })]
         public void Interop(string input, string[] expected)
         {
             var result = ScriptApp.Run(input, Context, Output);

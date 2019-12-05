@@ -17,5 +17,9 @@ namespace RTLang.Tests.Mocks
 
         public double InstanceMethod(double d)
             => -d;
+
+        public static int Overload(int x) => x;
+        public static int Overload(int x, int y) => x + y;
+        public static string Overload(int x, string y) => x + y;
     }
 }
