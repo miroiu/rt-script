@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
+using System.Text;
 
 namespace RTLang
 {
@@ -121,6 +123,63 @@ namespace RTLang
 
             throw new Exception($"{nameof(ToFriendlyName)}: should not happen.");
         }
+
+        public static string ToFriendlyString(this object value)
+        {
+            if (value == null)
+            {
+                return "null";
+            }
+
+            if (value is bool b)
+            {
+                return b ? "true" : "false";
+            }
+
+            if (value is ICollection collection)
+            {
+                StringBuilder builder = new StringBuilder(12);
+                builder.Append("[");
+
+                foreach (var element in collection)
+                {
+                    var friendly = element.ToFriendlyString();
+                    builder.Append($"{friendly}, ");
+                }
+
+                if (collection.Count > 0)
+                {
+                    builder.Length -= 2;
+                }
+
+                builder.Append("]");
+                return builder.ToString();
+            }
+
+            if (value is IDictionary dictionary)
+            {
+                StringBuilder builder = new StringBuilder(12);
+                builder.Append("{");
+
+                foreach (var key in dictionary.Keys)
+                {
+                    var keyValue = dictionary[key];
+                    builder.Append($"[{key.ToFriendlyString()}] = {keyValue.ToFriendlyString()}, ");
+                }
+
+                if (dictionary.Count > 0)
+                {
+                    builder.Length -= 2;
+                }
+
+                builder.Append("}");
+
+                return builder.ToString();
+            }
+
+            return value.ToString();
+        }
+
 
         #endregion
 

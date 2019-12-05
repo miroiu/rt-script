@@ -1,8 +1,6 @@
 ﻿using RTLang.Operators;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace RTLang.Interpreter
 {
@@ -79,63 +77,7 @@ namespace RTLang.Interpreter
             => _statics.ContainsKey(name);
 
         public void Print(object value)
-            => _out.WriteLine(ToFriendlyString(value));
-
-        private string ToFriendlyString(object value)
-        {
-            if (value == null)
-            {
-                return "null";
-            }
-
-            if (value is bool b)
-            {
-                return b ? "true" : "false";
-            }
-
-            if(value is IDictionary dictionary)
-            {
-                StringBuilder builder = new StringBuilder(12);
-                builder.Append("{");
-
-                foreach(var key in dictionary.Keys)
-                {
-                    var keyValue = dictionary[key];
-                    builder.Append($"[{ToFriendlyString(key)}] = {ToFriendlyString(keyValue)}, ");
-                }
-
-                if (dictionary.Count > 0)
-                {
-                    builder.Length -= 2;
-                }
-
-                builder.Append("}");
-
-                return builder.ToString();
-            }
-
-            if (value is ICollection collection)
-            {
-                StringBuilder builder = new StringBuilder(12);
-                builder.Append("[");
-
-                foreach (var element in collection)
-                {
-                    var friendly = ToFriendlyString(element);
-                    builder.Append($"{friendly}, ");
-                }
-
-                if (collection.Count > 0)
-                {
-                    builder.Length -= 2;
-                }
-
-                builder.Append("]");
-                return builder.ToString();
-            }
-
-            return value.ToString();
-        }
+            => _out.WriteLine(value.ToFriendlyString());
 
         public object Evaluate(LiteralType type, string value)
         {
