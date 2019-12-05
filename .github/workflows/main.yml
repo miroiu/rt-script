@@ -17,7 +17,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '3.0.100'
-    - run: dotnet publish -c Release -r win-x64 -f netcoreapp3.0 /p:DebugType=None -o publish rtscript --self-contained false     
+    - name: Publish 
+      run: dotnet publish -c Release -r win-x64 -f netcoreapp3.0 /p:DebugType=None -o publish rtscript --self-contained false     
+    - name: Zip files
+      run: zip -r rtscript.zip ./publish/* 
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -35,6 +38,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./publish/
-        asset_name: rtscript.exe
-        asset_content_type: application/octet-stream
+        asset_path: ./rtscript.zip
+        asset_name: rtscript.zip
+        asset_content_type: application/zip
