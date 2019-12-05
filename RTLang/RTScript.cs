@@ -13,6 +13,8 @@ namespace RTLang
         public RTScript(IExecutionContext context)
             => Context = context;
 
+        public RTScript(IOutputStream outs) : this(NewContext(outs)) { }
+
         public void Execute(string code)
             => Execute(code, Context);
 

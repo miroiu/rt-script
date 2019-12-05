@@ -7,7 +7,7 @@ namespace RTLang
 {
     public static class Extensions
     {
-        #region Strings
+        #region Name
 
         public static string ToFriendlyName(this Type type)
         {
@@ -124,6 +124,10 @@ namespace RTLang
             throw new Exception($"{nameof(ToFriendlyName)}: should not happen.");
         }
 
+        #endregion
+
+        #region String
+
         public static string ToFriendlyString(this object value)
         {
             if (value == null)
@@ -136,50 +140,59 @@ namespace RTLang
                 return b ? "true" : "false";
             }
 
-            if (value is ICollection collection)
-            {
-                StringBuilder builder = new StringBuilder(12);
-                builder.Append("[");
-
-                foreach (var element in collection)
-                {
-                    var friendly = element.ToFriendlyString();
-                    builder.Append($"{friendly}, ");
-                }
-
-                if (collection.Count > 0)
-                {
-                    builder.Length -= 2;
-                }
-
-                builder.Append("]");
-                return builder.ToString();
-            }
-
             if (value is IDictionary dictionary)
             {
-                StringBuilder builder = new StringBuilder(12);
-                builder.Append("{");
+                return dictionary.ToFriendlyString();
+            }
 
-                foreach (var key in dictionary.Keys)
-                {
-                    var keyValue = dictionary[key];
-                    builder.Append($"[{key.ToFriendlyString()}] = {keyValue.ToFriendlyString()}, ");
-                }
-
-                if (dictionary.Count > 0)
-                {
-                    builder.Length -= 2;
-                }
-
-                builder.Append("}");
-
-                return builder.ToString();
+            if (value is ICollection collection)
+            {
+                return collection.ToFriendlyString();
             }
 
             return value.ToString();
         }
 
+        private static string ToFriendlyString(this IDictionary dictionary)
+        {
+            StringBuilder builder = new StringBuilder(12);
+            builder.Append("{");
+
+            foreach (var key in dictionary.Keys)
+            {
+                var keyValue = dictionary[key];
+                builder.Append($"[{key.ToFriendlyString()}] = {keyValue.ToFriendlyString()}, ");
+            }
+
+            if (dictionary.Count > 0)
+            {
+                builder.Length -= 2;
+            }
+
+            builder.Append("}");
+
+            return builder.ToString();
+        }
+
+        public static string ToFriendlyString(this ICollection collection)
+        {
+            StringBuilder builder = new StringBuilder(12);
+            builder.Append("[");
+
+            foreach (var element in collection)
+            {
+                var friendly = element.ToFriendlyString();
+                builder.Append($"{friendly}, ");
+            }
+
+            if (collection.Count > 0)
+            {
+                builder.Length -= 2;
+            }
+
+            builder.Append("]");
+            return builder.ToString();
+        }
 
         #endregion
 
