@@ -45,7 +45,7 @@ namespace RTLang.Interop
         private static void BuildMethods(Type type, TypeConfiguration config)
         {
             var allMethods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
-            for (int i = 0; i < allMethods.Length; i++)
+            for (var i = 0; i < allMethods.Length; i++)
             {
                 var method = allMethods[i];
                 if (!method.ContainsGenericParameters)
@@ -61,8 +61,9 @@ namespace RTLang.Interop
         {
             // Instance
             var instanceProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var property in instanceProperties)
+            for (var i = 0; i < instanceProperties.Length; i++)
             {
+                var property = instanceProperties[i];
                 var indexParams = property.GetIndexParameters();
                 if (indexParams.Length > 0)
                 {
@@ -79,8 +80,9 @@ namespace RTLang.Interop
 
             // Static
             var staticProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Static);
-            foreach (var property in staticProperties)
+            for (var i = 0; i < staticProperties.Length; i++)
             {
+                var property = staticProperties[i];
                 var prop = new PropertyDescriptor(property.Name, property.PropertyType, property.PropertyType, property.CanRead, property.CanWrite, isStatic: true, isIndexer: false);
                 config.Properties.Add(prop);
             }

@@ -32,8 +32,8 @@ namespace RTLang.Tests
 
         [Test]
         [TestCase("print test.InstanceProp;", new string[] { "null" })]
-        [TestCase("test.InstanceProp = 'Instance'; print test.InstanceProp;", new string[] { "\"Instance\"" })]
-        [TestCase("print testc.StaticProp;", new string[] { "\"Static\"" })]
+        [TestCase("test.InstanceProp = 'Instance'; print test.InstanceProp;", new string[] { "Instance" })]
+        [TestCase("print testc.StaticProp;", new string[] { "Static" })]
         [TestCase("testc.StaticProp = null; print testc.StaticProp;", new string[] { "null" })]
         [TestCase("print testc.StaticMethod();", new string[] { "true" })]
         [TestCase("print test.InstanceMethod(1.0);", new string[] { "-1" })]
