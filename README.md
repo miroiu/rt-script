@@ -23,6 +23,13 @@ rtscript -r --add rtstdlib.dll mylib.dll
 rtscript -f myscript.rt --add rtstdlib.dll
 ```
 
+## Features:
+  - type safe
+  - type inference
+  - operators can be overloaded
+  - implicit type conversion
+  - very similar to C#
+  
 ## Examples:
 C#:
 ```csharp
@@ -54,14 +61,24 @@ print myDictionary;
 print int.Parse("123");
 ```
 
-## Features:
-  - type safe
-  - type inference
-  - operators can be overloaded
-  - implicit type conversion
-  - very similar to C#
-  
-Variables:
+## Plugins:
+```csharp
+using RTLang;
+
+namespace MyPlugin
+{
+    public static class RTScriptPlugin
+    {
+        public static void Inject(IExecutionContext context)
+        {
+            context.Print("Hello from plugin!");
+        }
+    }
+}
+```
+Plugins must have a public class named RTScriptPlugin with a public static Inject method that takes an IExecutionContext as the parameter and doesn't return anything.
+ 
+## Variables:
 ```csharp
 // Declaration and initialization
 var myVar = 1;
@@ -72,7 +89,7 @@ myVar = 2;
 PI = 1; // prints error
 ```
 
-Built-in data types:
+## Built-in data types:
 ```csharp
 integer: 1
 double: 1.0
@@ -81,7 +98,7 @@ boolean: true | false
 array of any type: [value, value, value] // where all values have to be of the same type
 ```
 
-Binary operators:
+## Binary operators:
 ```
 add: +
 subtract: -
@@ -93,20 +110,20 @@ less than: <
 greater than: > 
 ```
 
-Unary operators:
+## Unary operators:
 ```
 minus: -
 logical negation: !
 ```
 
-Commands:
+## Commands:
 ```csharp
 print 'hello'; // prints to the output stream
 ```
 
-Errors:
+## Errors:
   - syntax errors and evaluation errors are printed to the console with their respective line and column numbers
   - evaluation and syntax errors are not fail-fast, meaning that the code will execute until an error is found
 
-Comments:
+## Comments:
   - the entire line after '//' is ignored during evaluation 
