@@ -21,8 +21,9 @@ namespace RTLang.Tests
         }
 
         [Test]
-        [TestCase("", 0, new string[0])]
-        [TestCase(";", 0, new string[0])]
+        [TestCase("", 0, new string[] { "mock" })]
+        [TestCase(";", 0, new string[] { "mock" })]
+        [TestCase(";", 1, new string[] { "mock" })]
         [TestCase("mock.StaticMeth", 15, new string[] { "StaticMethod1", "StaticMethod2" })]
         [TestCase("mock.StaticProperty + mock.StaticMeth", 38, new string[] { "StaticMethod1", "StaticMethod2" })]
         // Identifier

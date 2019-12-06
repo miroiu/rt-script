@@ -32,10 +32,18 @@ namespace RTLang.CodeAnalysis
                     {
                         var analyzer = new AnalyzerService(_context, AnalyzerOptions.Completions, position);
 
-                        while (parser.HasNext)
+                        if (lexer.Peek().Type == TokenType.EndOfCode)
                         {
                             var expr = parser.Next();
                             analyzer.Visit(expr);
+                        }
+                        else
+                        {
+                            while (parser.HasNext)
+                            {
+                                var expr = parser.Next();
+                                analyzer.Visit(expr);
+                            }
                         }
 
                         return analyzer.Completions;
