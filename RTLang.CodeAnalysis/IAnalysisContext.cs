@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RTLang.CodeCompletion
+namespace RTLang.CodeAnalysis
 {
-    public interface ICompletionContext
+    internal interface IAnalysisContext
     {
         Type GetType(string variableName);
 

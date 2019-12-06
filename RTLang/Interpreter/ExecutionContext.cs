@@ -77,6 +77,21 @@ namespace RTLang.Interpreter
         public bool IsType(string name)
             => _statics.ContainsKey(name);
 
+        public bool IsReadOnly(string name)
+        {
+            if (_statics.ContainsKey(name))
+            {
+                return true;
+            }
+
+            if (!_variables.TryGetValue(name, out var result))
+            {
+                throw new Exception($"'{name}' does not exist in the current context.");
+            }
+
+            return result.IsReadOnly;
+        }
+
         public void Print(object value)
             => _out.WriteLine(value.ToFriendlyString());
 

@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RTLang.CodeCompletion
+namespace RTLang.CodeAnalysis.Syntax
 {
-    public class CompletionParser : IExpressionProvider, IRTLangParser
+    internal class SyntaxParser : IExpressionProvider, IRTLangParser
     {
         public static readonly IDictionary<(TokenType Type, bool CanBeginWith), IParslet> Parslets = typeof(IRTLangParser).Assembly.GetTypes()
                  .Where(x => typeof(IParslet).IsAssignableFrom(x) && x.CustomAttributes.Any())
@@ -25,7 +25,7 @@ namespace RTLang.CodeCompletion
         public bool HasNext { get; private set; }
         public Token Current { get; private set; }
 
-        public CompletionParser(Lexer.Lexer lexer)
+        public SyntaxParser(Lexer.Lexer lexer)
         {
             _lexer = lexer;
 

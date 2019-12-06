@@ -1,8 +1,8 @@
 ﻿using RTLang.Parser;
 
-namespace RTLang.CodeCompletion.Parser
+namespace RTLang.CodeAnalysis.Syntax
 {
-    public class EmptyParslet : IParslet
+    internal class EmptyParslet : IParslet
     {
         public Expression Accept(IRTLangParser parser)
             => new EmptyExpression();

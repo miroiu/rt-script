@@ -8,6 +8,7 @@ namespace RTLang.Lexer
         public string Text;
         public int Line;
         public int Column;
+        public int Position;
 
         public override bool Equals(object obj)
             => obj is Token token ? token.Equals(this) : false;

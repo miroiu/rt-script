@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RTLang.CodeCompletion
+namespace RTLang.CodeAnalysis
 {
-    public class CompletionContext : ICompletionContext
+    internal class AnalysisContext : IAnalysisContext
     {
         private readonly IExecutionContext _context;
         private readonly string[] _keywords = new string[]
@@ -18,8 +18,8 @@ namespace RTLang.CodeCompletion
             "var"
         };
 
-        public CompletionContext(IExecutionContext context)
-            => _context = context ?? throw new CompletionException($"'{nameof(context)}' is null.");
+        public AnalysisContext(IExecutionContext context)
+            => _context = context ?? throw new AnalysisException($"'{nameof(context)}' is null.");
 
         public Type GetType(string variable)
             => _context.GetType(variable);

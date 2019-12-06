@@ -7,15 +7,14 @@
         public Lexer(SourceText text)
             => _text = text;
 
-        public int Position => _text.Position;
-
         public Token Lex()
         {
             Token token = new Token
             {
                 Text = $"{_text.Current}",
                 Line = _text.Line,
-                Column = _text.Column
+                Column = _text.Column,
+                Position = _text.Position
             };
 
             switch (_text.Current)

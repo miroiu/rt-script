@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using RTLang.CodeCompletion;
+using RTLang.CodeAnalysis;
 using RTLang.Tests.Mocks;
 using System.Linq;
 
@@ -8,14 +8,14 @@ namespace RTLang.Tests
     [TestFixture]
     public class CodeCompletionTests
     {
-        private CompletionService _service;
+        private RTLangService _service;
         private IExecutionContext _context;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             _context = RTScript.NewContext(new MockOutputStream());
-            _service = CompletionService.Create(_context);
+            _service = RTLangService.Create(_context);
             _context.DeclareStatic<CompletionClassMock>("mock");
             _context.Declare("mockInt", 1);
         }
@@ -32,15 +32,15 @@ namespace RTLang.Tests
         [TestCase("var x = mo", 10, new string[] { "mock", "mockInt" })]
         public void Completions(string input, int position, string[] expected)
         {
-            var result = _service.GetCompletions(input, position).Completions.Select(c => c.Text);
+            var result = _service.GetCompletions(input, position).Select(c => c.Text);
             Assert.AreEqual(expected, result.ToArray());
         }
 
         [TestCase("var mock = 1;", new string[] { "mock" })]
         public void Errors(string input, string[] expected)
         {
-            var result = _service.GetCompletions(input, input.Length);
-            var errors = result.Errors.Select(e => input.Substring(e.Position, e.Length)).ToArray();
+            var result = _service.GetDiagnostics(input);
+            var errors = result.Select(e => input.Substring(e.Position, e.Length)).ToArray();
             Assert.AreEqual(expected, errors);
         }
     }
