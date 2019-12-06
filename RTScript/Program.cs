@@ -8,7 +8,6 @@ namespace RTScript
         [STAThread]
         private static void Main(string[] args)
         {
-            // TODO: Load assembly?
             if (args.Length != 0)
             {
                 var console = new RTScriptConsole(args);

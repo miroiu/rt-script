@@ -3,7 +3,7 @@ using System.IO;
 
 namespace RTScript
 {
-    [CommandOption("--add", Arguments = "<file>.dll", Description = "Loads one or multiple plugin files.")]
+    [CommandOption("--add", Arguments = "<file>.dll", Description = "loads one or multiple plugin files.")]
     [ConsoleCommand("-f", Description = "execute .rt files")]
     public sealed class FileCommand : IConsoleCommand
     {

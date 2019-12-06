@@ -79,11 +79,7 @@ namespace RTScript
                 if (parameters.Length == 1)
                 {
                     var param = parameters[0];
-
-                    if (param.ParameterType == typeof(IExecutionContext))
-                    {
-                        return true;
-                    }
+                    return param.ParameterType == typeof(IExecutionContext);
                 }
             }
 
