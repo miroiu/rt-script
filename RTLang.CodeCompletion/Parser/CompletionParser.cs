@@ -1,11 +1,12 @@
 ﻿using RTLang.Lexer;
+using RTLang.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RTLang.Parser
+namespace RTLang.CodeCompletion
 {
-    public class Parser : IExpressionProvider, IRTLangParser
+    public class CompletionParser : IExpressionProvider, IRTLangParser
     {
         public static readonly IDictionary<(TokenType Type, bool CanBeginWith), IParslet> Parslets = typeof(IRTLangParser).Assembly.GetTypes()
                  .Where(x => typeof(IParslet).IsAssignableFrom(x) && x.CustomAttributes.Any())
@@ -24,7 +25,7 @@ namespace RTLang.Parser
         public bool HasNext { get; private set; }
         public Token Current { get; private set; }
 
-        public Parser(Lexer.Lexer lexer)
+        public CompletionParser(Lexer.Lexer lexer)
         {
             _lexer = lexer;
 
@@ -51,7 +52,11 @@ namespace RTLang.Parser
                 return Take();
             }
 
-            throw new ParserException(Current, $"Expected {tokenType} but found {Current.Type}.");
+            // Generate token?
+            return new Token
+            {
+                Type = tokenType
+            };
         }
 
         public Token Peek(int offset = 1)
@@ -68,7 +73,10 @@ namespace RTLang.Parser
         {
             if (Current.Type != type)
             {
-                throw new ParserException(Current, $"Expected {type} but found {Current.Type}.");
+                Current = new Token
+                {
+                    Type = type
+                };
             }
         }
 
@@ -81,7 +89,8 @@ namespace RTLang.Parser
             {
                 return value;
             }
-            throw new ParserException(token, $"Invalid token found: {token.Text}");
+            // Return empty parslet?
+            throw new ParserException(token.Line, token.Column, $"Invalid token found: {token.Text}");
         }
 
         #endregion

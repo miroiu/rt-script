@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTLang", "RTLang\RTLang.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTScript", "RTScript\RTScript.csproj", "{0E399B4E-5DE3-4E35-8D87-7B79FAC63389}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTScript.StandardLibrary", "RTScript.StandardLibrary\RTScript.StandardLibrary.csproj", "{3EAC44E1-099B-4EAD-BFC1-841EF1A056FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTScript.StandardLibrary", "RTScript.StandardLibrary\RTScript.StandardLibrary.csproj", "{3EAC44E1-099B-4EAD-BFC1-841EF1A056FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTLang.CodeCompletion", "RTLang.CodeCompletion\RTLang.CodeCompletion.csproj", "{A8136CDD-BB19-41AC-9979-083D7CFAF203}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{3EAC44E1-099B-4EAD-BFC1-841EF1A056FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EAC44E1-099B-4EAD-BFC1-841EF1A056FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EAC44E1-099B-4EAD-BFC1-841EF1A056FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8136CDD-BB19-41AC-9979-083D7CFAF203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8136CDD-BB19-41AC-9979-083D7CFAF203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8136CDD-BB19-41AC-9979-083D7CFAF203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8136CDD-BB19-41AC-9979-083D7CFAF203}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

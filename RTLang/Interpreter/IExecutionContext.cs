@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RTLang
 {
@@ -14,5 +15,6 @@ namespace RTLang
         object Evaluate(LiteralType type, string value);
         object Evaluate(UnaryOperatorType operatorType, object value);
         object Evaluate(BinaryOperatorType operatorType, object left, object right);
+        IEnumerable<string> GetSymbols();
     }
 }

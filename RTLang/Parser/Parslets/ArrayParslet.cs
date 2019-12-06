@@ -5,7 +5,7 @@ namespace RTLang.Parser
     [Parslet(TokenType.OpenBrace)]
     public class ArrayParslet : IParslet
     {
-        public Expression Accept(Parser parser)
+        public Expression Accept(IRTLangParser parser)
         {
             var openBrace = parser.Take();
 

@@ -8,5 +8,10 @@
         }
 
         public Expression Inner { get; }
+
+        public override void Accept(ILangVisitor<Expression> visitor)
+        {
+            visitor.Visit(Inner);
+        }
     }
 }

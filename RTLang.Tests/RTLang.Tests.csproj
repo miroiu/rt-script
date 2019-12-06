@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RTLang.CodeCompletion\RTLang.CodeCompletion.csproj" />
     <ProjectReference Include="..\RTLang\RTLang.csproj" />
   </ItemGroup>
 

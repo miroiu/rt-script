@@ -5,10 +5,10 @@ namespace RTLang.Parser
     [Parslet(TokenType.Identifier, true)]
     public class BinaryParslet : IParslet
     {
-        public Expression Accept(Parser parser)
+        public Expression Accept(IRTLangParser parser)
             => ParseBinaryExpression(parser);
 
-        private Expression ParseBinaryExpression(Parser parser, Expression left = default, OperatorPrecedence parentPrecedence = OperatorPrecedence.None)
+        private Expression ParseBinaryExpression(IRTLangParser parser, Expression left = default, OperatorPrecedence parentPrecedence = OperatorPrecedence.None)
         {
             if (left == default)
             {

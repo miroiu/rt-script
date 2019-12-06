@@ -10,5 +10,10 @@
 
         public string PropertyName { get; }
         public Expression Index { get; }
+
+        public override void Accept(ILangVisitor<Expression> visitor)
+        {
+            visitor.Visit(Index);
+        }
     }
 }

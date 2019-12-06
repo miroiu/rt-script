@@ -2,7 +2,7 @@
 {
     public class VariableDeclarationExpression : Expression
     {
-        public VariableDeclarationExpression(bool isReadOnly, IdentifierExpression identifier, Expression initializer)
+        public VariableDeclarationExpression(bool isReadOnly, string identifier, Expression initializer)
         {
             IsReadOnly = isReadOnly;
             Identifier = identifier;
@@ -10,7 +10,12 @@
         }
 
         public bool IsReadOnly { get; }
-        public IdentifierExpression Identifier { get; }
+        public string Identifier { get; }
         public Expression Initializer { get; }
+
+        public override void Accept(ILangVisitor<Expression> visitor)
+        {
+            visitor.Visit(Initializer);
+        }
     }
 }

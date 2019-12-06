@@ -9,7 +9,7 @@ namespace RTLang.Parser
     [Parslet(TokenType.Null)]
     public class LiteralParslet : IParslet
     {
-        public Expression Accept(Parser parser)
+        public Expression Accept(IRTLangParser parser)
         {
             var literal = parser.Take();
 

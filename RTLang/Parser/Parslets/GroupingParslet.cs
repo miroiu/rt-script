@@ -5,7 +5,7 @@ namespace RTLang.Parser
     [Parslet(TokenType.OpenParen)]
     public class GroupingParslet : IParslet
     {
-        public Expression Accept(Parser parser)
+        public Expression Accept(IRTLangParser parser)
         {
             var openParen = parser.Take();
             var expr = parser.ParseExpression();

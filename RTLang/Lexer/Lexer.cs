@@ -7,6 +7,8 @@
         public Lexer(SourceText text)
             => _text = text;
 
+        public int Position => _text.Position;
+
         public Token Lex()
         {
             Token token = new Token

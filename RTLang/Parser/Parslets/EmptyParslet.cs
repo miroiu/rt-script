@@ -6,7 +6,7 @@ namespace RTLang.Parser
     [Parslet(TokenType.EndOfCode, true)]
     public class EmptyParslet : IParslet
     {
-        public Expression Accept(Parser parser)
+        public Expression Accept(IRTLangParser parser)
         {
             return new EmptyExpression();
         }

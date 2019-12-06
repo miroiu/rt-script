@@ -2,6 +2,6 @@
 {
     public interface IParslet
     {
-        Expression Accept(Parser parser);
+        Expression Accept(IRTLangParser parser);
     }
 }

@@ -10,5 +10,10 @@
 
         public string MethodName { get; }
         public ArgumentsExpression Arguments { get; }
+
+        public override void Accept(ILangVisitor<Expression> visitor)
+        {
+            visitor.Visit(Arguments);
+        }
     }
 }

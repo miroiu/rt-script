@@ -12,5 +12,11 @@
         public Expression Left { get; }
         public BinaryOperatorType OperatorType { get; }
         public Expression Right { get; }
+
+        public override void Accept(ILangVisitor<Expression> visitor)
+        {
+            visitor.Visit(Left);
+            visitor.Visit(Right);
+        }
     }
 }

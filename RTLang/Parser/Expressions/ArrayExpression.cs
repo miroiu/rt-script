@@ -10,5 +10,10 @@
 
         public ArgumentsExpression Arguments { get; }
         public int Length { get; }
+
+        public override void Accept(ILangVisitor<Expression> visitor)
+        {
+            visitor.Visit(Arguments);
+        }
     }
 }

@@ -10,5 +10,10 @@
 
         public UnaryOperatorType OperatorType { get; }
         public Expression Operand { get; }
+
+        public override void Accept(ILangVisitor<Expression> visitor)
+        {
+            visitor.Visit(Operand);
+        }
     }
 }

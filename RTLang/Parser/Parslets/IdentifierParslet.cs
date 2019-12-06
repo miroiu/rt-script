@@ -5,7 +5,7 @@ namespace RTLang.Parser
     [Parslet(TokenType.Identifier)]
     public class IdentifierParslet : IParslet
     {
-        public Expression Accept(Parser parser)
+        public Expression Accept(IRTLangParser parser)
         {
             var identToken = parser.Take();
 

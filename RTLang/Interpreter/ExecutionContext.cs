@@ -1,6 +1,7 @@
 ﻿using RTLang.Operators;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RTLang.Interpreter
 {
@@ -149,5 +150,8 @@ namespace RTLang.Interpreter
 
             throw new Exception($"Operator '{operatorType.ToFriendlyName()}' cannot be applied to null values.");
         }
+
+        public IEnumerable<string> GetSymbols()
+            => _statics.Keys.Union(_variables.Keys);
     }
 }
