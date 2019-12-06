@@ -20,12 +20,12 @@ namespace RTLang.CodeAnalysis.Analyzers
                     break;
             }
 
-            return default;
+            return new List<CompletionItem>();
         }
 
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
         {
-            throw new System.NotImplementedException();
+            return new List<Diagnostic>();
         }
     }
 }

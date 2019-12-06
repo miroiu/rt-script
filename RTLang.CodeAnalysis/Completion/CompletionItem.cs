@@ -3,6 +3,6 @@
     public struct CompletionItem
     {
         public string Text;
-        public CompletionType Type;
+        public SymbolType Type;
     }
 }

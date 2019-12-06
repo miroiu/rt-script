@@ -1,34 +1,22 @@
 ﻿using RTLang.Lexer;
 using RTLang.Parser;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RTLang.CodeAnalysis.Syntax
 {
     internal class SyntaxParser : IExpressionProvider, IRTLangParser
     {
-        public static readonly IDictionary<(TokenType Type, bool CanBeginWith), IParslet> Parslets = typeof(IRTLangParser).Assembly.GetTypes()
-                 .Where(x => typeof(IParslet).IsAssignableFrom(x) && x.CustomAttributes.Any())
-                 .SelectMany(x =>
-                 {
-                     return x.GetCustomAttributes(false).Select(y => new
-                     {
-                         Attribute = (ParsletAttribute)y,
-                         Type = x
-                     }).ToList();
-                 })
-                 .ToDictionary(x => (x.Attribute.TokenType, x.Attribute.CanBeginWith), x => Activator.CreateInstance(x.Type) as IParslet);
-
+        public static readonly IDictionary<(TokenType Type, bool CanBeginWith), IParslet> Parslets = Parser.Parser.Parslets;
         private readonly Lexer.Lexer _lexer;
 
         public bool HasNext { get; private set; }
         public Token Current { get; private set; }
+        public bool ThrowOnError { get; }
 
-        public SyntaxParser(Lexer.Lexer lexer)
+        public SyntaxParser(Lexer.Lexer lexer, bool throwOnError)
         {
             _lexer = lexer;
-
+            ThrowOnError = throwOnError;
             HasNext = Peek().Type != TokenType.EndOfCode;
         }
 
@@ -39,7 +27,11 @@ namespace RTLang.CodeAnalysis.Syntax
             Current = _lexer.Lex();
             var result = GetParslet(Current, true).Accept(this);
 
-            Ensure(TokenType.Semicolon);
+            if (ThrowOnError)
+            {
+                Ensure(TokenType.Semicolon);
+            }
+
             HasNext = Peek().Type != TokenType.EndOfCode;
 
             return result;
@@ -47,16 +39,8 @@ namespace RTLang.CodeAnalysis.Syntax
 
         public Token Match(TokenType tokenType)
         {
-            if (Current.Type == tokenType)
-            {
-                return Take();
-            }
-
-            // Generate token?
-            return new Token
-            {
-                Type = tokenType
-            };
+            Ensure(tokenType);
+            return Take();
         }
 
         public Token Peek(int offset = 1)
@@ -71,12 +55,17 @@ namespace RTLang.CodeAnalysis.Syntax
 
         public void Ensure(TokenType type)
         {
-            if (Current.Type != type)
+            if ((ThrowOnError && Current.Type != type) || Current.Type == TokenType.EndOfCode)
             {
-                Current = new Token
+                // Missing mandatory token should raise a diagnostic
+                throw new SyntaxException(new Token
                 {
-                    Type = type
-                };
+                    Line = Current.Line,
+                    Column = Current.Column,
+                    Position = Current.Position,
+                    Type = type,
+                    Text = type.ToFriendlyString()
+                }, Current);
             }
         }
 
@@ -89,8 +78,13 @@ namespace RTLang.CodeAnalysis.Syntax
             {
                 return value;
             }
-            // Return empty parslet?
-            throw new ParserException(token.Line, token.Column, $"Invalid token found: {token.Text}");
+
+            if (ThrowOnError)
+            {
+                throw new SyntaxException(token, $"Invalid token found: {token.Text}");
+            }
+
+            return new EmptyParslet();
         }
 
         #endregion

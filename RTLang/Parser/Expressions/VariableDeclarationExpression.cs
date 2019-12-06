@@ -5,12 +5,12 @@
         public VariableDeclarationExpression(bool isReadOnly, string identifier, Expression initializer)
         {
             IsReadOnly = isReadOnly;
-            Identifier = identifier;
+            Name = identifier;
             Initializer = initializer;
         }
 
         public bool IsReadOnly { get; }
-        public string Identifier { get; }
+        public string Name { get; }
         public Expression Initializer { get; }
 
         public override void Accept(ILangVisitor<Expression> visitor)

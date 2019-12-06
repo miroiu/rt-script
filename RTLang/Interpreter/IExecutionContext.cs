@@ -11,7 +11,7 @@ namespace RTLang
         // Creates a variable with an initial value
         void Declare(string name, object value, bool isConst = false);
 
-        // Declare a static type
+        // Declare a type
         void Declare(string name, Type type);
 
         // Returns the value of a variable
@@ -20,7 +20,7 @@ namespace RTLang
         // Returns the type of a variable
         Type GetType(string name);
 
-        // Tells if 'name' is a static type
+        // Tells if 'name' is a type
         bool IsType(string name);
 
         // Tells if variable can be written to
@@ -38,7 +38,10 @@ namespace RTLang
         // Applies a binary operator 
         object Evaluate(BinaryOperatorType operatorType, object left, object right);
 
-        // Returns all the defined variables and static types
-        IEnumerable<string> GetSymbols();
+        // Returns all the variables
+        IEnumerable<string> GetVariables();
+
+        // Returns all the types
+        IEnumerable<string> GetTypes();
     }
 }

@@ -9,25 +9,32 @@ namespace RTLang.CodeAnalysis.Analyzers
     internal class VariableDeclarationAnalyzer : IExpressionAnalyzer
     {
         public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
-        {
-            throw new System.NotImplementedException();
-        }
+            => context.GetSymbols()
+            .Where(s => s.Type == SymbolType.Type || s.Type == SymbolType.Variable)
+            .Select(s => new CompletionItem
+            {
+                Type = s.Type,
+                Text = s.Name
+            });
 
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
         {
             var casted = (VariableDeclarationExpression)expression;
-            var alreadyExists = context.GetSymbols().Any(s => s == casted.Identifier);
+
+            var alreadyExists = context.GetSymbols().Any(s => s.Name == casted.Name);
 
             if (alreadyExists)
             {
-                yield return new Diagnostic
+                return new Diagnostic
                 {
-                    Position = casted.Token.Column,
+                    Position = casted.Token.Position,
                     Length = casted.Token.Text.Length,
                     Type = DiagnosticType.Error,
-                    Message = $"'{casted.Identifier}' is already defined in the current context."
-                };
+                    Message = $"'{casted.Name}' is already defined in the current context."
+                }.ToOneItemArray();
             }
+
+            return new List<Diagnostic>();
         }
     }
 }

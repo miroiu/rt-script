@@ -8,7 +8,7 @@ namespace RTLang.Interpreter
     public sealed class ExecutionContext : IExecutionContext
     {
         private readonly IDictionary<string, Reference> _variables = new Dictionary<string, Reference>();
-        private readonly IDictionary<string, Type> _statics = new Dictionary<string, Type>();
+        private readonly IDictionary<string, Type> _types = new Dictionary<string, Type>();
         private readonly IOutputStream _out;
 
         public ExecutionContext(IOutputStream outs)
@@ -26,7 +26,7 @@ namespace RTLang.Interpreter
 
         public void Declare(string name, object value, bool isConst = false)
         {
-            if (_variables.ContainsKey(name) || _statics.ContainsKey(name))
+            if (_variables.ContainsKey(name) || _types.ContainsKey(name))
             {
                 throw new Exception($"'{name}' is already defined in the current context.");
             }
@@ -36,17 +36,17 @@ namespace RTLang.Interpreter
 
         public void Declare(string name, Type type)
         {
-            if (_variables.ContainsKey(name) || _statics.ContainsKey(name))
+            if (_variables.ContainsKey(name) || _types.ContainsKey(name))
             {
                 throw new Exception($"'{name}' is already defined in the current context.");
             }
 
-            _statics[name] = type;
+            _types[name] = type;
         }
 
         public object GetValue(string name)
         {
-            if (_statics.ContainsKey(name))
+            if (_types.ContainsKey(name))
             {
                 return default;
             }
@@ -61,7 +61,7 @@ namespace RTLang.Interpreter
 
         public Type GetType(string name)
         {
-            if (_statics.TryGetValue(name, out var type))
+            if (_types.TryGetValue(name, out var type))
             {
                 return type;
             }
@@ -75,11 +75,11 @@ namespace RTLang.Interpreter
         }
 
         public bool IsType(string name)
-            => _statics.ContainsKey(name);
+            => _types.ContainsKey(name);
 
         public bool IsReadOnly(string name)
         {
-            if (_statics.ContainsKey(name))
+            if (_types.ContainsKey(name))
             {
                 return true;
             }
@@ -166,7 +166,10 @@ namespace RTLang.Interpreter
             throw new Exception($"Operator '{operatorType.ToFriendlyName()}' cannot be applied to null values.");
         }
 
-        public IEnumerable<string> GetSymbols()
-            => _statics.Keys.Union(_variables.Keys);
+        public IEnumerable<string> GetVariables()
+            => _variables.Keys;
+
+        public IEnumerable<string> GetTypes()
+            => _types.Keys;
     }
 }

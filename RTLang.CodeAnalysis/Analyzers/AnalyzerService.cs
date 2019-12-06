@@ -21,7 +21,9 @@ namespace RTLang.CodeAnalysis.Analyzers
                 .ToDictionary(x => x.Attribute.ExpressionType, x => Activator.CreateInstance(x.Type) as IExpressionAnalyzer);
 
         private readonly int _completionPosition;
-        private readonly List<Diagnostic> _diagnostics = Collections<Diagnostic>.Empty;
+        private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
+
+        private CompletionPositionFinder _positionFinder = new CompletionPositionFinder();
 
         public AnalyzerService(IAnalysisContext context, AnalyzerOptions options, int completionPosition = 0)
         {
@@ -30,7 +32,7 @@ namespace RTLang.CodeAnalysis.Analyzers
             _completionPosition = completionPosition;
         }
 
-        public IReadOnlyList<CompletionItem> Completions { get; private set; } = Collections<CompletionItem>.Empty;
+        public IReadOnlyList<CompletionItem> Completions { get; private set; } = new List<CompletionItem>();
         public IReadOnlyList<Diagnostic> Diagnostics => _diagnostics;
         public IAnalysisContext Context { get; }
         public AnalyzerOptions Options { get; }
@@ -40,7 +42,7 @@ namespace RTLang.CodeAnalysis.Analyzers
             if (Analyzers.TryGetValue(host.GetType(), out var analyzer))
             {
                 // Happens only once
-                if (Options.HasFlag(AnalyzerOptions.Completions) && (host.Token.Position + host.Token.Text.Length == _completionPosition))
+                if (Options.HasFlag(AnalyzerOptions.Completions) && _positionFinder.FindPosition(host, _completionPosition))
                 {
                     Completions = analyzer.GetCompletions(host, Context).ToList();
                     return;

@@ -25,16 +25,6 @@ namespace RTLang.Parser
                 else
                 {
                     left = parser.ParsePrimaryExpression();
-
-                    if (parser.Current.Type == TokenType.Exclamation)
-                    {
-                        var operatorToken = parser.Take();
-                        var operatorType = GetUnaryOperatorType(operatorToken);
-                        left = new UnaryExpression(operatorType, left)
-                        {
-                            Token = operatorToken
-                        };
-                    }
                 }
             }
 

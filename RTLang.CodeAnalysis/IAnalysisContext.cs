@@ -7,8 +7,14 @@ namespace RTLang.CodeAnalysis
     {
         Type GetType(string variableName);
 
-        IEnumerable<string> GetMembers(Type type);
+        // Returns all the members of a
+        IEnumerable<Symbol> GetMembers(Type type);
 
-        IEnumerable<string> GetSymbols();
+        // Returns variables and static types
+        IEnumerable<Symbol> GetSymbols();
+
+        IEnumerable<Symbol> GetTypes();
+
+        IEnumerable<Symbol> GetVariables();
     }
 }

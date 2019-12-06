@@ -21,12 +21,12 @@ namespace RTLang.CodeAnalysis
 
         public IReadOnlyList<CompletionItem> GetCompletions(string code, int position)
         {
-            if (position <= code.Length)
+            if (position >= 0 && position <= code.Length)
             {
                 using (var text = new SourceText(code.Substring(0, position)))
                 {
                     var lexer = new Lexer.Lexer(text);
-                    var parser = new SyntaxParser(lexer);
+                    var parser = new SyntaxParser(lexer, false);
 
                     try
                     {
@@ -40,14 +40,22 @@ namespace RTLang.CodeAnalysis
 
                         return analyzer.Completions;
                     }
-                    catch
+                    catch (SyntaxException ex)
                     {
-                        return Collections<CompletionItem>.Empty;
+                        return new List<CompletionItem>();
                     }
+                    catch (LexerException ex)
+                    {
+                        return new List<CompletionItem>();
+                    }
+                    //catch
+                    //{
+                    //    return new List<CompletionItem>();
+                    //}
                 }
             }
 
-            return Collections<CompletionItem>.Empty;
+            return new List<CompletionItem>();
         }
 
         public IReadOnlyList<Diagnostic> GetDiagnostics(string code)
@@ -55,12 +63,12 @@ namespace RTLang.CodeAnalysis
             using (var text = new SourceText(code))
             {
                 var lexer = new Lexer.Lexer(text);
-                var parser = new SyntaxParser(lexer);
+                var parser = new SyntaxParser(lexer, true);
+
+                var analyzer = new AnalyzerService(_context, AnalyzerOptions.Diagnostics);
 
                 try
                 {
-                    var analyzer = new AnalyzerService(_context, AnalyzerOptions.Diagnostics);
-
                     while (parser.HasNext)
                     {
                         var expr = parser.Next();
@@ -69,10 +77,42 @@ namespace RTLang.CodeAnalysis
 
                     return analyzer.Diagnostics;
                 }
-                catch
+                catch (SyntaxException ex)
                 {
-                    return Collections<Diagnostic>.Empty;
+                    var result = new List<Diagnostic>(analyzer.Diagnostics.Count + 1);
+                    result.AddRange(analyzer.Diagnostics);
+
+                    var token = ex.Current;
+                    var length = token.Text.Length;
+                    var position = token.Position;
+
+                    result.Add(new Diagnostic
+                    {
+                        Type = DiagnosticType.Error,
+                        Position = position > code.Length ? code.Length : position,
+                        Length = position + length > code.Length ? 0 : length,
+                        Message = ex.Message
+                    });
+
+                    return result;
                 }
+                catch (LexerException ex)
+                {
+                    return new List<Diagnostic>
+                    {
+                        new Diagnostic
+                        {
+                            Message = ex.Message,
+                            Position = text.Position,
+                            Length = 1,
+                            Type = DiagnosticType.Error
+                        }
+                    };
+                }
+                //catch
+                //{
+                //    return new List<Diagnostic>();
+                //}
             }
         }
     }

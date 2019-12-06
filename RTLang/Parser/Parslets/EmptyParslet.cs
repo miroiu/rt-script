@@ -8,7 +8,10 @@ namespace RTLang.Parser
     {
         public Expression Accept(IRTLangParser parser)
         {
-            return new EmptyExpression();
+            return new EmptyExpression()
+            {
+                Token = parser.Current
+            };
         }
     }
 }

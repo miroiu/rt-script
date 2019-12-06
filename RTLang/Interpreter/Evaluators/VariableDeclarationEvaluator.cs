@@ -9,7 +9,7 @@ namespace RTLang.Interpreter
         {
             var casted = (VariableDeclarationExpression)expression;
             object result = ((ValueExpression)Reducer.Reduce(casted.Initializer, ctx)).Value;
-            ctx.Declare(casted.Identifier, result, casted.IsReadOnly);
+            ctx.Declare(casted.Name, result, casted.IsReadOnly);
             return default;
         }
     }

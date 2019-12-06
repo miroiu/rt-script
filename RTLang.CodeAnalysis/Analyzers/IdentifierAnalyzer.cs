@@ -11,29 +11,34 @@ namespace RTLang.CodeAnalysis.Analyzers
         public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
         {
             var casted = (IdentifierExpression)expression;
-            var symbols = context.GetSymbols().Where(s => s.StartsWith(casted.Name) && !(s == casted.Name));
+            var symbols = context.GetSymbols().Where(s => s.Name != casted.Name && s.Name.StartsWith(casted.Name));
 
             return symbols.Select(w => new CompletionItem
             {
-                Text = w
+                Text = w.Name,
+                Type = w.Type
             });
         }
 
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
         {
             var casted = (IdentifierExpression)expression;
-            var symbols = context.GetSymbols().Where(s => s.StartsWith(casted.Name) && !(s == casted.Name));
+            var symbols = context.GetSymbols()
+                .Where(s => s.Name != casted.Name && s.Name.StartsWith(casted.Name))
+                .Select(s => s.Name);
 
             if (!symbols.Contains(casted.Name))
             {
-                yield return new Diagnostic
+                return new Diagnostic
                 {
                     Position = casted.Token.Column,
                     Length = casted.Token.Text.Length,
                     Type = DiagnosticType.Error,
                     Message = $"'{casted.Name}' is not defined in the current context."
-                };
+                }.ToOneItemArray();
             }
+
+            return new List<Diagnostic>();
         }
     }
 }
