@@ -73,7 +73,7 @@ namespace RTLang.CodeAnalysis.Syntax
         }
 
         public bool IsEndOfStatement()
-            => Current.Type == TokenType.Semicolon;
+            => Current.Type == TokenType.Semicolon || Current.Type == TokenType.EndOfCode;
 
         private IParslet GetParslet(Token token, bool canBeginWith)
         {
@@ -84,6 +84,18 @@ namespace RTLang.CodeAnalysis.Syntax
 
             if (ThrowOnError)
             {
+                if (token.Type == TokenType.EndOfCode)
+                {
+                    throw new SyntaxException(new Token
+                    {
+                        Type = TokenType.Semicolon,
+                        Text = TokenType.Semicolon.ToFriendlyString(),
+                        Column = token.Column,
+                        Line = token.Line,
+                        Position = token.Position
+                    }, token);
+                }
+
                 throw new SyntaxException(token, $"Invalid token found: {token.Text}");
             }
 

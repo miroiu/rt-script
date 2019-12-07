@@ -21,6 +21,7 @@ namespace RTLang.CodeAnalysis.Analyzers
 
                     if (type != default)
                     {
+                        // Can be both a property or an method completion
                         if (casted.Right is IdentifierExpression property)
                         {
                             return context.GetMembers(type)
@@ -30,6 +31,12 @@ namespace RTLang.CodeAnalysis.Analyzers
                                     Text = s.Name,
                                     Type = s.Type
                                 });
+                        }
+
+                        // This is when it is requesting arguments
+                        if (casted.Right is InvocationExpression invocation)
+                        {
+                            return InvocationAnalyzer.GetMethodOverloadsCompletion(type, invocation.MethodName);
                         }
                     }
 
@@ -41,12 +48,6 @@ namespace RTLang.CodeAnalysis.Analyzers
             }
 
             return Enumerable.Empty<CompletionItem>();
-        }
-
-        private bool IsMethodOverload(MethodDescriptor descriptor, IReadOnlyList<Expression> parameters)
-        {
-            // TODO:
-            return descriptor.Parameters.Count == parameters.Count;
         }
 
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
@@ -72,6 +73,22 @@ namespace RTLang.CodeAnalysis.Analyzers
                                     Length = property.Token.Text.Length,
                                     Type = DiagnosticType.Error,
                                     Message = $"'{type.ToFriendlyName()}' does not have a property named: '{property.Name}'."
+                                }.ToOneItemArray();
+                            }
+                        }
+
+                        if (casted.Right is InvocationExpression invocation)
+                        {
+                            bool exists = TypeHelper.GetMethods(type).Any(m => m.Descriptor.Name == invocation.MethodName && InvocationAnalyzer.IsMethodOverload(m.Descriptor, invocation.Arguments.Items));
+
+                            if (!exists)
+                            {
+                                return new Diagnostic
+                                {
+                                    Position = invocation.Token.Position,
+                                    Length = invocation.Token.Text.Length,
+                                    Type = DiagnosticType.Error,
+                                    Message = $"No matching overload found for '{invocation.MethodName}'"
                                 }.ToOneItemArray();
                             }
                         }
@@ -135,9 +152,12 @@ namespace RTLang.CodeAnalysis.Analyzers
                         }
                     }
 
-                    // TODO: No way to handle member assignment
-
                     return AnalyzerService.GetDiagnostics(casted.Left, context);
+
+                default:
+                    var leftDiagnostics = AnalyzerService.GetDiagnostics(casted.Left, context);
+                    var rightDiagnostics = AnalyzerService.GetDiagnostics(casted.Right, context);
+                    return leftDiagnostics.Union(rightDiagnostics);
             }
 
             return Enumerable.Empty<Diagnostic>();
@@ -163,7 +183,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                         else if (casted.Right is InvocationExpression invocation)
                         {
                             return TypeHelper.GetMethods(type)
-                                .FirstOrDefault(m => m.Descriptor.Name == invocation.MethodName && IsMethodOverload(m.Descriptor, invocation.Arguments.Items))
+                                .FirstOrDefault(m => m.Descriptor.Name == invocation.MethodName && InvocationAnalyzer.IsMethodOverload(m.Descriptor, invocation.Arguments.Items))
                                 ?.Descriptor.ReturnType;
                         }
                         else if (casted.Right is IndexerExpression indexer)

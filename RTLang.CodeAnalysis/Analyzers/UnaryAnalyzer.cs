@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using RTLang.Interpreter;
 using RTLang.Parser;
 
 namespace RTLang.CodeAnalysis.Analyzers
 {
+    [ExpressionEvaluator(typeof(UnaryExpression))]
     internal class UnaryAnalyzer : IExpressionAnalyzer
     {
         public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)

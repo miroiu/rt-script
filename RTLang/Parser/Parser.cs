@@ -73,7 +73,7 @@ namespace RTLang.Parser
         }
 
         public bool IsEndOfStatement()
-            => Current.Type == TokenType.Semicolon;
+            => Current.Type == TokenType.Semicolon || Current.Type == TokenType.EndOfCode;
 
         private IParslet GetParslet(Token token, bool canBeginWith)
         {

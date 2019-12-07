@@ -10,12 +10,6 @@ namespace RTLang.Parser
             var openBrace = parser.Take();
 
             var args = parser.ParseArguments(TokenType.CloseBrace);
-
-            if (args.Items.Count == 0)
-            {
-                throw new ParserException(openBrace, "Empty arrays are not allowed.");
-            }
-
             parser.Match(TokenType.CloseBrace);
 
             return new ArrayExpression(args)

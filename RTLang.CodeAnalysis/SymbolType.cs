@@ -7,6 +7,7 @@
         Variable,
         Keyword,
         Method,
-        Property
+        Property,
+        MethodSignature
     }
 }
