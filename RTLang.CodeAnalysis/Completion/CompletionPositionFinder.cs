@@ -27,11 +27,11 @@ namespace RTLang.CodeAnalysis
             }
         }
 
-        public bool FindPosition(Expression host, int desiredPosition)
+        public int FindPosition(Expression host)
         {
             Visit(host);
 
-            return Position == desiredPosition;
+            return Position;
         }
     }
 }

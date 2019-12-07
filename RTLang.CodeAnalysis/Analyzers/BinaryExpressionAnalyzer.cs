@@ -35,11 +35,13 @@ namespace RTLang.CodeAnalysis.Analyzers
 
                     break;
 
-                case BinaryOperatorType.Assign:
-                    break;
-
+                // This should be pretty slow
                 default:
-                    return GetCompletions(casted.Right, context);
+                    var positionFinder = new CompletionPositionFinder();
+                    var service = new AnalyzerService(context, AnalyzerOptions.Completions, positionFinder.FindPosition(casted.Right));
+
+                    service.Visit(casted.Right);
+                    return service.Completions;
             }
 
             return new List<CompletionItem>();
@@ -115,7 +117,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                         break;
 
                     case BinaryOperatorType.Assign:
-                        break;
+                        return type;
 
                     default:
                         var leftType = AnalyzerService.GetReturnType(casted.Left, context);

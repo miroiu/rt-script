@@ -41,7 +41,7 @@ namespace RTLang.Tests
         [TestCase("var x = ", 8, new string[] { "mockInt" })]
         [TestCase("var x = mo", 10, new string[] { "mock", "mockInt" })]
         // Assignment
-        [TestCase("CMock = mockI", 12, new string[] { "mockInt" })]
+        [TestCase("mock = mockI", 12, new string[] { "mockInt" })]
         public void Completions(string input, int position, string[] expected)
         {
             if (position > input.Length)
