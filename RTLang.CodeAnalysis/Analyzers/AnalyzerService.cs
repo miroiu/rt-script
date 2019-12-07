@@ -33,7 +33,7 @@ namespace RTLang.CodeAnalysis.Analyzers
             _completionPosition = completionPosition;
         }
 
-        public IReadOnlyList<CompletionItem> Completions { get; private set; } = new List<CompletionItem>();
+        public IReadOnlyList<Completion> Completions { get; private set; } = new List<Completion>();
         public IReadOnlyList<Diagnostic> Diagnostics => _diagnostics;
         public IAnalysisContext Context { get; }
         public AnalyzerOptions Options { get; }
@@ -75,7 +75,7 @@ namespace RTLang.CodeAnalysis.Analyzers
             return default;
         }
 
-        public static IReadOnlyList<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
+        public static IReadOnlyList<Completion> GetCompletions(Expression expression, IAnalysisContext context)
         {
             var service = new AnalyzerService(context, AnalyzerOptions.Completions, NONE);
             service.Visit(expression);

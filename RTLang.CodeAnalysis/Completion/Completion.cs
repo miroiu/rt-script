@@ -1,6 +1,6 @@
 ﻿namespace RTLang.CodeAnalysis
 {
-    public struct CompletionItem
+    public struct Completion
     {
         public string Text;
         public SymbolType Type;

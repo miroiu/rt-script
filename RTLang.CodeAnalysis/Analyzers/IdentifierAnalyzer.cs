@@ -9,12 +9,12 @@ namespace RTLang.CodeAnalysis.Analyzers
     [ExpressionEvaluator(typeof(IdentifierExpression))]
     internal class IdentifierAnalyzer : IExpressionAnalyzer
     {
-        public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
+        public IEnumerable<Completion> GetCompletions(Expression expression, IAnalysisContext context)
         {
             var casted = (IdentifierExpression)expression;
             return context.GetSymbols()
                 .Where(s => s.Name != casted.Name && s.Name.StartsWith(casted.Name))
-                .Select(w => new CompletionItem
+                .Select(w => new Completion
                 {
                     Text = w.Name,
                     Type = w.Type

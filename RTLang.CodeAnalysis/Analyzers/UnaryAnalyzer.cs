@@ -8,7 +8,7 @@ namespace RTLang.CodeAnalysis.Analyzers
     [ExpressionEvaluator(typeof(UnaryExpression))]
     internal class UnaryAnalyzer : IExpressionAnalyzer
     {
-        public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
+        public IEnumerable<Completion> GetCompletions(Expression expression, IAnalysisContext context)
         {
             var casted = (UnaryExpression)expression;
             return AnalyzerService.GetCompletions(casted.Operand, context);

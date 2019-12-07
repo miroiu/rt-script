@@ -9,8 +9,8 @@ namespace RTLang.CodeAnalysis.Analyzers
     [ExpressionEvaluator(typeof(LiteralExpression))]
     internal class LiteralAnalyzer : IExpressionAnalyzer
     {
-        public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
-            => Enumerable.Empty<CompletionItem>();
+        public IEnumerable<Completion> GetCompletions(Expression expression, IAnalysisContext context)
+            => Enumerable.Empty<Completion>();
 
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
             => Enumerable.Empty<Diagnostic>();

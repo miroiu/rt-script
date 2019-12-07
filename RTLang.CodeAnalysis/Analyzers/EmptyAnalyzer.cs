@@ -9,9 +9,9 @@ namespace RTLang.CodeAnalysis.Analyzers
     [ExpressionEvaluator(typeof(EmptyExpression))]
     internal class EmptyAnalyzer : IExpressionAnalyzer
     {
-        public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
+        public IEnumerable<Completion> GetCompletions(Expression expression, IAnalysisContext context)
             => context.GetSymbols()
-            .Select(s => new CompletionItem
+            .Select(s => new Completion
             {
                 Type = s.Type,
                 Text = s.Name

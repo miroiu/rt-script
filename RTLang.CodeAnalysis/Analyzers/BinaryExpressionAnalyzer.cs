@@ -10,7 +10,7 @@ namespace RTLang.CodeAnalysis.Analyzers
     [ExpressionEvaluator(typeof(BinaryExpression))]
     internal class BinaryExpressionAnalyzer : IExpressionAnalyzer
     {
-        public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
+        public IEnumerable<Completion> GetCompletions(Expression expression, IAnalysisContext context)
         {
             var casted = (BinaryExpression)expression;
 
@@ -26,7 +26,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                         {
                             return context.GetMembers(type)
                                 .Where(s => s.Name != property.Name && s.Name.StartsWith(property.Name))
-                                .Select(s => new CompletionItem
+                                .Select(s => new Completion
                                 {
                                     Text = s.Name,
                                     Type = s.Type
@@ -47,7 +47,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                     return AnalyzerService.GetCompletions(casted.Right, context);
             }
 
-            return Enumerable.Empty<CompletionItem>();
+            return Enumerable.Empty<Completion>();
         }
 
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)

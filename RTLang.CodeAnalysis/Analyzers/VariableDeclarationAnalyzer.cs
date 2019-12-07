@@ -10,10 +10,10 @@ namespace RTLang.CodeAnalysis.Analyzers
     internal class VariableDeclarationAnalyzer : IExpressionAnalyzer
     {
         // var x = <completions>
-        public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
+        public IEnumerable<Completion> GetCompletions(Expression expression, IAnalysisContext context)
             => context.GetSymbols()
             .Where(s => s.Type == SymbolType.Type || s.Type == SymbolType.Variable)
-            .Select(s => new CompletionItem
+            .Select(s => new Completion
             {
                 Type = s.Type,
                 Text = s.Name

@@ -12,7 +12,7 @@ namespace RTLang.CodeAnalysis.Analyzers
     {
         private const string DelegateInvoke = "Invoke";
 
-        public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
+        public IEnumerable<Completion> GetCompletions(Expression expression, IAnalysisContext context)
         {
             var casted = (InvocationExpression)expression;
             var delegateType = context.GetType(casted.MethodName);
@@ -73,14 +73,14 @@ namespace RTLang.CodeAnalysis.Analyzers
             return descriptor.Parameters.Count == parameters.Count;
         }
 
-        public static IEnumerable<CompletionItem> GetMethodOverloadsCompletion(Type type, string methodName)
+        public static IEnumerable<Completion> GetMethodOverloadsCompletion(Type type, string methodName)
         {
             bool isDelegate = typeof(Delegate).IsAssignableFrom(type);
             var name = isDelegate ? DelegateInvoke : methodName;
 
             return TypeHelper.GetMethods(type)
                 .Where(m => m.Descriptor.Name == name)
-                .Select(m => new CompletionItem
+                .Select(m => new Completion
                 {
                     Text = BuildMethodSignature(m.Descriptor, methodName),
                     Type = SymbolType.MethodSignature

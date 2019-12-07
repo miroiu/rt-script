@@ -16,7 +16,7 @@ namespace RTLang.CodeAnalysis
         public static RTLangService Create(IExecutionContext context)
             => new RTLangService(new AnalysisContext(context));
 
-        public IReadOnlyList<CompletionItem> GetCompletions(string code, int position)
+        public IReadOnlyList<Completion> GetCompletions(string code, int position)
         {
             if (position >= 0 && position <= code.Length)
             {
@@ -47,11 +47,11 @@ namespace RTLang.CodeAnalysis
                     }
                     catch (SyntaxException)
                     {
-                        return new List<CompletionItem>();
+                        return new List<Completion>();
                     }
                     catch (LexerException)
                     {
-                        return new List<CompletionItem>();
+                        return new List<Completion>();
                     }
                     catch (Exception ex)
                     {
@@ -60,7 +60,7 @@ namespace RTLang.CodeAnalysis
                 }
             }
 
-            return new List<CompletionItem>();
+            return new List<Completion>();
         }
 
         public IReadOnlyList<Diagnostic> GetDiagnostics(string code)
