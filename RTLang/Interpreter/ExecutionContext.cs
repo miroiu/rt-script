@@ -130,7 +130,7 @@ namespace RTLang.Interpreter
             {
                 var type = value.GetType();
 
-                var op = OperatorsCache.GetUnaryOperator(operatorType, type);
+                var op = TypeHelper.GetUnaryOperator(operatorType, type);
                 if (op != null && TypeHelper.TryChangeType(ref value, op.ParameterType))
                 {
                     return op.Execute(value);
@@ -154,7 +154,7 @@ namespace RTLang.Interpreter
                     return $"{left}{right}";
                 }
 
-                var op = OperatorsCache.GetBinaryOperator(operatorType, leftType, rightType);
+                var op = TypeHelper.GetBinaryOperator(operatorType, leftType, rightType);
                 if (op != null && TypeHelper.TryChangeType(ref left, op.LeftType) && TypeHelper.TryChangeType(ref right, op.RightType))
                 {
                     return op.Execute(left, right);

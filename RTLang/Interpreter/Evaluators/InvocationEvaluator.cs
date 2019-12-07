@@ -21,7 +21,7 @@ namespace RTLang.Interpreter
             if (action != default)
             {
                 var actionType = ctx.GetType(casted.MethodName);
-                var methods = TypesCache.GetMethods(actionType).Where(p => p.Descriptor.Name == DelegateInvoke);
+                var methods = TypeHelper.GetMethods(actionType).Where(p => p.Descriptor.Name == DelegateInvoke);
 
                 foreach (var method in methods)
                 {

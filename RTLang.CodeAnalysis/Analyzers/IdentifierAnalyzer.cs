@@ -11,23 +11,21 @@ namespace RTLang.CodeAnalysis.Analyzers
         public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
         {
             var casted = (IdentifierExpression)expression;
-            var symbols = context.GetSymbols().Where(s => s.Name != casted.Name && s.Name.StartsWith(casted.Name));
-
-            return symbols.Select(w => new CompletionItem
-            {
-                Text = w.Name,
-                Type = w.Type
-            });
+            return context.GetSymbols()
+                .Where(s => s.Name != casted.Name && s.Name.StartsWith(casted.Name))
+                .Select(w => new CompletionItem
+                {
+                    Text = w.Name,
+                    Type = w.Type
+                });
         }
 
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
         {
             var casted = (IdentifierExpression)expression;
-            var symbols = context.GetSymbols()
-                .Where(s => s.Name != casted.Name && s.Name.StartsWith(casted.Name))
-                .Select(s => s.Name);
+            var exists = context.GetSymbols().Any(s => s.Name == casted.Name);
 
-            if (!symbols.Contains(casted.Name))
+            if (!exists)
             {
                 return new Diagnostic
                 {

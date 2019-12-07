@@ -1,12 +1,13 @@
-﻿using System;
+﻿using RTLang.Operators;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace RTLang.Operators
+namespace RTLang
 {
-    public static class OperatorsCache
+    public static partial class TypeHelper
     {
-        static OperatorsCache()
+        static TypeHelper()
         {
             LoadOperators(typeof(NumberOperators));
             LoadOperators(typeof(BooleanOperators));

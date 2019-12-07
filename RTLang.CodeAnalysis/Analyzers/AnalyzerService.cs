@@ -23,7 +23,7 @@ namespace RTLang.CodeAnalysis.Analyzers
         private readonly int _completionPosition;
         private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
 
-        private CompletionPositionFinder _positionFinder = new CompletionPositionFinder();
+        private readonly CompletionPositionFinder _positionFinder = new CompletionPositionFinder();
 
         public AnalyzerService(IAnalysisContext context, AnalyzerOptions options, int completionPosition = 0)
         {
@@ -42,7 +42,7 @@ namespace RTLang.CodeAnalysis.Analyzers
             if (Analyzers.TryGetValue(host.GetType(), out var analyzer))
             {
                 // Happens only once
-                if (Options.HasFlag(AnalyzerOptions.Completions) && _positionFinder.FindPosition(host, _completionPosition))
+                if (Completions.Count == 0 && Options.HasFlag(AnalyzerOptions.Completions) && _positionFinder.FindPosition(host, _completionPosition))
                 {
                     Completions = analyzer.GetCompletions(host, Context).ToList();
                     return;

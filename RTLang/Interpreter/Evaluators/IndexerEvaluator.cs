@@ -15,7 +15,7 @@ namespace RTLang.Interpreter
             if (instance != null)
             {
                 var instanceType = ctx.GetType(casted.PropertyName);
-                var indexers = TypesCache.GetProperties(instanceType).Where(p => p.Descriptor.IsIndexer);
+                var indexers = TypeHelper.GetProperties(instanceType).Where(p => p.Descriptor.IsIndexer);
 
                 var indexValue = Reducer.Reduce<ValueExpression>(casted.Index, ctx);
 

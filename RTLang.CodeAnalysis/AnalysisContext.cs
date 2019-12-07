@@ -26,7 +26,8 @@ namespace RTLang.CodeAnalysis
 
         public IEnumerable<Symbol> GetMembers(Type type)
         {
-            var props = TypesCache.GetProperties(type)
+            var props = TypeHelper.GetProperties(type)
+                .Where(p => !p.Descriptor.IsIndexer)
                 .Select(p => new Symbol
                 {
                     Type = SymbolType.Property,
@@ -34,7 +35,7 @@ namespace RTLang.CodeAnalysis
                     Name = p.Descriptor.Name
                 });
 
-            var methods = TypesCache.GetMethods(type)
+            var methods = TypeHelper.GetMethods(type)
                 .Select(p => new Symbol
                 {
                     Type = SymbolType.Method,

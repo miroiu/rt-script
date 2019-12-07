@@ -55,6 +55,6 @@ namespace RTLang
             => new ExecutionContext(output);
 
         public static void LoadOperators(Type hostType)
-            => OperatorsCache.LoadOperators(hostType);
+            => TypeHelper.LoadOperators(hostType);
     }
 }

@@ -1,15 +1,16 @@
-﻿using System;
+﻿using RTLang.Interop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace RTLang.Interop
+namespace RTLang
 {
-    public static class TypesCache
+    public static partial class TypeHelper
     {
         private static readonly Dictionary<TypeConfiguration, MembersCache> _members = new Dictionary<TypeConfiguration, MembersCache>();
 
-        public static void AddType(TypeConfiguration typeConfig)
+        public static void ConfigureType(TypeConfiguration typeConfig)
         {
             if (!_members.ContainsKey(typeConfig))
             {
@@ -67,7 +68,7 @@ namespace RTLang.Interop
             if (!_members.TryGetValue(new TypeConfiguration(type), out var props))
             {
                 var config = TypeConfiguration.Build(type);
-                AddType(config);
+                ConfigureType(config);
                 return _members[config].GetProperties();
             }
 
@@ -79,7 +80,7 @@ namespace RTLang.Interop
             if (!_members.TryGetValue(new TypeConfiguration(type), out var props))
             {
                 var config = TypeConfiguration.Build(type);
-                AddType(config);
+                ConfigureType(config);
                 return _members[config].GetMethods();
             }
 

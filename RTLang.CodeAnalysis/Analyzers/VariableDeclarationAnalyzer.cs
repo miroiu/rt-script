@@ -8,6 +8,7 @@ namespace RTLang.CodeAnalysis.Analyzers
     [ExpressionEvaluator(typeof(VariableDeclarationExpression))]
     internal class VariableDeclarationAnalyzer : IExpressionAnalyzer
     {
+        // var x = <completions>
         public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
             => context.GetSymbols()
             .Where(s => s.Type == SymbolType.Type || s.Type == SymbolType.Variable)

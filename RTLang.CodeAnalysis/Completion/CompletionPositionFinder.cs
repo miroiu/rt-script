@@ -1,7 +1,7 @@
 ﻿using RTLang.Lexer;
 using RTLang.Parser;
 
-namespace RTLang.CodeAnalysis.Analyzers
+namespace RTLang.CodeAnalysis
 {
     internal class CompletionPositionFinder : ILangVisitor<Expression>
     {

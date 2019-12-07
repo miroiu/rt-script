@@ -81,11 +81,11 @@ namespace RTLang.Interpreter
             if (instance.Type != null)
             {
                 // Should be a single indexable property
-                var prop = TypesCache.GetProperties(instance.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == indexer.PropertyName && p.Descriptor.IsStatic == isStatic);
+                var prop = TypeHelper.GetProperties(instance.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == indexer.PropertyName && p.Descriptor.IsStatic == isStatic);
 
                 if (prop != null)
                 {
-                    var indexerWrappers = TypesCache.GetProperties(prop.Descriptor.ReturnType).Where(p => p.Descriptor.IsIndexer);
+                    var indexerWrappers = TypeHelper.GetProperties(prop.Descriptor.ReturnType).Where(p => p.Descriptor.IsIndexer);
                     var index = Reducer.Reduce<ValueExpression>(indexer.Index, ctx);
 
                     foreach (var wrapper in indexerWrappers)
@@ -110,7 +110,7 @@ namespace RTLang.Interpreter
             // This means the value is not a null literal
             if (instance.Type != null)
             {
-                var methodWrappers = TypesCache.GetMethods(instance.Type).Where(p => p.Descriptor.Name == method.MethodName && p.Descriptor.IsStatic == isStatic);
+                var methodWrappers = TypeHelper.GetMethods(instance.Type).Where(p => p.Descriptor.Name == method.MethodName && p.Descriptor.IsStatic == isStatic);
 
                 foreach (var wrapper in methodWrappers)
                 {
@@ -132,7 +132,7 @@ namespace RTLang.Interpreter
             if (instance.Type != null)
             {
                 // Should be a single property
-                var prop = TypesCache.GetProperties(instance.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == property.Name && p.Descriptor.IsStatic == isStatic);
+                var prop = TypeHelper.GetProperties(instance.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == property.Name && p.Descriptor.IsStatic == isStatic);
 
                 if (prop != null)
                 {

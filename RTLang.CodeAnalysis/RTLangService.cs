@@ -48,11 +48,11 @@ namespace RTLang.CodeAnalysis
 
                         return analyzer.Completions;
                     }
-                    catch (SyntaxException ex)
+                    catch (SyntaxException)
                     {
                         return new List<CompletionItem>();
                     }
-                    catch (LexerException ex)
+                    catch (LexerException)
                     {
                         return new List<CompletionItem>();
                     }

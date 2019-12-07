@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace RTLang
 {
-    public static class TypeHelper
+    public static partial class TypeHelper
     {
         private static readonly Dictionary<Type, HashSet<Type>> _conversionTable = new Dictionary<Type, HashSet<Type>>
         {
