@@ -2,7 +2,7 @@
 
 namespace RTLang.CodeAnalysis.Syntax
 {
-    public class SyntaxException : AnalysisException
+    internal class SyntaxException : AnalysisException
     {
         public SyntaxException(Token expected, Token current) : base($"Expected '{expected.Text}'.")
         {
