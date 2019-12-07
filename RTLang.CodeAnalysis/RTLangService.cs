@@ -56,10 +56,10 @@ namespace RTLang.CodeAnalysis
                     {
                         return new List<CompletionItem>();
                     }
-                    //catch
-                    //{
-                    //    return new List<CompletionItem>();
-                    //}
+                    catch
+                    {
+                        return new List<CompletionItem>();
+                    }
                 }
             }
 
@@ -119,10 +119,10 @@ namespace RTLang.CodeAnalysis
                         }
                     };
                 }
-                //catch
-                //{
-                //    return new List<Diagnostic>();
-                //}
+                catch
+                {
+                    return new List<Diagnostic>();
+                }
             }
         }
     }
