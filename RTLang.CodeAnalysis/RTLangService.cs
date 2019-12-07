@@ -2,7 +2,6 @@
 using RTLang.CodeAnalysis.Syntax;
 using RTLang.Lexer;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RTLang.CodeAnalysis
 {
@@ -15,9 +14,6 @@ namespace RTLang.CodeAnalysis
 
         public static RTLangService Create(IExecutionContext context)
             => new RTLangService(new AnalysisContext(context));
-
-        public async Task<IReadOnlyList<CompletionItem>> GetCompletionsAsync(string code, int position)
-            => await Task.Run(() => GetCompletions(code, position));
 
         public IReadOnlyList<CompletionItem> GetCompletions(string code, int position)
         {
