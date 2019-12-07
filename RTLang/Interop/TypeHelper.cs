@@ -10,7 +10,7 @@ namespace RTLang
     {
         private static readonly Dictionary<TypeConfiguration, MembersCache> _members = new Dictionary<TypeConfiguration, MembersCache>();
 
-        public static void ConfigureType(TypeConfiguration typeConfig)
+        public static void AddTypeConfiguration(TypeConfiguration typeConfig)
         {
             if (!_members.ContainsKey(typeConfig))
             {
@@ -68,7 +68,7 @@ namespace RTLang
             if (!_members.TryGetValue(new TypeConfiguration(type), out var props))
             {
                 var config = TypeConfiguration.Build(type);
-                ConfigureType(config);
+                AddTypeConfiguration(config);
                 return _members[config].GetProperties();
             }
 
@@ -80,7 +80,7 @@ namespace RTLang
             if (!_members.TryGetValue(new TypeConfiguration(type), out var props))
             {
                 var config = TypeConfiguration.Build(type);
-                ConfigureType(config);
+                AddTypeConfiguration(config);
                 return _members[config].GetMethods();
             }
 

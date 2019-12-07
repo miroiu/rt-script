@@ -196,10 +196,7 @@ namespace RTLang
 
         #endregion
 
-        public static void DeclareStatic<T>(this IExecutionContext context, string name)
-            => context.Declare(name, typeof(T));
-
-        public static void DeclareStatic<T>(this IExecutionContext context)
-            => context.Declare(typeof(T).ToFriendlyName(), typeof(T));
+        public static void Declare<T>(this IExecutionContext context)
+            => context.Declare(typeof(T));
     }
 }

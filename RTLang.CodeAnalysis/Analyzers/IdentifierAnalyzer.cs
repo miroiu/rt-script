@@ -1,5 +1,6 @@
 ﻿using RTLang.Interpreter;
 using RTLang.Parser;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -37,6 +38,12 @@ namespace RTLang.CodeAnalysis.Analyzers
             }
 
             return new List<Diagnostic>();
+        }
+
+        public Type GetReturnType(Expression expression, IAnalysisContext context)
+        {
+            var casted = (IdentifierExpression)expression;
+            return context.GetType(casted.Name);
         }
     }
 }

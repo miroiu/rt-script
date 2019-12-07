@@ -8,7 +8,7 @@ namespace RTLang.CodeAnalysis.Analyzers
 {
     internal class AnalyzerService : ILangVisitor<Expression>
     {
-        internal static readonly IDictionary<Type, IExpressionAnalyzer> Analyzers = typeof(IExpressionAnalyzer).Assembly.GetTypes()
+        private static readonly IDictionary<Type, IExpressionAnalyzer> Analyzers = typeof(IExpressionAnalyzer).Assembly.GetTypes()
                 .Where(x => typeof(IExpressionAnalyzer).IsAssignableFrom(x))
                 .SelectMany(x =>
                 {
@@ -55,6 +55,18 @@ namespace RTLang.CodeAnalysis.Analyzers
             }
 
             host.Accept(this);
+        }
+
+        public static Type GetReturnType(Expression expr, IAnalysisContext context)
+        {
+            var exprType = expr.GetType();
+
+            if (Analyzers.TryGetValue(exprType, out var analyzer))
+            {
+                return analyzer.GetReturnType(expr, context);
+            }
+
+            return default;
         }
     }
 }

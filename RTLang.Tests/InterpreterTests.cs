@@ -35,7 +35,7 @@ namespace RTLang.Tests
 
             Context.Declare("action", Action);
             Context.Declare("isEven", IsEven);
-            Context.DeclareStatic<int>();
+            Context.Declare<int>();
         }
 
         [Test]

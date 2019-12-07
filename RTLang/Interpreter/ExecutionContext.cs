@@ -34,8 +34,10 @@ namespace RTLang.Interpreter
             _variables[name] = new Reference(name, isConst, value);
         }
 
-        public void Declare(string name, Type type)
+        public void Declare(Type type)
         {
+            var name = type.ToFriendlyName();
+
             if (_variables.ContainsKey(name) || _types.ContainsKey(name))
             {
                 throw new Exception($"'{name}' is already defined in the current context.");

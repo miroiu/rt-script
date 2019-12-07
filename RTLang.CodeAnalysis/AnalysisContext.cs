@@ -1,5 +1,4 @@
-﻿using RTLang.Interop;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +7,7 @@ namespace RTLang.CodeAnalysis
     internal class AnalysisContext : IAnalysisContext
     {
         private readonly IExecutionContext _context;
-        private readonly string[] _keywords = new string[]
+        private readonly HashSet<string> _keywords = new HashSet<string>
         {
             "const",
             "null",
@@ -22,7 +21,16 @@ namespace RTLang.CodeAnalysis
             => _context = context ?? throw new AnalysisException($"'{nameof(context)}' is null.");
 
         public Type GetType(string variable)
-            => _context.GetType(variable);
+        {
+            try
+            {
+                return _context.GetType(variable);
+            }
+            catch
+            {
+                return default;
+            }
+        }
 
         public IEnumerable<Symbol> GetMembers(Type type)
         {
@@ -64,6 +72,33 @@ namespace RTLang.CodeAnalysis
                 Type = SymbolType.Keyword
             }));
 
+        public Symbol GetSymbol(string name)
+        {
+            try
+            {
+                return _keywords.Contains(name) ? new Symbol
+                {
+                    IsReadOnly = true,
+                    Name = name,
+                    Type = SymbolType.Keyword
+                } : _context.IsType(name) ? new Symbol
+                {
+                    IsReadOnly = true,
+                    Name = name,
+                    Type = SymbolType.Type
+                } : new Symbol
+                {
+                    IsReadOnly = _context.IsReadOnly(name),
+                    Name = name,
+                    Type = SymbolType.Variable
+                };
+            }
+            catch
+            {
+                return default;
+            }
+        }
+
         public IEnumerable<Symbol> GetTypes()
             => _context.GetTypes().Select(t => new Symbol
             {
@@ -80,7 +115,7 @@ namespace RTLang.CodeAnalysis
                 Type = SymbolType.Variable
             });
 
-        //public IEnumerable<string> GetMethodArguments(Type type, string methodName)
+        //public IEnumerable<MethodOverloadDescription> GetMethodOverloads(Type type, string methodName)
         //{
         //}
     }

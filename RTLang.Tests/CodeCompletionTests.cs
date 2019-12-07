@@ -16,19 +16,21 @@ namespace RTLang.Tests
         {
             _context = RTScript.NewContext(new MockOutputStream());
             _service = RTLangService.Create(_context);
-            _context.DeclareStatic<CompletionClassMock>("mock");
+            _context.Declare<CMock>();
+            _context.Declare("mock", new CMock());
             _context.Declare("mockInt", 1);
         }
 
         [Test]
-        [TestCase("", 0, new string[] { "mock" })]
-        [TestCase(";", 0, new string[] { "mock" })]
-        [TestCase(";", 1, new string[] { "mock" })]
+        [TestCase("", 0, new string[] { "CMock" })]
+        [TestCase(";", 0, new string[] { "CMock" })]
+        [TestCase(";", 1, new string[] { "CMock" })]
         // Accessors
-        [TestCase("mock.StaticMeth", 15, new string[] { "StaticMethod1", "StaticMethod2" })]
-        [TestCase("mock.StaticProperty + mock.StaticMeth", 38, new string[] { "StaticMethod1", "StaticMethod2" })]
-        [TestCase("mock.StaticProperty + mock.IsDeepProp.ToStr", 41, new string[] { "ToString" })]
-        [TestCase("mock.StaticProperty + mock.IsDeep(true).ToStr", 43, new string[] { "ToString" })]
+        [TestCase("CMock.StaticMeth", 16, new string[] { "StaticMethod1", "StaticMethod2" })]
+        [TestCase("CMock.StaticProperty + CMock.StaticMeth", 39, new string[] { "StaticMethod1", "StaticMethod2" })]
+        [TestCase("CMock.StaticProperty + mock.HasDepth(1).ToStr", 45, new string[] { "ToString" })]
+        [TestCase("CMock.StaticProperty + mock.Depth.ToStr", 39, new string[] { "ToString" })]
+        [TestCase("CMock.StaticProperty + mock.Depth[int.Parse('0')].ToStr", 55, new string[] { "ToString" })]
         // Identifier
         [TestCase("v", 1, new string[] { "var" })]
         [TestCase("const", 3, new string[] { "const" })]
@@ -36,10 +38,10 @@ namespace RTLang.Tests
         // Variable declaration
         [TestCase("var ", 4, new string[0])]
         [TestCase("var x", 4, new string[0])]
-        [TestCase("var x = ", 8, new string[] { "mock", "mockInt" })]
+        [TestCase("var x = ", 8, new string[] { "mockInt" })]
         [TestCase("var x = mo", 10, new string[] { "mock", "mockInt" })]
         // Assignment
-        [TestCase("mock = mockI", 12, new string[] { "mockInt" })]
+        [TestCase("CMock = mockI", 12, new string[] { "mockInt" })]
         public void Completions(string input, int position, string[] expected)
         {
             if (position > input.Length)
@@ -60,7 +62,7 @@ namespace RTLang.Tests
         [TestCase("", new string[0])]
         [TestCase(";", new string[0])]
         // Variable declaration
-        [TestCase("var mock = 1;", new string[] { "mock" })]
+        [TestCase("var CMock = 1;", new string[] { "CMock" })]
         [TestCase("var x;", new string[] { ";" })]
         [TestCase("var x = +;", new string[] { "+" })]
         [TestCase("var x = x;", new string[] { "x" })]
@@ -68,7 +70,7 @@ namespace RTLang.Tests
         [TestCase("const;", new string[] { ";" })]
         [TestCase("const var;", new string[] { "var" })]
         // Assignment
-        [TestCase("mock = 5;", new string[] { "mock" })]
+        [TestCase("CMock = 5;", new string[] { "CMock" })]
         public void Diagnostics(string input, string[] expected)
         {
             var result = _service.GetDiagnostics(input);

@@ -6,7 +6,7 @@ namespace RTLang.CodeAnalysis.Syntax
 {
     internal class SyntaxParser : IExpressionProvider, IRTLangParser
     {
-        public static readonly IDictionary<(TokenType Type, bool CanBeginWith), IParslet> Parslets = Parser.Parser.Parslets;
+        private static readonly IDictionary<(TokenType Type, bool CanBeginWith), IParslet> Parslets = Parser.Parser.Parslets;
         private readonly Lexer.Lexer _lexer;
 
         public bool HasNext { get; private set; }

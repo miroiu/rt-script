@@ -12,7 +12,7 @@ namespace RTLang
         void Declare(string name, object value, bool isConst = false);
 
         // Declare a type
-        void Declare(string name, Type type);
+        void Declare(Type type);
 
         // Returns the value of a variable
         object GetValue(string name);

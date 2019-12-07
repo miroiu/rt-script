@@ -1,6 +1,6 @@
 ﻿namespace RTLang.CodeAnalysis.Analyzers
 {
-    internal interface IExpressionAnalyzer : ICompletionsProvider, IDiagnosticsProvider
+    internal interface IExpressionAnalyzer : ICompletionsProvider, IDiagnosticsProvider, ITypeAnalyzer
     {
     }
 }

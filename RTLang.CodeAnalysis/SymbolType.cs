@@ -2,6 +2,7 @@
 {
     public enum SymbolType
     {
+        None,
         Type,
         Variable,
         Keyword,

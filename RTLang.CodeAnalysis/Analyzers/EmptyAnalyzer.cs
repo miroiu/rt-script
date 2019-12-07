@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using RTLang.Interpreter;
 using RTLang.Parser;
@@ -18,5 +19,8 @@ namespace RTLang.CodeAnalysis.Analyzers
 
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
             => new List<Diagnostic>();
+
+        public Type GetReturnType(Expression expression, IAnalysisContext context)
+            => default;
     }
 }
