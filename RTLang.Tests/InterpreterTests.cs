@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using RTLang.Interpreter;
 using System;
+using RTLang.CodeAnalysis;
 
 namespace RTLang.Tests
 {
@@ -24,6 +25,7 @@ namespace RTLang.Tests
     {
         public MockOutputStream Output { get; private set; }
         public IExecutionContext Context { get; private set; }
+        public RTLangService LangService { get; private set; }
         public Action Action { get; } = () => { };
         public Func<int, bool> IsEven { get; } = (i) => i % 2 == 0;
 
@@ -32,6 +34,7 @@ namespace RTLang.Tests
         {
             Output = new MockOutputStream();
             Context = RTScript.NewContext(Output);
+            LangService = RTLangService.Create(Context);
 
             Context.Declare("action", Action);
             Context.Declare("isEven", IsEven);
@@ -113,6 +116,8 @@ namespace RTLang.Tests
         [TestCase("var a = 'str'; print a.Length;", new[] { "3" })]
         public void Everything(string input, string[] expected)
         {
+            var diagnostics = LangService.GetDiagnostics(input);
+            Assert.IsTrue(diagnostics.Count == 0);
             var result = InterpreterApp.Run(input, Context, Output);
             Assert.AreEqual(expected, result);
         }

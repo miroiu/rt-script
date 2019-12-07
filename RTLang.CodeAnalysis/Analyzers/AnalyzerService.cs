@@ -24,6 +24,7 @@ namespace RTLang.CodeAnalysis.Analyzers
         private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
 
         private readonly CompletionPositionFinder _positionFinder = new CompletionPositionFinder();
+        private const int NONE = -1;
 
         public AnalyzerService(IAnalysisContext context, AnalyzerOptions options, int completionPosition = 0)
         {
@@ -42,31 +43,53 @@ namespace RTLang.CodeAnalysis.Analyzers
             if (Analyzers.TryGetValue(host.GetType(), out var analyzer))
             {
                 // Happens only once
-                if (Completions.Count == 0 && Options.HasFlag(AnalyzerOptions.Completions) && _positionFinder.FindPosition(host) == _completionPosition)
+                if (Completions.Count == 0 && Options.HasFlag(AnalyzerOptions.Completions))
                 {
-                    Completions = analyzer.GetCompletions(host, Context).ToList();
-                    return;
+                    bool isAtDesiredPosition = _completionPosition == NONE || _positionFinder.FindPosition(host) == _completionPosition;
+                    if (isAtDesiredPosition)
+                    {
+                        Completions = analyzer.GetCompletions(host, Context).ToList();
+                        return;
+                    }
                 }
 
                 if (Options.HasFlag(AnalyzerOptions.Diagnostics))
                 {
                     _diagnostics.AddRange(analyzer.GetDiagnostics(host, Context));
+                    return;
                 }
             }
 
             host.Accept(this);
         }
 
-        public static Type GetReturnType(Expression expr, IAnalysisContext context)
+        public static Type GetReturnType(Expression expression, IAnalysisContext context)
         {
-            var exprType = expr.GetType();
+            var exprType = expression.GetType();
 
             if (Analyzers.TryGetValue(exprType, out var analyzer))
             {
-                return analyzer.GetReturnType(expr, context);
+                return analyzer.GetReturnType(expression, context);
             }
 
             return default;
+        }
+
+        public static IReadOnlyList<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
+        {
+            var service = new AnalyzerService(context, AnalyzerOptions.Completions, NONE);
+            service.Visit(expression);
+
+            return service.Completions;
+        }
+
+        // Will stop at the first diagnostic found
+        public static IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
+        {
+            var service = new AnalyzerService(context, AnalyzerOptions.Diagnostics, NONE);
+            service.Visit(expression);
+
+            return service.Diagnostics;
         }
     }
 }

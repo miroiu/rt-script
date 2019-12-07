@@ -21,5 +21,13 @@ namespace RTLang.CodeAnalysis
 
         // Returns all variable symbols
         IEnumerable<Symbol> GetVariables();
+
+        Type GetLiteralType(LiteralType type, string value);
+
+        // Adds a temporary symbol (e.g. variable defined in a previous statement that was not evaluated)
+        void AddMetadata(SymbolMetadata symbol);
+
+        // Clears the temporary symbols
+        void ClearMetadata();
     }
 }

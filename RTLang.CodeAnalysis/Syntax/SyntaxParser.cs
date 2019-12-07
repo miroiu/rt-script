@@ -55,7 +55,10 @@ namespace RTLang.CodeAnalysis.Syntax
 
         public void Ensure(TokenType type)
         {
-            if ((ThrowOnError && Current.Type != type) || Current.Type == TokenType.EndOfCode)
+            // Hack: This is coming from VariableDeclaration where '=' is mandatory
+            bool shouldBeAssignment = (type == TokenType.Equals && Current.Type != type);
+
+            if ((ThrowOnError && Current.Type != type) || shouldBeAssignment)
             {
                 // Missing mandatory token should raise a diagnostic
                 throw new SyntaxException(new Token

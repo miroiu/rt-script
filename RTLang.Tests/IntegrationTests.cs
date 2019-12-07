@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using RTLang.Tests.Mocks;
+using RTLang.CodeAnalysis;
 
 namespace RTLang.Tests
 {
@@ -18,6 +19,7 @@ namespace RTLang.Tests
     {
         public MockOutputStream Output { get; private set; }
         public IExecutionContext Context { get; private set; }
+        public RTLangService LangService { get; private set; }
 
         private readonly TestClass _test = new TestClass();
 
@@ -26,6 +28,8 @@ namespace RTLang.Tests
         {
             Output = new MockOutputStream();
             Context = RTScript.NewContext(Output);
+            LangService = RTLangService.Create(Context);
+
             Context.Declare("t", _test);
             Context.Declare(typeof(TestClass));
         }
@@ -43,6 +47,7 @@ namespace RTLang.Tests
         [TestCase("print TestClass.Overload(1, '2');", new string[] { "12" })]
         public void Interop(string input, string[] expected)
         {
+            Assert.IsTrue(LangService.GetDiagnostics(input).Count == 0);
             var result = ScriptApp.Run(input, Context, Output);
             Assert.AreEqual(expected, result);
         }

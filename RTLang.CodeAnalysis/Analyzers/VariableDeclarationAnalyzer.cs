@@ -24,6 +24,7 @@ namespace RTLang.CodeAnalysis.Analyzers
             var casted = (VariableDeclarationExpression)expression;
 
             var alreadyExists = context.GetSymbols().Any(s => s.Name == casted.Name);
+            var diagnostics = AnalyzerService.GetDiagnostics(casted.Initializer, context);
 
             if (alreadyExists)
             {
@@ -35,8 +36,19 @@ namespace RTLang.CodeAnalysis.Analyzers
                     Message = $"'{casted.Name}' is already defined in the current context."
                 }.ToOneItemArray();
             }
+            else
+            {
+                var type = AnalyzerService.GetReturnType(casted.Initializer, context);
 
-            return new List<Diagnostic>();
+                context.AddMetadata(new SymbolMetadata(new Symbol
+                {
+                    IsReadOnly = casted.IsReadOnly,
+                    Name = casted.Name,
+                    Type = SymbolType.Variable
+                }, type));
+            }
+
+            return diagnostics;
         }
 
         public Type GetReturnType(Expression expression, IAnalysisContext context)

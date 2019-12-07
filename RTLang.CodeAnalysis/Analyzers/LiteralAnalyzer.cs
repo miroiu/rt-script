@@ -6,21 +6,19 @@ using RTLang.Parser;
 
 namespace RTLang.CodeAnalysis.Analyzers
 {
-    [ExpressionEvaluator(typeof(EmptyExpression))]
-    internal class EmptyAnalyzer : IExpressionAnalyzer
+    [ExpressionEvaluator(typeof(LiteralExpression))]
+    internal class LiteralAnalyzer : IExpressionAnalyzer
     {
         public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
-            => context.GetSymbols()
-            .Select(s => new CompletionItem
-            {
-                Type = s.Type,
-                Text = s.Name
-            });
+            => Enumerable.Empty<CompletionItem>();
 
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
             => Enumerable.Empty<Diagnostic>();
 
         public Type GetReturnType(Expression expression, IAnalysisContext context)
-            => default;
+        {
+            var casted = (LiteralExpression)expression;
+            return context.GetLiteralType(casted.Type, casted.Value);
+        }
     }
 }

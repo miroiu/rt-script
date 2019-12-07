@@ -37,7 +37,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                 }.ToOneItemArray();
             }
 
-            return new List<Diagnostic>();
+            return Enumerable.Empty<Diagnostic>();
         }
 
         public Type GetReturnType(Expression expression, IAnalysisContext context)

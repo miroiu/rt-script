@@ -19,6 +19,7 @@ namespace RTLang.Tests
             _context.Declare<CMock>();
             _context.Declare("mock", new CMock());
             _context.Declare("mockInt", 1);
+            _context.Declare("mockIntConst", 1, true);
         }
 
         [Test]
@@ -42,6 +43,8 @@ namespace RTLang.Tests
         [TestCase("var x = mo", 10, new string[] { "mock", "mockInt" })]
         // Assignment
         [TestCase("mock = mockI", 12, new string[] { "mockInt" })]
+        [TestCase("var x = 1 + (mock = mockI", 22, new string[] { "mockInt" })]
+        [TestCase("var x = -mo", 11, new string[] { "mockInt" })]
         public void Completions(string input, int position, string[] expected)
         {
             if (position > input.Length)
@@ -71,6 +74,7 @@ namespace RTLang.Tests
         [TestCase("const var;", new string[] { "var" })]
         // Assignment
         [TestCase("CMock = 5;", new string[] { "CMock" })]
+        [TestCase("mockIntConst = 3;", new string[] { "mockIntConst" })]
         public void Diagnostics(string input, string[] expected)
         {
             var result = _service.GetDiagnostics(input);

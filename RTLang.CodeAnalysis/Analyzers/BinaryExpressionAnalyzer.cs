@@ -8,7 +8,7 @@ using RTLang.Parser;
 namespace RTLang.CodeAnalysis.Analyzers
 {
     [ExpressionEvaluator(typeof(BinaryExpression))]
-    internal class BinaryExpressionAnalyzer : IExpressionAnalyzer, ITypeAnalyzer
+    internal class BinaryExpressionAnalyzer : IExpressionAnalyzer
     {
         public IEnumerable<CompletionItem> GetCompletions(Expression expression, IAnalysisContext context)
         {
@@ -35,16 +35,12 @@ namespace RTLang.CodeAnalysis.Analyzers
 
                     break;
 
-                // This should be pretty slow
                 default:
-                    var positionFinder = new CompletionPositionFinder();
-                    var service = new AnalyzerService(context, AnalyzerOptions.Completions, positionFinder.FindPosition(casted.Right));
-
-                    service.Visit(casted.Right);
-                    return service.Completions;
+                    // TODO: Is this slow?
+                    return AnalyzerService.GetCompletions(casted.Right, context);
             }
 
-            return new List<CompletionItem>();
+            return Enumerable.Empty<CompletionItem>();
         }
 
         private bool IsMethodOverload(MethodDescriptor descriptor, IReadOnlyList<Expression> parameters)
@@ -59,6 +55,30 @@ namespace RTLang.CodeAnalysis.Analyzers
 
             switch (casted.OperatorType)
             {
+                case BinaryOperatorType.AccessMember:
+                    var type = AnalyzerService.GetReturnType(casted.Left, context);
+
+                    if (type != default)
+                    {
+                        if (casted.Right is IdentifierExpression property)
+                        {
+                            bool exists = context.GetMembers(type).Any(s => s.Name == property.Name && s.Type == SymbolType.Property);
+
+                            if (!exists)
+                            {
+                                return new Diagnostic
+                                {
+                                    Position = property.Token.Column,
+                                    Length = property.Token.Text.Length,
+                                    Type = DiagnosticType.Error,
+                                    Message = $"'{type.ToFriendlyName()}' does not have a property named: '{property.Name}'."
+                                }.ToOneItemArray();
+                            }
+                        }
+                    }
+
+                    break;
+
                 case BinaryOperatorType.Assign:
                     if (casted.Left is IdentifierExpression id)
                     {
@@ -75,10 +95,11 @@ namespace RTLang.CodeAnalysis.Analyzers
                             }.ToOneItemArray();
                         }
                     }
-                    break;
+
+                    return AnalyzerService.GetDiagnostics(casted.Left, context);
             }
 
-            return new List<Diagnostic>();
+            return Enumerable.Empty<Diagnostic>();
         }
 
         public Type GetReturnType(Expression expression, IAnalysisContext context)
@@ -126,7 +147,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                         if (leftType != default && rightType != default)
                         {
                             var op = TypeHelper.GetBinaryOperator(casted.OperatorType, leftType, rightType);
-                            return op.ReturnType;
+                            return op?.ReturnType;
                         }
 
                         return default;

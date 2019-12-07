@@ -77,6 +77,8 @@ namespace RTLang.CodeAnalysis
 
                 try
                 {
+                    _context.ClearMetadata();
+
                     while (parser.HasNext)
                     {
                         var expr = parser.Next();
