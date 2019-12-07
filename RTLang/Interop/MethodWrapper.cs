@@ -2,7 +2,7 @@
 
 namespace RTLang.Interop
 {
-    // TODO: Try to create a type safe delegate from the method info (maybe using Linq.Parser?)
+    // TODO: Better implementation of methodwrapper (type safe delegate from the method info)
     public class MethodWrapper : IMethodWrapper
     {
         private readonly MethodInfo _info;

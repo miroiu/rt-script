@@ -89,7 +89,6 @@ namespace RTLang
 
         #region Wrappers
 
-        // TODO: Better implementation of methodwrapper
         private static IMethodWrapper WrapMethod(Type type, MethodInfo method, MethodDescriptor descriptor)
             => new MethodWrapper(method, descriptor);
 
