@@ -40,8 +40,8 @@ Context.Declare("PI", 3.14, isConst: true);
 Context.Declare("myList", new List<int>{ 0, 1, 2, 3, 4, 5, 6, 7, 8 }, isConst: true);
 Context.Declare("myDictionary", new Dictionary<string, int>(), isConst: true);
 
-Context.Declare<int>(); // Declare static type
-// Context.Declare(typeof(int)); // Declare static type
+Context.Declare<int>(); // Declare type
+// Context.Declare(typeof(int)); // Declare type
 ```
 
 RTScript:
