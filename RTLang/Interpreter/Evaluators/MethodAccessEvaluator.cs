@@ -11,7 +11,10 @@ namespace RTLang.Interpreter
 
             if (casted.Instance != null || casted.Method.Descriptor.IsStatic)
             {
-                return new ValueExpression(casted.Method.Execute(casted.Instance, (object[])casted.Arguments), casted.Method.Descriptor.ReturnType);
+                return new ValueExpression(casted.Method.Execute(casted.Instance, (object[])casted.Arguments), casted.Method.Descriptor.ReturnType)
+                {
+                    Token = casted.Token
+                };
             }
 
             throw new ExecutionException($"Cannot read method '{casted.Method.Descriptor.Name}' of null.", casted);

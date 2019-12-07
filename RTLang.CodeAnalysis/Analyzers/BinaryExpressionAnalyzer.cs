@@ -68,7 +68,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                             {
                                 return new Diagnostic
                                 {
-                                    Position = property.Token.Column,
+                                    Position = property.Token.Position,
                                     Length = property.Token.Text.Length,
                                     Type = DiagnosticType.Error,
                                     Message = $"'{type.ToFriendlyName()}' does not have a property named: '{property.Name}'."
@@ -88,13 +88,54 @@ namespace RTLang.CodeAnalysis.Analyzers
                         {
                             return new Diagnostic
                             {
-                                Position = id.Token.Column,
+                                Position = id.Token.Position,
                                 Length = id.Token.Text.Length,
                                 Type = DiagnosticType.Error,
                                 Message = $"'{id.Name}' is read-only."
                             }.ToOneItemArray();
                         }
                     }
+
+                    if (casted.Left is BinaryExpression accessor)
+                    {
+                        var propertyType = AnalyzerService.GetReturnType(accessor, context);
+                        if (propertyType != default)
+                        {
+                            if (accessor.Right is IdentifierExpression property)
+                            {
+                                var isReadOnly = context.GetMembers(propertyType).Any(s => s.Name == property.Name && s.Type == SymbolType.Property && s.IsReadOnly == true);
+                                if (isReadOnly)
+                                {
+                                    return new Diagnostic
+                                    {
+                                        Position = property.Token.Position,
+                                        Length = property.Token.Text.Length,
+                                        Type = DiagnosticType.Error,
+                                        Message = $"Property '{property.Name}' is read-only."
+                                    }.ToOneItemArray();
+                                }
+                                else
+                                {
+                                    var initializerType = AnalyzerService.GetReturnType(casted.Right, context);
+                                    if (initializerType != default)
+                                    {
+                                        if (!TypeHelper.CanChangeType(initializerType, propertyType))
+                                        {
+                                            return new Diagnostic
+                                            {
+                                                Position = property.Token.Position,
+                                                Length = property.Token.Text.Length,
+                                                Type = DiagnosticType.Error,
+                                                Message = $"Cannot assign value of type '{initializerType.ToFriendlyName()}' to property of type '{propertyType.ToFriendlyName()}'"
+                                            }.ToOneItemArray();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // TODO: No way to handle member assignment
 
                     return AnalyzerService.GetDiagnostics(casted.Left, context);
             }

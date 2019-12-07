@@ -41,10 +41,11 @@ namespace RTLang.Tests
         [TestCase("var x", 4, new string[0])]
         [TestCase("var x = ", 8, new string[] { "mockInt" })]
         [TestCase("var x = mo", 10, new string[] { "mock", "mockInt" })]
+        [TestCase("var x = -mo", 11, new string[] { "mockInt" })]
         // Assignment
         [TestCase("mock = mockI", 12, new string[] { "mockInt" })]
+        [TestCase("mock = -mockI", 13, new string[] { "mockInt" })]
         [TestCase("var x = 1 + (mock = mockI", 22, new string[] { "mockInt" })]
-        [TestCase("var x = -mo", 11, new string[] { "mockInt" })]
         public void Completions(string input, int position, string[] expected)
         {
             if (position > input.Length)
@@ -75,6 +76,8 @@ namespace RTLang.Tests
         // Assignment
         [TestCase("CMock = 5;", new string[] { "CMock" })]
         [TestCase("mockIntConst = 3;", new string[] { "mockIntConst" })]
+        [TestCase("mock.Depth = 3;", new string[] { "Depth" })]
+        [TestCase("CMock.StaticProperty = true;", new string[] { "StaticProperty" })]
         public void Diagnostics(string input, string[] expected)
         {
             var result = _service.GetDiagnostics(input);

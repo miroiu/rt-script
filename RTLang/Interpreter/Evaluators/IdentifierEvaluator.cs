@@ -10,7 +10,11 @@ namespace RTLang.Interpreter
             var casted = (IdentifierExpression)expression;
             var result = ctx.GetValue(casted.Name);
             var type = ctx.GetType(casted.Name);
-            return new ValueExpression(result, type);
+
+            return new ValueExpression(result, type)
+            {
+                Token = casted.Token
+            };
         }
     }
 }

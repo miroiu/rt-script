@@ -47,7 +47,8 @@ namespace RTLang.Tests
         [TestCase("print TestClass.Overload(1, '2');", new string[] { "12" })]
         public void Interop(string input, string[] expected)
         {
-            Assert.IsTrue(LangService.GetDiagnostics(input).Count == 0);
+            var diagnostics = LangService.GetDiagnostics(input);
+            Assert.IsTrue(diagnostics.Count == 0);
             var result = ScriptApp.Run(input, Context, Output);
             Assert.AreEqual(expected, result);
         }

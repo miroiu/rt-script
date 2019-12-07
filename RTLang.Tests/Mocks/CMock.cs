@@ -6,7 +6,7 @@ namespace RTLang.Tests.Mocks
     {
         public static void StaticMethod1() { }
         public static void StaticMethod2() { }
-        public static int StaticProperty { get; }
+        public static int StaticProperty { get; set; }
 
         public bool HasDepth(int value) => Depth.Contains(value);
 

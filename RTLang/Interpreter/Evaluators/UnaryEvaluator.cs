@@ -18,7 +18,10 @@ namespace RTLang.Interpreter
 
                 default:
                     var result = ctx.Evaluate(casted.OperatorType, value);
-                    return new ValueExpression(result, result?.GetType());
+                    return new ValueExpression(result, result?.GetType())
+                    {
+                        Token = casted.Operand.Token
+                    };
             }
         }
     }

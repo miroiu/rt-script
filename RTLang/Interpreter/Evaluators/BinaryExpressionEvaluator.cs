@@ -1,5 +1,4 @@
 ﻿using RTLang.Parser;
-using RTLang.Interop;
 using System.Linq;
 
 namespace RTLang.Interpreter
@@ -26,19 +25,25 @@ namespace RTLang.Interpreter
                     {
                         var rightEx = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
                         var wrapper = property.Property;
-                        var returnType = wrapper.Descriptor.ReturnType;
+                        var descriptor = wrapper.Descriptor;
+                        var returnType = descriptor.ReturnType;
                         var castedValue = rightEx.Value;
 
-                        if (TypeHelper.TryChangeType(ref castedValue, returnType))
+                        if (descriptor.CanWrite)
                         {
-                            wrapper.SetValue(property.Instance, castedValue, property.Index);
-                            return property;
+                            if (TypeHelper.TryChangeType(ref castedValue, returnType))
+                            {
+                                wrapper.SetValue(property.Instance, castedValue, property.Index);
+                                return property;
+                            }
+
+                            throw new ExecutionException($"Cannot convert type '{rightEx.Type.ToFriendlyName()}' to '{returnType.ToFriendlyName()}'.", rightEx);
                         }
 
-                        throw new ExecutionException($"Cannot convert type '{rightEx.Type.ToFriendlyName()}' to '{returnType.ToFriendlyName()}'.", rightEx);
+                        throw new ExecutionException($"Property '{descriptor.Name}' is read-only.", property);
                     }
 
-                    throw new ExecutionException($"Expected identifier.", casted.Left);
+                    throw new ExecutionException($"Cannot assign a value to '{casted.Left.Token.Text}'.", casted.Left);
 
                 case BinaryOperatorType.AccessMember:
                     if (casted.Right is IdentifierExpression propertyIdentifier)
@@ -62,14 +67,17 @@ namespace RTLang.Interpreter
                         return CreatePropertyIndexerAccessor(ctx, indexer, instance, isStatic);
                     }
 
-                    throw new ExecutionException($"Expected identifier.", casted.Left);
+                    throw new ExecutionException($"'{casted.Right.Token.Text}' is not a valid property name.", casted.Right);
 
                 default:
                     var leftExpr = Reducer.Reduce<ValueExpression>(casted.Left, ctx);
                     var rightExpr = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
                     var result = ctx.Evaluate(casted.OperatorType, leftExpr.Value, rightExpr.Value);
 
-                    return new ValueExpression(result, result?.GetType());
+                    return new ValueExpression(result, result?.GetType())
+                    {
+                        Token = casted.Token
+                    };
             }
         }
 
@@ -92,7 +100,10 @@ namespace RTLang.Interpreter
                     {
                         if (wrapper.Descriptor.ParameterType == index.Type)
                         {
-                            return new PropertyAccessExpression(wrapper, prop.GetValue(instance.Value), index.Value);
+                            return new PropertyAccessExpression(wrapper, prop.GetValue(instance.Value), index.Value)
+                            {
+                                Token = index.Token
+                            };
                         }
                     }
 
@@ -116,7 +127,10 @@ namespace RTLang.Interpreter
                 {
                     if (InvocationEvaluator.TryFindMethodOverloadWithArguments(ctx, method.Arguments.Items, wrapper.Descriptor.Parameters, out var values))
                     {
-                        return new MethodAccessExpression(instance.Value, wrapper, values);
+                        return new MethodAccessExpression(instance.Value, wrapper, values)
+                        {
+                            Token = method.Token
+                        };
                     }
                 }
 
@@ -136,7 +150,10 @@ namespace RTLang.Interpreter
 
                 if (prop != null)
                 {
-                    return new PropertyAccessExpression(prop, instance.Value);
+                    return new PropertyAccessExpression(prop, instance.Value)
+                    {
+                        Token = property.Token
+                    };
                 }
 
                 throw new ExecutionException($"'{instance.Type.ToFriendlyName()}' does not have a {(isStatic ? "static " : string.Empty)}property named '{property.Name}'.", property);

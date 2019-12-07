@@ -12,7 +12,10 @@ namespace RTLang.Interpreter
             var result = ctx.Evaluate(casted.Type, casted.Value);
 
             // The null literal doesn't have a type
-            return new ValueExpression(result, result?.GetType());
+            return new ValueExpression(result, result?.GetType())
+            {
+                Token = casted.Token
+            };
         }
     }
 }

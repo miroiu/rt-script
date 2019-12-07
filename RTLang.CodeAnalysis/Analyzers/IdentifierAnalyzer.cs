@@ -30,7 +30,7 @@ namespace RTLang.CodeAnalysis.Analyzers
             {
                 return new Diagnostic
                 {
-                    Position = casted.Token.Column,
+                    Position = casted.Token.Position,
                     Length = casted.Token.Text.Length,
                     Type = DiagnosticType.Error,
                     Message = $"'{casted.Name}' is not defined in the current context."

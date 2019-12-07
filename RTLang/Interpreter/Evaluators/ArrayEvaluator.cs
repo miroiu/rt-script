@@ -36,7 +36,10 @@ namespace RTLang.Interpreter
                     }
                 }
 
-                return new ValueExpression(array, array.GetType());
+                return new ValueExpression(array, array.GetType())
+                {
+                    Token = casted.Token
+                };
             }
 
             throw new ExecutionException($"Could not infer element type because the first element was null.", expression);
