@@ -2,7 +2,7 @@
 
 namespace RTLang.CodeAnalysis
 {
-    public static class Extensions
+    internal static class Extensions
     {
         public static T[] ToOneItemArray<T>(this T value)
             => new[] { value };

@@ -1,6 +1,7 @@
 ﻿using RTLang.CodeAnalysis.Analyzers;
 using RTLang.CodeAnalysis.Syntax;
 using RTLang.Lexer;
+using System;
 using System.Collections.Generic;
 
 namespace RTLang.CodeAnalysis
@@ -52,9 +53,9 @@ namespace RTLang.CodeAnalysis
                     {
                         return new List<CompletionItem>();
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        return new List<CompletionItem>();
+                        throw new AnalysisException(ex.Message);
                     }
                 }
             }
@@ -115,9 +116,9 @@ namespace RTLang.CodeAnalysis
                         }
                     };
                 }
-                catch
+                catch (Exception ex)
                 {
-                    return new List<Diagnostic>();
+                    throw new AnalysisException(ex.Message);
                 }
             }
         }
