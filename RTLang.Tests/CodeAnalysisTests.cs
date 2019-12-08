@@ -26,6 +26,8 @@ namespace RTLang.Tests
             Context.Declare("mockInt", 1);
             Context.Declare("mockIntConst", 1, true);
             Context.Declare("inv", _invocation);
+            Context.Declare<ColorsEnum>();
+            Context.Declare("gray", ColorsEnum.Gray);
         }
 
         [Test]
@@ -61,6 +63,9 @@ namespace RTLang.Tests
         // Invocation
         [TestCase("inv(", 16, new string[] { "void inv()" })]
         [TestCase("mock.HasDepth(", 45, new string[] { "bool HasDepth(int)" })]
+        // Enums
+        [TestCase("gray.To", 7, new string[] { "ToString" })]
+        [TestCase("ColorsEnum.Gr", 15, new string[] { "Gray", "Green" })]
         public void Completions(string input, int position, string[] expected)
         {
             if (position > input.Length)
@@ -112,6 +117,9 @@ namespace RTLang.Tests
         [TestCase("mock.Depth[mo].Length;", new string[] { "mo" })]
         [TestCase("mock.Depth['asd'].Length;", new string[] { "'asd'" })]
         [TestCase("mock.NotExists[mo].Length;", new string[] { "NotExists" })]
+        // Enums
+        [TestCase("print gray.Missing;", new string[] { "Missing" })]
+        [TestCase("print ColorsEnum.NonExist;", new string[] { "NonExist" })]
         public void Diagnostics(string input, string[] expected)
         {
             var result = LangService.GetDiagnostics(input);
