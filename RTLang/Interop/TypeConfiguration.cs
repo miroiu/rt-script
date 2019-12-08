@@ -42,17 +42,28 @@ namespace RTLang.Interop
             return config;
         }
 
+        public static bool TryGetDescriptor(MethodInfo method, out MethodDescriptor descriptor)
+        {
+            descriptor = default;
+
+            if (!method.ContainsGenericParameters)
+            {
+                var parameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
+                descriptor = new MethodDescriptor(method.Name, method.IsStatic, method.ReturnType, parameters);
+                return true;
+            }
+
+            return false;
+        }
+
         private static void BuildMethods(Type type, TypeConfiguration config)
         {
             var allMethods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static);
             for (var i = 0; i < allMethods.Length; i++)
             {
-                var method = allMethods[i];
-                if (!method.ContainsGenericParameters)
+                if (TryGetDescriptor(allMethods[i], out var descriptor))
                 {
-                    var parameters = method.GetParameters().Select(p => p.ParameterType).ToArray();
-                    var med = new MethodDescriptor(method.Name, method.IsStatic, method.ReturnType, parameters);
-                    config.Methods.Add(med);
+                    config.Methods.Add(descriptor);
                 }
             }
         }
