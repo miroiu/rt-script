@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RTLang.Interop;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -162,14 +163,23 @@ namespace RTLang.CodeAnalysis
 
         public IEnumerable<Symbol> GetMembers(Type type)
         {
-            var props = TypeHelper.GetProperties(type)
-                .Where(p => !p.Descriptor.IsIndexer)
+            var props = TypeHelper.GetProperties(type, DescriptorType.Property)
                 .Select(p => new Symbol
                 {
                     Type = SymbolType.Property,
                     IsReadOnly = !p.Descriptor.CanWrite,
                     Name = p.Descriptor.Name
                 });
+
+            if (type.IsEnum)
+            {
+                props = props.Union(TypeHelper.GetProperties(type, DescriptorType.Enum).Select(p => new Symbol
+                {
+                    Type = SymbolType.Property,
+                    IsReadOnly = !p.Descriptor.CanWrite,
+                    Name = p.Descriptor.Name
+                }));
+            }
 
             var methods = TypeHelper.GetMethods(type)
                 .Select(p => new Symbol

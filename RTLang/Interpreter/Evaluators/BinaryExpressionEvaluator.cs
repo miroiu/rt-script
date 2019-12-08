@@ -1,4 +1,5 @@
-﻿using RTLang.Parser;
+﻿using RTLang.Interop;
+using RTLang.Parser;
 using System.Linq;
 
 namespace RTLang.Interpreter
@@ -21,7 +22,7 @@ namespace RTLang.Interpreter
                     }
 
                     var property = Reducer.Reduce<PropertyAccessExpression>(casted.Left, ctx, false);
-                    if (property != null)
+                    if (property != default)
                     {
                         var rightEx = Reducer.Reduce<ValueExpression>(casted.Right, ctx);
                         var wrapper = property.Property;
@@ -86,14 +87,15 @@ namespace RTLang.Interpreter
         private static Expression CreatePropertyIndexerAccessor(IExecutionContext ctx, IndexerExpression indexer, ValueExpression instance, bool isStatic)
         {
             // This means the value is not a null literal
-            if (instance.Type != null)
+            if (instance.Type != default)
             {
                 // Should be a single indexable property
-                var prop = TypeHelper.GetProperties(instance.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == indexer.PropertyName && p.Descriptor.IsStatic == isStatic);
+                var prop = TypeHelper.GetProperties(instance.Type, DescriptorType.Property)
+                    .FirstOrDefault(p => p.Descriptor.Name == indexer.PropertyName && p.Descriptor.IsStatic == isStatic);
 
-                if (prop != null)
+                if (prop != default)
                 {
-                    var indexerWrappers = TypeHelper.GetProperties(prop.Descriptor.ReturnType).Where(p => p.Descriptor.IsIndexer);
+                    var indexerWrappers = TypeHelper.GetProperties(prop.Descriptor.ReturnType, DescriptorType.Indexer);
                     var index = Reducer.Reduce<ValueExpression>(indexer.Index, ctx);
 
                     foreach (var wrapper in indexerWrappers)
@@ -119,7 +121,7 @@ namespace RTLang.Interpreter
         private static Expression CreateMethodAccessor(IExecutionContext ctx, ValueExpression instance, InvocationExpression method, bool isStatic)
         {
             // This means the value is not a null literal
-            if (instance.Type != null)
+            if (instance.Type != default)
             {
                 var methodWrappers = TypeHelper.GetMethods(instance.Type).Where(p => p.Descriptor.Name == method.MethodName && p.Descriptor.IsStatic == isStatic);
 
@@ -143,17 +145,29 @@ namespace RTLang.Interpreter
         private static Expression CreatePropertyAccessor(ValueExpression instance, IdentifierExpression property, bool isStatic)
         {
             // This means the value is not a null literal
-            if (instance.Type != null)
+            if (instance.Type != default)
             {
                 // Should be a single property
-                var prop = TypeHelper.GetProperties(instance.Type).FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == property.Name && p.Descriptor.IsStatic == isStatic);
+                var prop = TypeHelper.GetProperties(instance.Type, DescriptorType.Property).FirstOrDefault(p => p.Descriptor.Name == property.Name && p.Descriptor.IsStatic == isStatic);
 
-                if (prop != null)
+                if (prop != default)
                 {
                     return new PropertyAccessExpression(prop, instance.Value)
                     {
                         Token = property.Token
                     };
+                }
+                else
+                {
+                    // Should be a single enum field
+                    var enumField = TypeHelper.GetProperties(instance.Type, DescriptorType.Enum).FirstOrDefault(p => p.Descriptor.Name == property.Name);
+                    if(enumField != default)
+                    {
+                        return new PropertyAccessExpression(enumField, instance.Value)
+                        {
+                            Token = property.Token
+                        };
+                    }
                 }
 
                 throw new ExecutionException($"'{instance.Type.ToFriendlyName()}' does not have a {(isStatic ? "static " : string.Empty)}property named '{property.Name}'.", property);

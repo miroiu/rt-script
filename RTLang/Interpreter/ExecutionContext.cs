@@ -120,18 +120,18 @@ namespace RTLang.Interpreter
 
                 case LiteralType.Null:
                 default:
-                    return null;
+                    return default;
             }
         }
 
         public object Evaluate(UnaryOperatorType operatorType, object value)
         {
-            if (value != null)
+            if (value != default)
             {
                 var type = value.GetType();
 
                 var op = TypeHelper.GetUnaryOperator(operatorType, type);
-                if (op != null && TypeHelper.TryChangeType(ref value, op.ParameterType))
+                if (op != default && TypeHelper.TryChangeType(ref value, op.ParameterType))
                 {
                     return op.Execute(value);
                 }
@@ -144,7 +144,7 @@ namespace RTLang.Interpreter
 
         public object Evaluate(BinaryOperatorType operatorType, object left, object right)
         {
-            if (left != null && right != null)
+            if (left != default && right != default)
             {
                 var leftType = left.GetType();
                 var rightType = right.GetType();
@@ -155,7 +155,7 @@ namespace RTLang.Interpreter
                 }
 
                 var op = TypeHelper.GetBinaryOperator(operatorType, leftType, rightType);
-                if (op != null && TypeHelper.TryChangeType(ref left, op.LeftType) && TypeHelper.TryChangeType(ref right, op.RightType))
+                if (op != default && TypeHelper.TryChangeType(ref left, op.LeftType) && TypeHelper.TryChangeType(ref right, op.RightType))
                 {
                     return op.Execute(left, right);
                 }

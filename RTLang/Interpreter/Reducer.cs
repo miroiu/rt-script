@@ -23,7 +23,7 @@ namespace RTLang.Interpreter
         {
             try
             {
-                if (expression == null || expression is ValueExpression)
+                if (expression == default || expression is ValueExpression)
                 {
                     return expression;
                 }

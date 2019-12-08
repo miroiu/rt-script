@@ -48,7 +48,7 @@ namespace RTLang
 
         public static bool TryChangeType(ref object value, Type desiredType)
         {
-            if (value != null)
+            if (value != default)
             {
                 var actualType = value.GetType();
 

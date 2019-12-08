@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using RTLang.Interop;
 using RTLang.Interpreter;
 using RTLang.Parser;
 
@@ -63,7 +64,8 @@ namespace RTLang.CodeAnalysis.Analyzers
                     {
                         if (right is IdentifierExpression property)
                         {
-                            bool exists = TypeHelper.GetProperties(type).Any(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == property.Name);
+                            bool exists = TypeHelper.GetProperties(type, DescriptorType.Property).Any(p => p.Descriptor.Name == property.Name) ||
+                                (type.IsEnum ? TypeHelper.GetProperties(type, DescriptorType.Enum).Any(p => p.Descriptor.Name == property.Name) : false);
 
                             if (!exists)
                             {
@@ -95,7 +97,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                         }
                         else if (right is IndexerExpression indexer)
                         {
-                            var prop = TypeHelper.GetProperties(type).FirstOrDefault(p => p.Descriptor.Name == indexer.PropertyName);
+                            var prop = TypeHelper.GetProperties(type, DescriptorType.Property).FirstOrDefault(p => p.Descriptor.Name == indexer.PropertyName);
 
                             if (prop == default)
                             {
@@ -112,7 +114,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                             if (indexType != default)
                             {
                                 var propType = prop.Descriptor.ReturnType;
-                                if (!TypeHelper.GetProperties(propType).Any(p => p.Descriptor.IsIndexer && p.Descriptor.ParameterType == indexType))
+                                if (!TypeHelper.GetProperties(propType, DescriptorType.Indexer).Any(p => p.Descriptor.ParameterType == indexType))
                                 {
                                     var index = indexer.Index;
                                     return new Diagnostic
@@ -154,7 +156,9 @@ namespace RTLang.CodeAnalysis.Analyzers
                         {
                             if (accessor.Right is IdentifierExpression property)
                             {
-                                var isReadOnly = TypeHelper.GetProperties(propertyType).Any(p => p.Descriptor.Name == property.Name && p.Descriptor.CanWrite == false);
+                                var isReadOnly = TypeHelper.GetProperties(propertyType, DescriptorType.Property).Any(p => p.Descriptor.Name == property.Name && p.Descriptor.CanWrite == false) ||
+                                    (propertyType.IsEnum ? TypeHelper.GetProperties(propertyType, DescriptorType.Enum).Any(p => p.Descriptor.Name == property.Name && p.Descriptor.CanWrite == false) : false);
+
                                 if (isReadOnly)
                                 {
                                     return new Diagnostic
@@ -209,8 +213,9 @@ namespace RTLang.CodeAnalysis.Analyzers
                     case BinaryOperatorType.AccessMember:
                         if (casted.Right is IdentifierExpression property)
                         {
-                            return TypeHelper.GetProperties(type)
-                                .FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == property.Name)
+                            var props = type.IsEnum ? TypeHelper.GetProperties(type, DescriptorType.Enum) : TypeHelper.GetProperties(type, DescriptorType.Property);
+
+                            return props.FirstOrDefault(p => p.Descriptor.Name == property.Name)
                                 ?.Descriptor.ReturnType;
                         }
                         else if (casted.Right is InvocationExpression invocation)
@@ -221,14 +226,14 @@ namespace RTLang.CodeAnalysis.Analyzers
                         }
                         else if (casted.Right is IndexerExpression indexer)
                         {
-                            var prop = TypeHelper.GetProperties(type)
-                                .FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == indexer.PropertyName);
+                            var prop = TypeHelper.GetProperties(type, DescriptorType.Property)
+                                .FirstOrDefault(p => p.Descriptor.Name == indexer.PropertyName);
 
                             var indexType = AnalyzerService.GetReturnType(indexer.Index, context);
                             if (indexType != default)
                             {
-                                return TypeHelper.GetProperties(prop.Descriptor.ReturnType)
-                                    .FirstOrDefault(p => p.Descriptor.IsIndexer && p.Descriptor.ParameterType == indexType)
+                                return TypeHelper.GetProperties(prop.Descriptor.ReturnType, DescriptorType.Indexer)
+                                    .FirstOrDefault(p => p.Descriptor.ParameterType == indexType)
                                     ?.Descriptor.ReturnType;
                             }
 

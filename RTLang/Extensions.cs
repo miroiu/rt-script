@@ -130,7 +130,7 @@ namespace RTLang
 
         public static string ToFriendlyString(this object value)
         {
-            if (value == null)
+            if (value == default)
             {
                 return "null";
             }

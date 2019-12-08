@@ -1,4 +1,5 @@
-﻿using RTLang.Parser;
+﻿using RTLang.Interop;
+using RTLang.Parser;
 using System.Linq;
 
 namespace RTLang.Interpreter
@@ -11,10 +12,10 @@ namespace RTLang.Interpreter
             var casted = (IndexerExpression)expression;
             var instance = ctx.GetValue(casted.PropertyName);
 
-            if (instance != null)
+            if (instance != default)
             {
                 var instanceType = ctx.GetType(casted.PropertyName);
-                var indexers = TypeHelper.GetProperties(instanceType).Where(p => p.Descriptor.IsIndexer);
+                var indexers = TypeHelper.GetProperties(instanceType, DescriptorType.Indexer);
 
                 var indexValue = Reducer.Reduce<ValueExpression>(casted.Index, ctx);
 

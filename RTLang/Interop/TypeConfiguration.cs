@@ -70,7 +70,61 @@ namespace RTLang.Interop
 
         private static void BuildProperties(Type type, TypeConfiguration config)
         {
-            // Instance
+            // Array
+            if (type.IsArray)
+            {
+                var desc = new PropertyDescriptor(string.Empty, typeof(object), typeof(int), true, true, false, descriptorType: DescriptorType.Indexer);
+                config.Properties.Add(desc);
+            }
+
+            // Enum
+            if (type.IsEnum)
+            {
+                var fields = GetEnumFields(type);
+                config.Properties.AddRange(fields);
+            }
+
+            var instance = GetInstanceProperties(type);
+            config.Properties.AddRange(instance);
+
+            // Static
+            var staticProps = GetStaticProperties(type);
+            config.Properties.AddRange(staticProps);
+        }
+
+        private static ICollection<PropertyDescriptor> GetStaticProperties(Type type)
+        {
+            List<PropertyDescriptor> properties = new List<PropertyDescriptor>();
+
+            var staticProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Static);
+            for (var i = 0; i < staticProperties.Length; i++)
+            {
+                var property = staticProperties[i];
+                var prop = new PropertyDescriptor(property.Name, property.PropertyType, property.PropertyType, property.CanRead, property.CanWrite, isStatic: true, descriptorType: DescriptorType.Property);
+                properties.Add(prop);
+            }
+
+            return properties;
+        }
+
+        private static ICollection<PropertyDescriptor> GetEnumFields(Type type)
+        {
+            List<PropertyDescriptor> properties = new List<PropertyDescriptor>();
+
+            foreach (var name in Enum.GetNames(type))
+            {
+                var elemType = Enum.GetUnderlyingType(type);
+                var staticDesc = new PropertyDescriptor(name, elemType, elemType, canRead: true, canWrite: false, isStatic: true, descriptorType: DescriptorType.Enum);
+                properties.Add(staticDesc);
+            }
+
+            return properties;
+        }
+
+        private static ICollection<PropertyDescriptor> GetInstanceProperties(Type type)
+        {
+            List<PropertyDescriptor> properties = new List<PropertyDescriptor>();
+
             var instanceProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             for (var i = 0; i < instanceProperties.Length; i++)
             {
@@ -79,31 +133,17 @@ namespace RTLang.Interop
                 if (indexParams.Length > 0)
                 {
                     var param = indexParams[0];
-                    var prop = new PropertyDescriptor(property.Name, property.PropertyType, param.ParameterType, property.CanRead, property.CanWrite, isStatic: false, isIndexer: true);
-                    config.Properties.Add(prop);
+                    var prop = new PropertyDescriptor(property.Name, property.PropertyType, param.ParameterType, property.CanRead, property.CanWrite, isStatic: false, descriptorType: DescriptorType.Indexer);
+                    properties.Add(prop);
                 }
                 else
                 {
-                    var prop = new PropertyDescriptor(property.Name, property.PropertyType, property.PropertyType, property.CanRead, property.CanWrite, isStatic: false, isIndexer: false);
-                    config.Properties.Add(prop);
+                    var prop = new PropertyDescriptor(property.Name, property.PropertyType, property.PropertyType, property.CanRead, property.CanWrite, isStatic: false, descriptorType: DescriptorType.Property);
+                    properties.Add(prop);
                 }
             }
 
-            // Static
-            var staticProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Static);
-            for (var i = 0; i < staticProperties.Length; i++)
-            {
-                var property = staticProperties[i];
-                var prop = new PropertyDescriptor(property.Name, property.PropertyType, property.PropertyType, property.CanRead, property.CanWrite, isStatic: true, isIndexer: false);
-                config.Properties.Add(prop);
-            }
-
-            // Array
-            if (type.IsArray)
-            {
-                var desc = new PropertyDescriptor(string.Empty, typeof(object), typeof(int), true, true, false, true);
-                config.Properties.Add(desc);
-            }
+            return properties;
         }
     }
 }

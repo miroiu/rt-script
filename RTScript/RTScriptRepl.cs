@@ -6,6 +6,11 @@ using System.Reflection;
 
 namespace RTScript
 {
+    public enum Enum
+    {
+        Test
+    }
+
     public class RTScriptRepl
     {
         private readonly IExecutionContext _context;
@@ -16,7 +21,10 @@ namespace RTScript
         private const string _pluginExtension = ".dll";
 
         public RTScriptRepl(IOutputStream output)
-            => _context = RTLang.RTScript.NewContext(output);
+        {
+            _context = RTLang.RTScript.NewContext(output);
+            _context.Declare<Enum>();
+        }
 
         public void Evaluate(string code)
             => RTLang.RTScript.Execute(code, _context);

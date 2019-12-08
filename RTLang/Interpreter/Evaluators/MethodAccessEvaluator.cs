@@ -9,7 +9,7 @@ namespace RTLang.Interpreter
         {
             var casted = (MethodAccessExpression)expression;
 
-            if (casted.Instance != null || casted.Method.Descriptor.IsStatic)
+            if (casted.Instance != default || casted.Method.Descriptor.IsStatic)
             {
                 return new ValueExpression(casted.Method.Execute(casted.Instance, (object[])casted.Arguments), casted.Method.Descriptor.ReturnType)
                 {

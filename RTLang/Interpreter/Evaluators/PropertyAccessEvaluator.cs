@@ -1,4 +1,5 @@
-﻿using RTLang.Parser;
+﻿using RTLang.Interop;
+using RTLang.Parser;
 
 namespace RTLang.Interpreter
 {
@@ -13,7 +14,7 @@ namespace RTLang.Interpreter
 
             if (descriptor.CanRead)
             {
-                if (casted.Instance != null || descriptor.IsStatic)
+                if (casted.Instance != default || descriptor.IsStatic)
                 {
                     return new ValueExpression(casted.Property.GetValue(casted.Instance, casted.Index), descriptor.ReturnType)
                     {
@@ -21,7 +22,7 @@ namespace RTLang.Interpreter
                     };
                 }
 
-                if (descriptor.IsIndexer)
+                if (descriptor.DescriptorType == DescriptorType.Indexer)
                 {
                     throw new ExecutionException($"Cannot index a null value.", casted);
                 }

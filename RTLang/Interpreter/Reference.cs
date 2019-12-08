@@ -9,7 +9,7 @@ namespace RTLang.Interpreter
 
         public Reference(string name, bool isReadOnly, object value)
         {
-            if (value == null)
+            if (value == default)
             {
                 throw new Exception("Cannot create a reference to a null value.");
             }
@@ -43,7 +43,7 @@ namespace RTLang.Interpreter
             {
                 _reference.SetTarget(value);
             }
-            else if (value != null)
+            else if (value != default)
             {
                 throw new Exception($"Cannot convert type '{value.GetType().ToFriendlyName()}' to '{Type.ToFriendlyName()}'.");
             }

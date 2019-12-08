@@ -19,13 +19,7 @@ namespace RTLang
 
                 foreach (var descriptor in typeConfig.Properties)
                 {
-                    if (descriptor.IsStatic)
-                    {
-                        var property = type.GetProperty(descriptor.Name, BindingFlags.Public | BindingFlags.Static);
-                        var wrapper = WrapStaticProperty(type, property, descriptor);
-                        result.AddProperty(descriptor, wrapper);
-                    }
-                    else if (descriptor.IsIndexer)
+                    if (descriptor.DescriptorType == DescriptorType.Indexer)
                     {
                         IPropertyWrapper wrapper;
 
@@ -44,12 +38,27 @@ namespace RTLang
 
                         result.AddProperty(descriptor, wrapper);
                     }
-                    else
+                    else if(descriptor.DescriptorType == DescriptorType.Property)
                     {
-                        var property = type.GetProperty(descriptor.Name, descriptor.ReturnType);
-                        var wrapper = WrapProperty(type, property, descriptor);
+                        if (descriptor.IsStatic)
+                        {
+                            var property = type.GetProperty(descriptor.Name, BindingFlags.Public | BindingFlags.Static);
+                            var wrapper = WrapStaticProperty(type, property, descriptor);
+                            result.AddProperty(descriptor, wrapper);
+                        }
+                        else
+                        {
+                            var property = type.GetProperty(descriptor.Name, descriptor.ReturnType);
+                            var wrapper = WrapProperty(type, property, descriptor);
+                            result.AddProperty(descriptor, wrapper);
+                        }
+                    }
+                    else if(descriptor.DescriptorType == DescriptorType.Enum)
+                    {
+                        var wrapper = WrapEnum(type, descriptor);
                         result.AddProperty(descriptor, wrapper);
                     }
+
                 }
 
                 foreach (var descriptor in typeConfig.Methods)
@@ -63,16 +72,16 @@ namespace RTLang
             }
         }
 
-        public static IEnumerable<IPropertyWrapper> GetProperties(Type type)
+        public static IEnumerable<IPropertyWrapper> GetProperties(Type type, DescriptorType propType)
         {
             if (!_members.TryGetValue(new TypeConfiguration(type), out var props))
             {
                 var config = TypeConfiguration.Build(type);
                 AddTypeConfiguration(config);
-                return _members[config].GetProperties();
+                return _members[config].GetProperties(propType);
             }
 
-            return props.GetProperties();
+            return props.GetProperties(propType);
         }
 
         public static IEnumerable<IMethodWrapper> GetMethods(Type type)
@@ -91,6 +100,12 @@ namespace RTLang
 
         private static IMethodWrapper WrapMethod(Type type, MethodInfo method, MethodDescriptor descriptor)
             => new MethodWrapper(method, descriptor);
+
+        private static IPropertyWrapper WrapEnum(Type type, PropertyDescriptor descriptor)
+        {
+            var adapterType = typeof(EnumWrapper<>).MakeGenericType(type);
+            return (IPropertyWrapper)Activator.CreateInstance(adapterType, descriptor);
+        }
 
         private static IPropertyWrapper WrapIndexer(Type type, MethodInfo getter, MethodInfo setter, PropertyDescriptor descriptor)
         {
