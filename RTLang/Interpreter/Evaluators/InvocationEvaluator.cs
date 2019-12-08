@@ -1,5 +1,4 @@
 ﻿using RTLang.Parser;
-using RTLang.Interop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +26,10 @@ namespace RTLang.Interpreter
                 {
                     if (TryFindMethodOverloadWithArguments(ctx, casted.Arguments.Items, method.Descriptor.Parameters, out var values))
                     {
-                        return new MethodAccessExpression(action, method, values);
+                        return new MethodAccessExpression(action, method, values)
+                        {
+                            Token = casted.Token
+                        };
                     }
                 }
 

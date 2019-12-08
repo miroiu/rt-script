@@ -24,7 +24,7 @@ namespace RTLang.Tests
     public class InterpreterTests
     {
         public MockOutputStream Output { get; private set; }
-        public IExecutionContext Context { get; private set; }
+        public AnalysisContext Context { get; private set; }
         public RTLangService LangService { get; private set; }
         public Action Action { get; } = () => { };
         public Func<int, bool> IsEven { get; } = (i) => i % 2 == 0;
@@ -33,7 +33,7 @@ namespace RTLang.Tests
         public void Setup()
         {
             Output = new MockOutputStream();
-            Context = RTScript.NewContext(Output);
+            Context = RTLangService.NewContext(RTScript.NewContext(Output));
             LangService = RTLangService.Create(Context);
 
             Context.Declare("action", Action);

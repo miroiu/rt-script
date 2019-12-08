@@ -20,7 +20,7 @@ namespace RTLang.CodeAnalysis.Analyzers
             if (args.Count > 0)
             {
                 List<Diagnostic> diagnostics = new List<Diagnostic>();
-                foreach(var arg in args)
+                foreach (var arg in args)
                 {
                     diagnostics.AddRange(AnalyzerService.GetDiagnostics(arg, context));
                 }
@@ -43,7 +43,8 @@ namespace RTLang.CodeAnalysis.Analyzers
             var args = casted.Arguments.Items;
             if (args.Count > 0)
             {
-                return AnalyzerService.GetReturnType(args[0], context);
+                return AnalyzerService.GetReturnType(args[0], context)
+                    ?.MakeArrayType();
             }
 
             return default;

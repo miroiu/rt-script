@@ -2,7 +2,7 @@
 
 namespace RTLang.CodeAnalysis
 {
-    internal struct Symbol : IEquatable<Symbol>
+    public struct Symbol : IEquatable<Symbol>
     {
         public string Name;
         public SymbolType Type;

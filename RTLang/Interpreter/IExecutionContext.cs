@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace RTLang
 {
@@ -37,11 +36,5 @@ namespace RTLang
 
         // Applies a binary operator 
         object Evaluate(BinaryOperatorType operatorType, object left, object right);
-
-        // Returns all the variables
-        IEnumerable<string> GetVariables();
-
-        // Returns all the types
-        IEnumerable<string> GetTypes();
     }
 }

@@ -15,7 +15,7 @@ namespace RTLang.CodeAnalysis.Analyzers
         public IEnumerable<Completion> GetCompletions(Expression expression, IAnalysisContext context)
         {
             var casted = (InvocationExpression)expression;
-            var delegateType = context.GetType(casted.MethodName);
+            var delegateType = context.GetSymbolType(casted.MethodName);
 
             return GetMethodOverloadsCompletion(delegateType, casted.MethodName);
         }
@@ -23,24 +23,24 @@ namespace RTLang.CodeAnalysis.Analyzers
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
         {
             var casted = (InvocationExpression)expression;
-            var delegateType = context.GetType(casted.MethodName);
+            var delegateType = context.GetSymbolType(casted.MethodName);
 
             if (delegateType != default)
             {
                 bool exists = TypeHelper.GetMethods(delegateType).Any(m => m.Descriptor.Name == DelegateInvoke && IsMethodOverload(m.Descriptor, casted.Arguments.Items));
 
-                if (exists)
+                if (!exists)
                 {
-                    return Enumerable.Empty<Diagnostic>();
+                    return new Diagnostic
+                    {
+                        Position = casted.Token.Position,
+                        Length = casted.Token.Text.Length,
+                        Type = DiagnosticType.Error,
+                        Message = $"No matching overload found for '{casted.MethodName}'"
+                    }.ToOneItemArray();
                 }
 
-                return new Diagnostic
-                {
-                    Position = casted.Token.Position,
-                    Length = casted.Token.Text.Length,
-                    Type = DiagnosticType.Error,
-                    Message = $"No matching overload found for '{casted.MethodName}'"
-                }.ToOneItemArray();
+                return AnalyzerService.GetDiagnostics(casted.Arguments, context);
             }
 
             return new Diagnostic
@@ -55,7 +55,7 @@ namespace RTLang.CodeAnalysis.Analyzers
         public Type GetReturnType(Expression expression, IAnalysisContext context)
         {
             var casted = (InvocationExpression)expression;
-            var delegateType = context.GetType(casted.MethodName);
+            var delegateType = context.GetSymbolType(casted.MethodName);
 
             if (delegateType != default)
             {

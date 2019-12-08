@@ -23,7 +23,7 @@ namespace RTLang.CodeAnalysis.Analyzers
         {
             var casted = (VariableDeclarationExpression)expression;
 
-            var alreadyExists = context.GetSymbols().Any(s => s.Name == casted.Name);
+            var alreadyExists = context.IsDefined(casted.Name);
             var diagnostics = AnalyzerService.GetDiagnostics(casted.Initializer, context);
 
             if (alreadyExists)
@@ -40,12 +40,12 @@ namespace RTLang.CodeAnalysis.Analyzers
             {
                 var type = AnalyzerService.GetReturnType(casted.Initializer, context);
 
-                context.AddMetadata(new SymbolMetadata(new Symbol
+                context.AddMetadata(new Symbol
                 {
                     IsReadOnly = casted.IsReadOnly,
                     Name = casted.Name,
                     Type = SymbolType.Variable
-                }, type));
+                }, type);
             }
 
             return diagnostics;

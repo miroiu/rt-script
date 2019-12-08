@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RTLang.Interop;
 using RTLang.Interpreter;
 using RTLang.Parser;
 
@@ -43,7 +42,6 @@ namespace RTLang.CodeAnalysis.Analyzers
                     break;
 
                 default:
-                    // TODO: Is this slow?
                     return AnalyzerService.GetCompletions(casted.Right, context);
             }
 
@@ -53,15 +51,17 @@ namespace RTLang.CodeAnalysis.Analyzers
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
         {
             var casted = (BinaryExpression)expression;
+            var left = casted.Left;
+            var right = casted.Right;
 
             switch (casted.OperatorType)
             {
                 case BinaryOperatorType.AccessMember:
-                    var type = AnalyzerService.GetReturnType(casted.Left, context);
+                    var type = AnalyzerService.GetReturnType(left, context);
 
                     if (type != default)
                     {
-                        if (casted.Right is IdentifierExpression property)
+                        if (right is IdentifierExpression property)
                         {
                             bool exists = context.GetMembers(type).Any(s => s.Name == property.Name && s.Type == SymbolType.Property);
 
@@ -76,8 +76,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                                 }.ToOneItemArray();
                             }
                         }
-
-                        if (casted.Right is InvocationExpression invocation)
+                        else if (right is InvocationExpression invocation)
                         {
                             bool exists = TypeHelper.GetMethods(type).Any(m => m.Descriptor.Name == invocation.MethodName && InvocationAnalyzer.IsMethodOverload(m.Descriptor, invocation.Arguments.Items));
 
@@ -91,13 +90,49 @@ namespace RTLang.CodeAnalysis.Analyzers
                                     Message = $"No matching overload found for '{invocation.MethodName}'"
                                 }.ToOneItemArray();
                             }
+
+                            return AnalyzerService.GetDiagnostics(invocation.Arguments, context);
+                        }
+                        else if (right is IndexerExpression indexer)
+                        {
+                            var prop = TypeHelper.GetProperties(type).FirstOrDefault(p => p.Descriptor.Name == indexer.PropertyName);
+
+                            if (prop != default)
+                            {
+                                var indexType = AnalyzerService.GetReturnType(indexer.Index, context);
+                                if (indexType != default)
+                                {
+                                    var propType = prop.Descriptor.ReturnType;
+                                    if (!TypeHelper.GetProperties(propType).Any(p => p.Descriptor.IsIndexer && p.Descriptor.ParameterType == indexType))
+                                    {
+                                        var index = indexer.Index;
+                                        return new Diagnostic
+                                        {
+                                            Position = index.Token.Position,
+                                            Length = index.Token.Text.Length,
+                                            Type = DiagnosticType.Error,
+                                            Message = $"'{propType.ToFriendlyName()}' does not have an index taking a '{indexType.ToFriendlyName()}' parameter."
+                                        }.ToOneItemArray();
+                                    }
+                                }
+
+                                return AnalyzerService.GetDiagnostics(indexer.Index, context);
+                            }
+
+                            return new Diagnostic
+                            {
+                                Position = right.Token.Position,
+                                Length = right.Token.Text.Length,
+                                Type = DiagnosticType.Error,
+                                Message = $"'{type.ToFriendlyName()}' does not have a property named '{indexer.PropertyName}'."
+                            }.ToOneItemArray();
                         }
                     }
 
                     break;
 
                 case BinaryOperatorType.Assign:
-                    if (casted.Left is IdentifierExpression id)
+                    if (left is IdentifierExpression id)
                     {
                         var isReadOnly = context.GetSymbols().Any(s => s.Name == id.Name && s.IsReadOnly);
 
@@ -112,8 +147,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                             }.ToOneItemArray();
                         }
                     }
-
-                    if (casted.Left is BinaryExpression accessor)
+                    else if (left is BinaryExpression accessor)
                     {
                         var propertyType = AnalyzerService.GetReturnType(accessor, context);
                         if (propertyType != default)
@@ -152,15 +186,15 @@ namespace RTLang.CodeAnalysis.Analyzers
                         }
                     }
 
-                    return AnalyzerService.GetDiagnostics(casted.Left, context);
+                    break;
 
                 default:
-                    var leftDiagnostics = AnalyzerService.GetDiagnostics(casted.Left, context);
-                    var rightDiagnostics = AnalyzerService.GetDiagnostics(casted.Right, context);
+                    var leftDiagnostics = AnalyzerService.GetDiagnostics(left, context);
+                    var rightDiagnostics = AnalyzerService.GetDiagnostics(right, context);
                     return leftDiagnostics.Union(rightDiagnostics);
             }
 
-            return Enumerable.Empty<Diagnostic>();
+            return AnalyzerService.GetDiagnostics(left, context);
         }
 
         public Type GetReturnType(Expression expression, IAnalysisContext context)
@@ -192,9 +226,14 @@ namespace RTLang.CodeAnalysis.Analyzers
                                 .FirstOrDefault(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == indexer.PropertyName);
 
                             var indexType = AnalyzerService.GetReturnType(indexer.Index, context);
-                            return TypeHelper.GetProperties(prop.Descriptor.ReturnType)
-                                .FirstOrDefault(p => p.Descriptor.IsIndexer && p.Descriptor.ParameterType == (indexType ?? p.Descriptor.ParameterType))
-                                ?.Descriptor.ReturnType;
+                            if (indexType != default)
+                            {
+                                return TypeHelper.GetProperties(prop.Descriptor.ReturnType)
+                                    .FirstOrDefault(p => p.Descriptor.IsIndexer && p.Descriptor.ParameterType == indexType)
+                                    ?.Descriptor.ReturnType;
+                            }
+
+                            return default;
                         }
                         break;
 

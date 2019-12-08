@@ -1,5 +1,4 @@
 ﻿using RTLang.Parser;
-using RTLang.Interop;
 using System.Linq;
 
 namespace RTLang.Interpreter
@@ -25,7 +24,10 @@ namespace RTLang.Interpreter
                     {
                         if (indexer.Descriptor.ParameterType == indexValue.Type)
                         {
-                            return new PropertyAccessExpression(indexer, instance, indexValue.Value);
+                            return new PropertyAccessExpression(indexer, instance, indexValue.Value)
+                            {
+                                Token = casted.Token
+                            };
                         }
                     }
 

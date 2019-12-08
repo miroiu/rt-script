@@ -9,20 +9,23 @@ namespace RTLang.Tests
     [TestFixture]
     public class CodeAnalysisTests
     {
-        private RTLangService _service;
-        private IExecutionContext _context;
+        public AnalysisContext Context { get; private set; }
+        public RTLangService LangService { get; private set; }
+
         private readonly Action _invocation = () => { };
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            _context = RTScript.NewContext(new MockOutputStream());
-            _service = RTLangService.Create(_context);
-            _context.Declare<CMock>();
-            _context.Declare("mock", new CMock());
-            _context.Declare("mockInt", 1);
-            _context.Declare("mockIntConst", 1, true);
-            _context.Declare("inv", _invocation);
+            Context = RTLangService.NewContext(RTScript.NewContext(new MockOutputStream()));
+            LangService = RTLangService.Create(Context);
+
+            Context.Declare<CMock>();
+            Context.Declare<int>();
+            Context.Declare("mock", new CMock());
+            Context.Declare("mockInt", 1);
+            Context.Declare("mockIntConst", 1, true);
+            Context.Declare("inv", _invocation);
         }
 
         [Test]
@@ -65,7 +68,7 @@ namespace RTLang.Tests
                 position = input.Length;
             }
 
-            var result = _service.GetCompletions(input, position).Select(c => c.Text).ToArray();
+            var result = LangService.GetCompletions(input, position).Select(c => c.Text).ToArray();
 
             if (result.Intersect(expected).Any())
             {
@@ -104,9 +107,14 @@ namespace RTLang.Tests
         [TestCase("inv(1);", new string[] { "inv" })]
         [TestCase("vv();", new string[] { "vv" })]
         [TestCase("mock.vv();", new string[] { "vv" })]
+        //[TestCase("mock.HasDepth('asd');", new string[] { "'asd'" })]
+        // Indexer
+        [TestCase("mock.Depth[mo].Length;", new string[] { "mo" })]
+        [TestCase("mock.Depth['asd'].Length;", new string[] { "'asd'" })]
+        [TestCase("mock.NotExists[mo].Length;", new string[] { "NotExists" })]
         public void Diagnostics(string input, string[] expected)
         {
-            var result = _service.GetDiagnostics(input);
+            var result = LangService.GetDiagnostics(input);
             var errors = result.Select(e => input.Substring(e.Position, e.Length)).ToArray();
             Assert.AreEqual(expected, errors);
         }

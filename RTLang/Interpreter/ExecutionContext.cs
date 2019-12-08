@@ -1,7 +1,5 @@
-﻿using RTLang.Operators;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RTLang.Interpreter
 {
@@ -118,7 +116,7 @@ namespace RTLang.Interpreter
                     throw new Exception($"'{value}' is not a number. (should not happen)");
 
                 case LiteralType.String:
-                    return value;
+                    return value.Substring(1, value.Length - 2);
 
                 case LiteralType.Null:
                 default:
@@ -167,11 +165,5 @@ namespace RTLang.Interpreter
 
             throw new Exception($"Operator '{operatorType.ToFriendlyName()}' cannot be applied to null values.");
         }
-
-        public IEnumerable<string> GetVariables()
-            => _variables.Keys;
-
-        public IEnumerable<string> GetTypes()
-            => _types.Keys;
     }
 }

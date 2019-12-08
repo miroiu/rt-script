@@ -4,39 +4,160 @@ using System.Linq;
 
 namespace RTLang.CodeAnalysis
 {
-    internal class AnalysisContext : IAnalysisContext
+    public class AnalysisContext : IAnalysisContext, IExecutionContext
     {
         private readonly IExecutionContext _context;
-        private readonly HashSet<string> _keywords = new HashSet<string>
+        private readonly Dictionary<string, Type> _tempType = new Dictionary<string, Type>();
+        private readonly HashSet<string> _definedSymbols = new HashSet<string>();
+        private readonly List<Symbol> _temp = new List<Symbol>(8);
+        private readonly List<Symbol> _symbols = new List<Symbol>(64)
         {
-            "const",
-            "null",
-            "print",
-            "false",
-            "true",
-            "var"
+            new Symbol
+            {
+                Name  = "const",
+                Type = SymbolType.Keyword,
+                IsReadOnly = true
+            },
+            new Symbol
+            {
+                Name  = "null",
+                Type = SymbolType.Keyword,
+                IsReadOnly = true
+            },
+            new Symbol
+            {
+                Name  = "print",
+                Type = SymbolType.Keyword,
+                IsReadOnly = true
+            },
+            new Symbol
+            {
+                Name  = "false",
+                Type = SymbolType.Keyword,
+                IsReadOnly = true
+            },
+            new Symbol
+            {
+                Name  = "true",
+                Type = SymbolType.Keyword,
+                IsReadOnly = true
+            },
+            new Symbol
+            {
+                Name  = "var",
+                Type = SymbolType.Keyword,
+                IsReadOnly = true
+            }
         };
-
-        private readonly Dictionary<string, SymbolMetadata> _temporary = new Dictionary<string, SymbolMetadata>();
 
         public AnalysisContext(IExecutionContext context)
             => _context = context ?? throw new AnalysisException($"'{nameof(context)}' is null.");
 
-        public Type GetType(string variable)
-        {
-            try
-            {
-                if (_temporary.TryGetValue(variable, out var value))
-                {
-                    return value.Type;
-                }
+        #region Execution Context Decorator
 
-                return _context.GetType(variable);
-            }
-            catch
+        public void Assign(string name, object value)
+            => _context.Assign(name, value);
+
+        public void Declare(string name, object value, bool isConst = false)
+        {
+            _context.Declare(name, value, isConst);
+            _definedSymbols.Add(name);
+            _symbols.Add(new Symbol
             {
-                return default;
+                IsReadOnly = isConst,
+                Name = name,
+                Type = SymbolType.Variable
+            });
+        }
+
+        public void Declare(Type type)
+        {
+            _context.Declare(type);
+
+            var name = type.ToFriendlyName();
+            _definedSymbols.Add(name);
+            _symbols.Add(new Symbol
+            {
+                IsReadOnly = true,
+                Name = name,
+                Type = SymbolType.Type
+            });
+        }
+
+        public Type GetType(string name)
+            => _context.GetType(name);
+
+        public object Evaluate(LiteralType type, string value)
+            => _context.Evaluate(type, value);
+
+        public object Evaluate(UnaryOperatorType operatorType, object value)
+            => _context.Evaluate(operatorType, value);
+
+        public object Evaluate(BinaryOperatorType operatorType, object left, object right)
+            => _context.Evaluate(operatorType, left, right);
+
+        public object GetValue(string name)
+            => _context.GetValue(name);
+
+        public bool IsReadOnly(string name)
+            => _context.IsReadOnly(name);
+
+        public bool IsType(string name)
+            => _context.IsType(name);
+
+        public void Print(object value)
+            => _context.Print(value);
+
+        #endregion
+
+        #region Analysis
+
+        public Type GetLiteralType(LiteralType type, string value)
+        {
+            var result = _context.Evaluate(type, value);
+            return result?.GetType();
+        }
+
+        public bool IsDefined(string name)
+            => _definedSymbols.Contains(name);
+
+        public bool IsMetadata(string name)
+            => _tempType.ContainsKey(name);
+
+        public Type GetSymbolType(string name)
+        {
+            if (_tempType.TryGetValue(name, out var value))
+            {
+                return value;
             }
+
+            if (IsDefined(name))
+            {
+                return _context.GetType(name);
+            }
+
+            return default;
+        }
+
+        public IEnumerable<Symbol> GetSymbols()
+            => _temp.Union(_symbols);
+
+        public void AddMetadata(Symbol symbol, Type type = default)
+        {
+            _temp.Add(symbol);
+            _tempType[symbol.Name] = type;
+            _definedSymbols.Add(symbol.Name);
+        }
+
+        public void ClearMetadata()
+        {
+            for (int i = 0; i < _temp.Count; i++)
+            {
+                _definedSymbols.Remove(_temp[i].Name);
+            }
+
+            _tempType.Clear();
+            _temp.Clear();
         }
 
         public IEnumerable<Symbol> GetMembers(Type type)
@@ -61,96 +182,6 @@ namespace RTLang.CodeAnalysis
             return props.Union(methods);
         }
 
-        public IEnumerable<Symbol> GetSymbols()
-            => _temporary.Values
-            .Select(v => v.Symbol)
-            .Union(_context.GetTypes().Select(s => new Symbol
-            {
-                IsReadOnly = true,
-                Name = s,
-                Type = SymbolType.Type
-            })).Union(_context.GetVariables().Select(s => new Symbol
-            {
-                IsReadOnly = _context.IsReadOnly(s),
-                Name = s,
-                Type = SymbolType.Variable
-            })).Union(_keywords.Select(s => new Symbol
-            {
-                IsReadOnly = true,
-                Name = s,
-                Type = SymbolType.Keyword
-            }));
-
-        public Symbol GetSymbol(string name)
-        {
-            try
-            {
-                if (_temporary.TryGetValue(name, out var temp))
-                {
-                    return temp.Symbol;
-                }
-
-                return _keywords.Contains(name) ? new Symbol
-                {
-                    IsReadOnly = true,
-                    Name = name,
-                    Type = SymbolType.Keyword
-                } : _context.IsType(name) ? new Symbol
-                {
-                    IsReadOnly = true,
-                    Name = name,
-                    Type = SymbolType.Type
-                } : new Symbol
-                {
-                    IsReadOnly = _context.IsReadOnly(name),
-                    Name = name,
-                    Type = SymbolType.Variable
-                };
-            }
-            catch
-            {
-                return default;
-            }
-        }
-
-        public IEnumerable<Symbol> GetTypes()
-            => _temporary
-            .Values
-            .Where(s => s.Symbol.Type == SymbolType.Type)
-            .Select(s => s.Symbol)
-            .Union(_context.GetTypes().Select(t => new Symbol
-            {
-                IsReadOnly = true,
-                Name = t,
-                Type = SymbolType.Type
-            }));
-
-        public IEnumerable<Symbol> GetVariables()
-            => _temporary
-            .Values
-            .Where(s => s.Symbol.Type == SymbolType.Variable)
-            .Select(s => s.Symbol)
-            .Union(_context.GetTypes().Select(t => new Symbol
-            {
-                IsReadOnly = _context.IsReadOnly(t),
-                Name = t,
-                Type = SymbolType.Variable
-            }));
-
-        public void AddMetadata(SymbolMetadata symbol)
-            => _temporary.Add(symbol.Symbol.Name, symbol);
-
-        public void ClearMetadata()
-            => _temporary.Clear();
-
-        public Type GetLiteralType(LiteralType type, string value)
-        {
-            var result = _context.Evaluate(type, value);
-            return result?.GetType();
-        }
-
-        //public IEnumerable<MethodOverloadDescription> GetMethodOverloads(Type type, string methodName)
-        //{
-        //}
+        #endregion
     }
 }

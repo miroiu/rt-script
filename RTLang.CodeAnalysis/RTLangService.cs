@@ -13,8 +13,11 @@ namespace RTLang.CodeAnalysis
         private RTLangService(IAnalysisContext context)
             => _context = context;
 
-        public static RTLangService Create(IExecutionContext context)
-            => new RTLangService(new AnalysisContext(context));
+        public static RTLangService Create(IAnalysisContext context)
+            => new RTLangService(context);
+
+        public static AnalysisContext NewContext(IExecutionContext context)
+            => new AnalysisContext(context);
 
         public IReadOnlyList<Completion> GetCompletions(string code, int position)
         {
@@ -24,24 +27,18 @@ namespace RTLang.CodeAnalysis
                 {
                     var lexer = new Lexer.Lexer(text);
                     var parser = new SyntaxParser(lexer, false);
+                    var analyzer = new AnalyzerService(_context, AnalyzerOptions.Completions, position);
 
                     try
                     {
-                        var analyzer = new AnalyzerService(_context, AnalyzerOptions.Completions, position);
+                        _context.ClearMetadata();
 
-                        if (lexer.Peek().Type == TokenType.EndOfCode)
+                        do
                         {
                             var expr = parser.Next();
                             analyzer.Visit(expr);
                         }
-                        else
-                        {
-                            while (parser.HasNext)
-                            {
-                                var expr = parser.Next();
-                                analyzer.Visit(expr);
-                            }
-                        }
+                        while (parser.HasNext);
 
                         return analyzer.Completions;
                     }

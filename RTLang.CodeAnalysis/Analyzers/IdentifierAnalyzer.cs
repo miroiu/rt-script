@@ -24,9 +24,8 @@ namespace RTLang.CodeAnalysis.Analyzers
         public IEnumerable<Diagnostic> GetDiagnostics(Expression expression, IAnalysisContext context)
         {
             var casted = (IdentifierExpression)expression;
-            var exists = context.GetSymbols().Any(s => s.Name == casted.Name);
 
-            if (!exists)
+            if (!context.IsDefined(casted.Name))
             {
                 return new Diagnostic
                 {
@@ -43,7 +42,7 @@ namespace RTLang.CodeAnalysis.Analyzers
         public Type GetReturnType(Expression expression, IAnalysisContext context)
         {
             var casted = (IdentifierExpression)expression;
-            return context.GetType(casted.Name);
+            return context.GetSymbolType(casted.Name);
         }
     }
 }

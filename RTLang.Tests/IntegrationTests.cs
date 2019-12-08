@@ -18,7 +18,7 @@ namespace RTLang.Tests
     public class IntegrationTests
     {
         public MockOutputStream Output { get; private set; }
-        public IExecutionContext Context { get; private set; }
+        public AnalysisContext Context { get; private set; }
         public RTLangService LangService { get; private set; }
 
         private readonly TestClass _test = new TestClass();
@@ -27,7 +27,7 @@ namespace RTLang.Tests
         public void Setup()
         {
             Output = new MockOutputStream();
-            Context = RTScript.NewContext(Output);
+            Context = RTLangService.NewContext(RTScript.NewContext(Output));
             LangService = RTLangService.Create(Context);
 
             Context.Declare("t", _test);

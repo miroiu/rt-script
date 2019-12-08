@@ -64,6 +64,7 @@ namespace RTLang.Lexer
             char delimiter = stream.Current;
 
             StringBuilder builder = new StringBuilder(10);
+            builder.Append(stream.Current);
             bool finished = false;
 
             while (!finished)
@@ -75,6 +76,7 @@ namespace RTLang.Lexer
                 else if (stream.Current == delimiter)
                 {
                     finished = true;
+                    builder.Append(stream.Current);
                     stream.MoveNext();
                 }
                 else
