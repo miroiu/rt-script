@@ -17,23 +17,23 @@ namespace RTLang.CodeAnalysis.Analyzers
             var casted = (ArrayExpression)expression;
 
             var args = casted.Arguments.Items;
-            if (args.Count > 0)
+            if (args.Count == 0)
             {
-                List<Diagnostic> diagnostics = new List<Diagnostic>();
-                foreach (var arg in args)
+                return new Diagnostic
                 {
-                    diagnostics.AddRange(AnalyzerService.GetDiagnostics(arg, context));
-                }
-                return diagnostics;
+                    Type = DiagnosticType.Error,
+                    Position = casted.Token.Position,
+                    Length = casted.Token.Text.Length,
+                    Message = "Empty arrays are not allowed."
+                }.ToOneItemArray();
             }
 
-            return new Diagnostic
+            List<Diagnostic> diagnostics = new List<Diagnostic>(5);
+            foreach (var arg in args)
             {
-                Type = DiagnosticType.Error,
-                Position = casted.Token.Position,
-                Length = casted.Token.Text.Length,
-                Message = "Empty arrays are not allowed."
-            }.ToOneItemArray();
+                diagnostics.AddRange(AnalyzerService.GetDiagnostics(arg, context));
+            }
+            return diagnostics;
         }
 
         public Type GetReturnType(Expression expression, IAnalysisContext context)

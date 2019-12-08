@@ -25,31 +25,30 @@ namespace RTLang.CodeAnalysis.Analyzers
             var casted = (InvocationExpression)expression;
             var delegateType = context.GetSymbolType(casted.MethodName);
 
-            if (delegateType != default)
+            if (delegateType == default)
             {
-                bool exists = TypeHelper.GetMethods(delegateType).Any(m => m.Descriptor.Name == DelegateInvoke && IsMethodOverload(m.Descriptor, casted.Arguments.Items));
-
-                if (!exists)
+                return new Diagnostic
                 {
-                    return new Diagnostic
-                    {
-                        Position = casted.Token.Position,
-                        Length = casted.Token.Text.Length,
-                        Type = DiagnosticType.Error,
-                        Message = $"No matching overload found for '{casted.MethodName}'"
-                    }.ToOneItemArray();
-                }
-
-                return AnalyzerService.GetDiagnostics(casted.Arguments, context);
+                    Position = casted.Token.Position,
+                    Length = casted.Token.Text.Length,
+                    Type = DiagnosticType.Error,
+                    Message = $"'{casted.MethodName}' is not defined in the current context."
+                }.ToOneItemArray();
             }
 
-            return new Diagnostic
+            bool exists = TypeHelper.GetMethods(delegateType).Any(m => m.Descriptor.Name == DelegateInvoke && IsMethodOverload(m.Descriptor, casted.Arguments.Items));
+            if (!exists)
             {
-                Position = casted.Token.Position,
-                Length = casted.Token.Text.Length,
-                Type = DiagnosticType.Error,
-                Message = $"'{casted.MethodName}' is not defined in the current context."
-            }.ToOneItemArray();
+                return new Diagnostic
+                {
+                    Position = casted.Token.Position,
+                    Length = casted.Token.Text.Length,
+                    Type = DiagnosticType.Error,
+                    Message = $"No matching overload found for '{casted.MethodName}'"
+                }.ToOneItemArray();
+            }
+
+            return AnalyzerService.GetDiagnostics(casted.Arguments, context);
         }
 
         public Type GetReturnType(Expression expression, IAnalysisContext context)

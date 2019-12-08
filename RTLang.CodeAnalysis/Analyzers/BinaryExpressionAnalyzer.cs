@@ -97,35 +97,35 @@ namespace RTLang.CodeAnalysis.Analyzers
                         {
                             var prop = TypeHelper.GetProperties(type).FirstOrDefault(p => p.Descriptor.Name == indexer.PropertyName);
 
-                            if (prop != default)
+                            if (prop == default)
                             {
-                                var indexType = AnalyzerService.GetReturnType(indexer.Index, context);
-                                if (indexType != default)
+                                return new Diagnostic
                                 {
-                                    var propType = prop.Descriptor.ReturnType;
-                                    if (!TypeHelper.GetProperties(propType).Any(p => p.Descriptor.IsIndexer && p.Descriptor.ParameterType == indexType))
-                                    {
-                                        var index = indexer.Index;
-                                        return new Diagnostic
-                                        {
-                                            Position = index.Token.Position,
-                                            Length = index.Token.Text.Length,
-                                            Type = DiagnosticType.Error,
-                                            Message = $"'{propType.ToFriendlyName()}' does not have an index taking a '{indexType.ToFriendlyName()}' parameter."
-                                        }.ToOneItemArray();
-                                    }
-                                }
-
-                                return AnalyzerService.GetDiagnostics(indexer.Index, context);
+                                    Position = right.Token.Position,
+                                    Length = right.Token.Text.Length,
+                                    Type = DiagnosticType.Error,
+                                    Message = $"'{type.ToFriendlyName()}' does not have a property named '{indexer.PropertyName}'."
+                                }.ToOneItemArray();
                             }
 
-                            return new Diagnostic
+                            var indexType = AnalyzerService.GetReturnType(indexer.Index, context);
+                            if (indexType != default)
                             {
-                                Position = right.Token.Position,
-                                Length = right.Token.Text.Length,
-                                Type = DiagnosticType.Error,
-                                Message = $"'{type.ToFriendlyName()}' does not have a property named '{indexer.PropertyName}'."
-                            }.ToOneItemArray();
+                                var propType = prop.Descriptor.ReturnType;
+                                if (!TypeHelper.GetProperties(propType).Any(p => p.Descriptor.IsIndexer && p.Descriptor.ParameterType == indexType))
+                                {
+                                    var index = indexer.Index;
+                                    return new Diagnostic
+                                    {
+                                        Position = index.Token.Position,
+                                        Length = index.Token.Text.Length,
+                                        Type = DiagnosticType.Error,
+                                        Message = $"'{propType.ToFriendlyName()}' does not have an index taking a '{indexType.ToFriendlyName()}' parameter."
+                                    }.ToOneItemArray();
+                                }
+                            }
+
+                            return AnalyzerService.GetDiagnostics(indexer.Index, context);
                         }
                     }
 
@@ -200,7 +200,6 @@ namespace RTLang.CodeAnalysis.Analyzers
         public Type GetReturnType(Expression expression, IAnalysisContext context)
         {
             var casted = (BinaryExpression)expression;
-
             var type = AnalyzerService.GetReturnType(casted.Left, context);
 
             if (type != default)
