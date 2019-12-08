@@ -47,6 +47,7 @@ namespace RTLang.Tests
         [TestCase("print TestClass.Overload(1, 2);", new string[] { "3" })]
         [TestCase("print TestClass.Overload(1, '2');", new string[] { "12" })]
         [TestCase("var x = ColorsEnum.Red; print x;", new string[] { "Red" })]
+        [TestCase("var x = 1; print x;", new string[] { "1" })]
         public void Interop(string input, string[] expected)
         {
             var diagnostics = LangService.GetDiagnostics(input);

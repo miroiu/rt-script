@@ -6,6 +6,7 @@ namespace RTLang.Interpreter
     public sealed class Reference : IEquatable<Reference>, IEquatable<string>
     {
         private readonly WeakReference<object> _reference;
+        private object _hardReference;
 
         public Reference(string name, bool isReadOnly, object value)
         {
@@ -17,7 +18,15 @@ namespace RTLang.Interpreter
             Type = value.GetType();
             Name = name;
             IsReadOnly = isReadOnly;
-            _reference = new WeakReference<object>(value);
+
+            if (Type.IsValueType)
+            {
+                _hardReference = value;
+            }
+            else
+            {
+                _reference = new WeakReference<object>(value);
+            }
         }
 
         public Type Type { get; }
@@ -27,8 +36,25 @@ namespace RTLang.Interpreter
         {
             get
             {
+                if (Type.IsValueType)
+                {
+                    return _hardReference;
+                }
+
                 _reference.TryGetTarget(out var result);
                 return result;
+            }
+
+            private set
+            {
+                if (Type.IsValueType)
+                {
+                    _hardReference = value;
+                }
+                else
+                {
+                    _reference.SetTarget(value);
+                }
             }
         }
 
@@ -41,7 +67,7 @@ namespace RTLang.Interpreter
 
             if (TypeHelper.TryChangeType(ref value, Type))
             {
-                _reference.SetTarget(value);
+                Value = value;
             }
             else if (value != default)
             {
