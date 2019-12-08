@@ -63,7 +63,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                     {
                         if (right is IdentifierExpression property)
                         {
-                            bool exists = context.GetMembers(type).Any(s => s.Name == property.Name && s.Type == SymbolType.Property);
+                            bool exists = TypeHelper.GetProperties(type).Any(p => !p.Descriptor.IsIndexer && p.Descriptor.Name == property.Name);
 
                             if (!exists)
                             {
@@ -154,7 +154,7 @@ namespace RTLang.CodeAnalysis.Analyzers
                         {
                             if (accessor.Right is IdentifierExpression property)
                             {
-                                var isReadOnly = context.GetMembers(propertyType).Any(s => s.Name == property.Name && s.Type == SymbolType.Property && s.IsReadOnly == true);
+                                var isReadOnly = TypeHelper.GetProperties(propertyType).Any(p => p.Descriptor.Name == property.Name && p.Descriptor.CanWrite == false);
                                 if (isReadOnly)
                                 {
                                     return new Diagnostic
