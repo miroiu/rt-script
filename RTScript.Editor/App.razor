@@ -1,0 +1,8 @@
+﻿@using Microsoft.JSInterop
+@code {
+    [JSInvokable]
+    public static async Task WriteLine(string value = default)
+    {
+        Console.WriteLine(value);
+    }
+}

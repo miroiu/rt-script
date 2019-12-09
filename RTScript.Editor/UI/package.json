@@ -1,0 +1,21 @@
+{
+  "name": "rtscript-editor",
+  "version": "1.0.0",
+  "description": "Editor UI",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel ./index.html -p 4200",
+    "build": "parcel build ./index.html --public-url './' --no-source-maps --experimental-scope-hoisting"
+  },
+  "author": "miroiu",
+  "license": "MIT",
+  "dependencies": {
+    "preact": "^10.0.5"
+  },
+  "devDependencies": {
+    "@types/parcel-env": "0.0.0",
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-clean-dist": "0.0.6",
+    "typescript": "^3.7.3"
+  }
+}
