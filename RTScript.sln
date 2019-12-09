@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTScript.StandardLibrary", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTLang.CodeAnalysis", "RTLang.CodeAnalysis\RTLang.CodeAnalysis.csproj", "{A8136CDD-BB19-41AC-9979-083D7CFAF203}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RTScript.Editor", "RTScript.Editor\RTScript.Editor.csproj", "{A686DF5D-6751-4752-8449-6A39045F9E03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RTScript.Editor", "RTScript.Editor\RTScript.Editor.csproj", "{A686DF5D-6751-4752-8449-6A39045F9E03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,8 +41,8 @@ Global
 		{A8136CDD-BB19-41AC-9979-083D7CFAF203}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8136CDD-BB19-41AC-9979-083D7CFAF203}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8136CDD-BB19-41AC-9979-083D7CFAF203}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A686DF5D-6751-4752-8449-6A39045F9E03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A686DF5D-6751-4752-8449-6A39045F9E03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A686DF5D-6751-4752-8449-6A39045F9E03}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{A686DF5D-6751-4752-8449-6A39045F9E03}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{A686DF5D-6751-4752-8449-6A39045F9E03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A686DF5D-6751-4752-8449-6A39045F9E03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

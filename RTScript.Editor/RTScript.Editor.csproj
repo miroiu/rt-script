@@ -20,6 +20,10 @@
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RTLang.CodeAnalysis\RTLang.CodeAnalysis.csproj" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="rd /q /s &quot;$(ProjectDir)UI\_framework&quot; || rem&#xD;&#xA;md &quot;$(ProjectDir)UI\wasm&quot;&#xD;&#xA;move /y &quot;$(TargetDir)dist\_framework&quot; &quot;$(ProjectDir)UI\&quot;" />
   </Target>

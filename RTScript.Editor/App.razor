@@ -1,8 +1,25 @@
-﻿@using Microsoft.JSInterop
-@code {
+﻿@using Microsoft.JSInterop;
+@using RTLang.CodeAnalysis;
+@code
+{
     [JSInvokable]
-    public static async Task WriteLine(string value = default)
+    public static async Task<IReadOnlyList<Completion>> GetCompletionsAsync(string code, int cursorPosition)
     {
-        Console.WriteLine(value);
+        Console.WriteLine(code);
+        return RTEditorService.GetCompletions(code, cursorPosition);
+    }
+
+    [JSInvokable]
+    public static async Task<IReadOnlyList<Diagnostic>> GetDiagnosticsAsync(string code)
+    {
+        Console.WriteLine(code);
+        return RTEditorService.GetDiagnostics(code);
+    }
+
+    [JSInvokable]
+    public static async Task ExecuteAsync(string code)
+    {
+        Console.WriteLine(code);
+        RTEditorService.Execute(code);
     }
 }
