@@ -1,10 +1,9 @@
 import { h } from "preact";
-import CodeAnalysis from './services/CodeAnalysis.service';
+import LangService from './services/RTLang.service';
+import Editor from "./Editor";
 
 export default _ => (
     <div>
-       <input type='button' value={"Get completions"} onClick={() => {
-           CodeAnalysis.GetCompletionsAsync('asd', 1).then(x => console.log(x));
-       }} />
+        <Editor service={new LangService()} />
     </div>
 )

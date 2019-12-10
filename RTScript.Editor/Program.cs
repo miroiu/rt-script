@@ -2,6 +2,10 @@
 
 namespace RTScript.Editor
 {
+    public class Test
+    {
+        public string Text { get; set; }
+    }
     public class Program
     {
         public static void Main(string[] args)

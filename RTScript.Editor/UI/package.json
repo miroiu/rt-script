@@ -2,21 +2,32 @@
   "name": "rtscript-editor",
   "version": "1.0.0",
   "description": "Editor UI",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "start": "parcel ./src/index.tsx -p 4200",
-    "build": "parcel build ./src/index.tsx --public-url './' --no-source-maps --experimental-scope-hoisting && cpy ./index.html ./dist && ncp ./_framework ./dist/_framework"
+    "start": "webpack-dev-server --open --progress --config webpack.config.dev.js",
+    "build": "webpack -p --config webpack.config.prod.js"
   },
   "author": "miroiu",
   "license": "MIT",
   "dependencies": {
-    "preact": "^10.0.5"
+    "preact": "^10.0.5",
+    "preact-codemirror": "^1.0.1"
   },
   "devDependencies": {
-    "cpy-cli": "^3.0.0",
-    "ncp": "^2.0.0",
-    "parcel-bundler": "^1.12.4",
-    "parcel-plugin-clean-dist": "0.0.6",
-    "typescript": "^3.7.3"
+    "@babel/core": "^7.7.5",
+    "@babel/preset-env": "^7.7.6",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-preact": "^2.0.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "copy-webpack-plugin": "^5.1.0",
+    "css-loader": "^3.3.0",
+    "file-loader": "^5.0.2",
+    "style-loader": "^1.0.1",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.3",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   }
 }

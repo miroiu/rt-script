@@ -5,8 +5,8 @@ namespace RTLang.CodeAnalysis
 {
     public struct Completion : IEquatable<Completion>
     {
-        public string Text;
-        public SymbolType Type;
+        public string Text { get; set; }
+        public SymbolType Type { get; set; }
 
         public override bool Equals(object obj)
             => obj is Completion c && c.Equals(this);

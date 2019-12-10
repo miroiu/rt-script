@@ -6,6 +6,7 @@
     public static async Task<IReadOnlyList<Completion>> GetCompletionsAsync(string code, int cursorPosition)
     {
         Console.WriteLine(code);
+        Console.WriteLine(cursorPosition);
         return RTEditorService.GetCompletions(code, cursorPosition);
     }
 

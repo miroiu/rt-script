@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="rd /q /s &quot;$(ProjectDir)UI\_framework&quot; || rem&#xD;&#xA;md &quot;$(ProjectDir)UI\wasm&quot;&#xD;&#xA;move /y &quot;$(TargetDir)dist\_framework&quot; &quot;$(ProjectDir)UI\&quot;" />
+    <Exec Command="xcopy /y /i /s &quot;$(TargetDir)dist&quot; &quot;$(ProjectDir)UI&quot;" />
   </Target>
   
 </Project>
