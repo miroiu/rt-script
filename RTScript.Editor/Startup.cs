@@ -9,10 +9,11 @@ namespace RTScript.Editor
     {
         private readonly AnalysisContext _analysisContext;
         private readonly RTLangService _langService;
+        private readonly OutputStream _output = new OutputStream();
 
         public Startup()
         {
-            var executionContext = RTLang.RTScript.NewContext(new OutputStream());
+            var executionContext = RTLang.RTScript.NewContext(_output);
             _analysisContext = RTLangService.NewContext(executionContext);
             _langService = RTLangService.Create(_analysisContext);
         }
@@ -22,6 +23,7 @@ namespace RTScript.Editor
             services.AddSingleton<IAnalysisContext>(_analysisContext);
             services.AddSingleton<IExecutionContext>(_analysisContext);
             services.AddSingleton(_langService);
+            services.AddSingleton(_output);
         }
 
         public void Configure(IComponentsApplicationBuilder app)

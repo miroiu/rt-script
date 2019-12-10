@@ -1,14 +1,19 @@
 ﻿using RTLang;
-using System;
+using System.Text;
 
 namespace RTScript.Editor
 {
     public class OutputStream : IOutputStream
     {
+        private readonly StringBuilder _result = new StringBuilder(64);
+
         public void Clear()
-            => Console.Clear();
+            => _result.Clear();
 
         public void WriteLine(string line)
-            => Console.WriteLine(line);
+            => _result.AppendLine(line);
+
+        public string Output
+            => _result.ToString();
     }
 }

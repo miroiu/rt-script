@@ -4,23 +4,13 @@
 {
     [JSInvokable]
     public static async Task<IReadOnlyList<Completion>> GetCompletionsAsync(string code, int cursorPosition)
-    {
-        Console.WriteLine(code);
-        Console.WriteLine(cursorPosition);
-        return RTEditorService.GetCompletions(code, cursorPosition);
-    }
+        => RTEditorService.GetCompletions(code, cursorPosition);
 
     [JSInvokable]
     public static async Task<IReadOnlyList<Diagnostic>> GetDiagnosticsAsync(string code)
-    {
-        Console.WriteLine(code);
-        return RTEditorService.GetDiagnostics(code);
-    }
+        => RTEditorService.GetDiagnostics(code);
 
     [JSInvokable]
-    public static async Task ExecuteAsync(string code)
-    {
-        Console.WriteLine(code);
-        RTEditorService.Execute(code);
-    }
+    public static async Task<ExecutionResult> ExecuteAsync(string code)
+        => RTEditorService.Execute(code);
 }

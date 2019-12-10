@@ -1,6 +1,7 @@
 import DotNetService from './DotNet.service';
 import Completion from '../models/Completion';
 import Diagnostic from '../models/Diagnostic';
+import ExecutionResult from '../models/ExecutionResult';
 
 export default class RTLangService {
     public async GetCompletionsAsync(code: string, position: number): Promise<Completion[]> {
@@ -22,9 +23,9 @@ export default class RTLangService {
         }
     }
     
-    public async ExecuteAsync(code: string): Promise<void> {
+    public async ExecuteAsync(code: string): Promise<ExecutionResult> {
         try {
-            await DotNetService.invoke<void>('ExecuteAsync', code);
+            return await DotNetService.invoke<ExecutionResult>('ExecuteAsync', code);
         }
         catch (e) {
         }
