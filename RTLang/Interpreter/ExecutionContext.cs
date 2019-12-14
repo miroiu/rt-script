@@ -108,7 +108,7 @@ namespace RTLang.Interpreter
                         return result;
                     }
 
-                    if (double.TryParse(value, out double dResult))
+                    if (float.TryParse(value, out float dResult))
                     {
                         return dResult;
                     }
